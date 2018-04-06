@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_home"
+        android:title="@string/string_nav_paste"
+        />
+    <item
+        android:id="@+id/navigation_history"
+        android:title="@string/string_nav_history"
+        />
+
+    <item
+        android:id="@+id/navigation_server_settings"
+        android:title="@string/string_nav_server_settings"
+        />
+
+</menu>

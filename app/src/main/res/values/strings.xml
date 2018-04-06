@@ -3,4 +3,8 @@
     <string name="action_settings">Settings</string>
     <string name="addFile">Add File</string>
     <string name="pasteUpload">Paste/Upload</string>
+    <string name="pasteTextHint">Paste your text here</string>
+    <string name="string_nav_paste">Paste</string>
+    <string name="string_nav_history">History</string>
+    <string name="string_nav_server_settings">Server Settings</string>
 </resources>

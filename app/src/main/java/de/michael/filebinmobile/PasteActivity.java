@@ -18,10 +18,4 @@ public class PasteActivity extends AppCompatActivity {
         ButterKnife.bind(this);
     }
 
-    @OnClick(R.id.fabPasteOptions)
-    void actionButtonPressed(View view) {
-        Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show();
-    }
-
 }
