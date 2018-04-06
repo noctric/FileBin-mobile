@@ -2,17 +2,20 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/navigation_home"
+        android:id="@+id/navigation_paste"
         android:title="@string/string_nav_paste"
+        android:icon="@mipmap/ic_content_paste_white_24dp"
         />
     <item
         android:id="@+id/navigation_history"
         android:title="@string/string_nav_history"
+        android:icon="@mipmap/ic_history_white_24dp"
         />
 
     <item
         android:id="@+id/navigation_server_settings"
         android:title="@string/string_nav_server_settings"
+        android:icon="@mipmap/ic_settings_white_24dp"
         />
 
 </menu>
