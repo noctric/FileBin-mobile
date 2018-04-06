@@ -8,14 +8,30 @@
     tools:context=".MainActivity"
     tools:layout_editor_absoluteY="25dp">
 
-    <TextView
-        android:id="@+id/textView"
+    <Button
+        android:id="@+id/btnDeleteChecked"
+        style="@style/buttonStandard"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
-        android:text="History"
+        android:layout_marginTop="8dp"
+        android:background="@color/colorAccent"
+        android:text="@string/delete"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rclUploadHistory"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/btnDeleteChecked">
+
+    </android.support.v7.widget.RecyclerView>
 </android.support.constraint.ConstraintLayout>

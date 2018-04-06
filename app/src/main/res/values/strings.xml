@@ -7,4 +7,5 @@
     <string name="string_nav_paste">Paste</string>
     <string name="string_nav_history">History</string>
     <string name="string_nav_server_settings">Server Settings</string>
+    <string name="delete">Delete</string>
 </resources>
