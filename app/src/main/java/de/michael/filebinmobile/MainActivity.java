@@ -10,13 +10,16 @@ import android.view.MenuItem;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import de.michael.filebinmobile.fragments.HistoryFragment;
+import de.michael.filebinmobile.fragments.PasteFragment;
+import de.michael.filebinmobile.fragments.SettingsFragment;
 
 public class MainActivity extends AppCompatActivity {
 
     @BindView(R.id.bnvMainNavigation)
     BottomNavigationView bnvMainNavigation;
 
-    // TODO remove global vars and try retrieve fragments by id
+    // TODO remove global vars and try to retrieve fragments by id
     private Fragment pasteFragment, historyFragment, settingsFragment;
 
     private BottomNavigationView.OnNavigationItemSelectedListener onNavigationItemSelectedListener
