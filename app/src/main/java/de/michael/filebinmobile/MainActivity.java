@@ -22,6 +22,8 @@ public class MainActivity extends AppCompatActivity {
     // TODO remove global vars and try to retrieve fragments by id
     private Fragment pasteFragment, historyFragment, settingsFragment;
 
+    // TODO only bring fragment to front instead of adding it multiple times to backstack
+    // TODO also the highlighting of the current menu point doesn't update itself when pressing back
     private BottomNavigationView.OnNavigationItemSelectedListener onNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -82,8 +84,4 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-    }
 }

@@ -8,4 +8,6 @@
     <string name="string_nav_history">History</string>
     <string name="string_nav_server_settings">Server Settings</string>
     <string name="delete">Delete</string>
+    <string name="Name">Name</string>
+    <string name="Address">Address</string>
 </resources>
