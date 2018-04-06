@@ -1,3 +1,4 @@
 <resources>
-    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="fabMargin">16dp</dimen>
+    <dimen name="buttonPadding">3dp</dimen>
 </resources>

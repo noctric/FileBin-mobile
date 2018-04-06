@@ -17,4 +17,9 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="buttonStandard">
+        <item name="android:textColor">@color/colorButtonText</item>
+        <item name="android:padding">@dimen/buttonPadding</item>
+    </style>
+
 </resources>
