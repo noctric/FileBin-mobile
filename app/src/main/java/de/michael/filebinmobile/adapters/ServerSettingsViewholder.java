@@ -2,6 +2,7 @@ package de.michael.filebinmobile.adapters;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import butterknife.BindView;
@@ -15,6 +16,12 @@ public class ServerSettingsViewholder extends RecyclerView.ViewHolder {
 
     @BindView(R.id.txtAddr)
     TextView txtAddr;
+
+    @BindView(R.id.btnDelete)
+    ImageButton btnDelete;
+
+    @BindView(R.id.btnEdit)
+    ImageButton btnEdit;
 
     public ServerSettingsViewholder(View itemView) {
         super(itemView);

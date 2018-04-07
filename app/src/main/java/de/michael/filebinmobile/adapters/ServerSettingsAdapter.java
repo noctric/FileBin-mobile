@@ -1,5 +1,7 @@
 package de.michael.filebinmobile.adapters;
 
+import android.app.AlertDialog;
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,7 +14,12 @@ import de.michael.filebinmobile.model.Server;
 
 public class ServerSettingsAdapter extends RecyclerView.Adapter<ServerSettingsViewholder>{
 
+    private Context context;
     private ArrayList<Server> savedServers = new ArrayList<>();
+
+    public ServerSettingsAdapter(Context context) {
+        this.context = context;
+    }
 
     public void updateData(ArrayList<Server> serverList) {
         savedServers.clear();
@@ -41,9 +48,20 @@ public class ServerSettingsAdapter extends RecyclerView.Adapter<ServerSettingsVi
 
     @Override
     public void onBindViewHolder(ServerSettingsViewholder holder, int position) {
-        Server item = this.savedServers.get(position);
+        final Server item = this.savedServers.get(position);
         holder.txtName.setText(item.getName());
         holder.txtAddr.setText(item.getAddr());
+
+        holder.btnEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setMessage("Edit server settings")
+                        .setTitle("Settings for " + item.getName());
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            }
+        });
     }
 
     @Override

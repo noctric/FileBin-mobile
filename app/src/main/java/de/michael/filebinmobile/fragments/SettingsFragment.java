@@ -33,7 +33,7 @@ public class SettingsFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        this.adapter = new ServerSettingsAdapter();
+        this.adapter = new ServerSettingsAdapter(getContext());
 
         //region let's just add some mock samples | 16 items
         mockData.add(new Server("Soapsurfer", "https://p.soapsurfer.de"));
