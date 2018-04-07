@@ -2,6 +2,7 @@ package de.michael.filebinmobile.adapters;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,7 +13,7 @@ import java.util.ArrayList;
 import de.michael.filebinmobile.R;
 import de.michael.filebinmobile.model.Server;
 
-public class ServerSettingsAdapter extends RecyclerView.Adapter<ServerSettingsViewholder>{
+public class ServerSettingsAdapter extends RecyclerView.Adapter<ServerSettingsViewholder> {
 
     private Context context;
     private ArrayList<Server> savedServers = new ArrayList<>();
@@ -41,7 +42,7 @@ public class ServerSettingsAdapter extends RecyclerView.Adapter<ServerSettingsVi
     @Override
     public ServerSettingsViewholder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.list_item_server_setting_relative_layout, null);
+                .inflate(R.layout.list_item_server_setting, null);
 
         return new ServerSettingsViewholder(view);
     }
@@ -55,9 +56,22 @@ public class ServerSettingsAdapter extends RecyclerView.Adapter<ServerSettingsVi
         holder.btnEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                final AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 builder.setMessage("Edit server settings")
-                        .setTitle("Settings for " + item.getName());
+                        .setTitle("Settings for " + item.getName())
+                        .setView(R.layout.edit_server_settings)
+                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                //TODO save server settings
+                            }
+                        })
+                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
+                            }
+                        });
                 AlertDialog dialog = builder.create();
                 dialog.show();
             }

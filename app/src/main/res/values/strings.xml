@@ -10,4 +10,7 @@
     <string name="delete">Delete</string>
     <string name="Name">Name</string>
     <string name="Address">Address</string>
+    <string name="exampleAddr">https://example.org</string>
+    <string name="ok">Ok</string>
+    <string name="cancel">Cancel</string>
 </resources>
