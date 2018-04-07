@@ -8,6 +8,7 @@
     tools:context=".MainActivity"
     tools:layout_editor_absoluteY="25dp">
 
+    <!--TODO let's make this a floating action button some day -->
     <Button
         android:id="@+id/btnDeleteChecked"
         style="@style/buttonStandard"
