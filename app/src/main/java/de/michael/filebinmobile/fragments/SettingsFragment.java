@@ -3,6 +3,8 @@ package de.michael.filebinmobile.fragments;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -33,8 +35,22 @@ public class SettingsFragment extends Fragment {
 
         this.adapter = new ServerSettingsAdapter();
 
-        //region let's just add some mock samples
+        //region let's just add some mock samples | 16 items
         mockData.add(new Server("Soapsurfer", "https://p.soapsurfer.de"));
+        mockData.add(new Server("Xinu", "https://paste.xinu.at"));
+        mockData.add(new Server("Xinu", "https://paste.xinu.at"));
+        mockData.add(new Server("Xinu", "https://paste.xinu.at"));
+        mockData.add(new Server("Xinu", "https://paste.xinu.at"));
+        mockData.add(new Server("Xinu", "https://paste.xinu.at"));
+        mockData.add(new Server("Xinu", "https://paste.xinu.at"));
+        mockData.add(new Server("Xinu", "https://paste.xinu.at"));
+        mockData.add(new Server("Xinu", "https://paste.xinu.at"));
+        mockData.add(new Server("Xinu", "https://paste.xinu.at"));
+        mockData.add(new Server("Xinu", "https://paste.xinu.at"));
+        mockData.add(new Server("Xinu", "https://paste.xinu.at"));
+        mockData.add(new Server("Xinu", "https://paste.xinu.at"));
+        mockData.add(new Server("Xinu", "https://paste.xinu.at"));
+        mockData.add(new Server("Xinu", "https://paste.xinu.at"));
         mockData.add(new Server("Xinu", "https://paste.xinu.at"));
 
         adapter.updateData(mockData);
@@ -48,12 +64,17 @@ public class SettingsFragment extends Fragment {
         View view = inflater.inflate(R.layout.server_settings_fragment, container, false);
         ButterKnife.bind(this, view);
 
-
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        this.rclServerList.setLayoutManager(linearLayoutManager);
 
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(this.rclServerList.getContext(),
+                linearLayoutManager.getOrientation());
+
+        this.rclServerList.setLayoutManager(linearLayoutManager);
+        this.rclServerList.setItemAnimator(new DefaultItemAnimator());
         this.rclServerList.setAdapter(this.adapter);
+        this.rclServerList.addItemDecoration(dividerItemDecoration);
+
 
         return view;
     }

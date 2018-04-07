@@ -22,4 +22,8 @@
         <item name="android:padding">@dimen/buttonPadding</item>
     </style>
 
+    <style name="imageButtinStandard">
+        <item name="android:padding">8dp</item>
+    </style>
+
 </resources>

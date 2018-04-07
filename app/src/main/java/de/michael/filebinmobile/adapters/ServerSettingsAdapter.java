@@ -34,11 +34,7 @@ public class ServerSettingsAdapter extends RecyclerView.Adapter<ServerSettingsVi
     @Override
     public ServerSettingsViewholder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.list_item_server_setting, null);
-
-        if (parent != null) {
-            parent.removeAllViews();
-        }
+                .inflate(R.layout.list_item_server_setting_relative_layout, null);
 
         return new ServerSettingsViewholder(view);
     }
