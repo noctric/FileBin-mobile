@@ -12,6 +12,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
 import java.util.ArrayList;
 
@@ -36,7 +37,7 @@ public class SettingsFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        this.adapter = new ServerSettingsAdapter(getContext());
+        this.adapter = new ServerSettingsAdapter(getActivity());
 
         //region let's just add some mock samples | 16 items
         /*
@@ -61,9 +62,7 @@ public class SettingsFragment extends Fragment {
         */
         //endregion
 
-        ArrayList<Server> serverList = SettingsManager.getInstance().getServerList(getActivity());
-
-        this.adapter.updateData(serverList);
+        reloadServerList();
 
     }
 
@@ -90,12 +89,24 @@ public class SettingsFragment extends Fragment {
     @OnClick(R.id.fbaAddServer)
     void addServer() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        final View view = LayoutInflater.from(getContext())
+                .inflate(R.layout.edit_server_settings, null);
         builder.setTitle("Add Server")
-                .setView(R.layout.edit_server_settings)
+                .setView(view)
                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        //TODO save server to list
+                        EditText txtName = view.findViewById(R.id.edtEditName);
+                        EditText txtAddr = view.findViewById(R.id.edtEditAddress);
+
+                        Server server = new Server(
+                                txtName.getText().toString(),
+                                txtAddr.getText().toString()
+                        );
+
+                        SettingsManager.getInstance().addServer(server, getActivity());
+
+                        reloadServerList();
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -106,6 +117,13 @@ public class SettingsFragment extends Fragment {
                 });
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+    private void reloadServerList() {
+
+        ArrayList<Server> serverList = SettingsManager.getInstance().getServerList(getActivity());
+        this.adapter.updateData(serverList);
+
     }
 
 }

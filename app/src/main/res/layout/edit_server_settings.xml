@@ -12,36 +12,41 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/Name"
-        tools:layout_editor_absoluteX="19dp"
-        tools:layout_editor_absoluteY="33dp" />
+        app:layout_constraintBaseline_toBaselineOf="@+id/edtEditName"
+        app:layout_constraintEnd_toEndOf="@+id/lblEditAddress" />
 
     <TextView
         android:id="@+id/lblEditAddress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
         android:text="@string/Address"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="86dp" />
+        app:layout_constraintBaseline_toBaselineOf="@+id/edtEditAddress"
+        app:layout_constraintEnd_toStartOf="@+id/edtEditAddress" />
 
     <EditText
         android:id="@+id/edtEditName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="8dp"
         android:ems="10"
         android:inputType="textPersonName"
         android:text="Name"
-        tools:layout_editor_absoluteX="81dp"
-        tools:layout_editor_absoluteY="18dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/edtEditAddress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="8dp"
         android:ems="10"
         android:inputType="textPersonName"
         android:text="@string/exampleAddr"
-        tools:layout_editor_absoluteX="81dp"
-        tools:layout_editor_absoluteY="72dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edtEditName" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rclAssociatedProfiles"

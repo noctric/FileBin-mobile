@@ -77,7 +77,20 @@ public class SettingsManager {
         return serverList;
     }
 
+    public void deleteServer(Server server, Activity activity) {
+        Gson gson = new Gson();
+        String serializedServerInfo = gson.toJson(server);
 
+        SharedPreferences preferences = activity.getPreferences(Context.MODE_PRIVATE);
+        Set<String> serverListSet = preferences.getStringSet(KEY_SERVER_LIST, null);
 
+        if (serverListSet != null) {
+            serverListSet.remove(serializedServerInfo);
+        }
 
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putStringSet(KEY_SERVER_LIST, serverListSet);
+
+        editor.apply();
+    }
 }
