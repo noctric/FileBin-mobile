@@ -9,17 +9,17 @@
     tools:layout_editor_absoluteY="25dp">
 
     <!--TODO let's make this a floating action button some day -->
-    <Button
-        android:id="@+id/btnDeleteChecked"
-        style="@style/buttonStandard"
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fbaDeleteCheckedItems"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginTop="8dp"
-        android:background="@color/colorAccent"
-        android:text="@string/delete"
+        android:layout_marginBottom="24dp"
+        android:layout_marginEnd="24dp"
+        android:clickable="true"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:srcCompat="@mipmap/ic_delete_white_24dp" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rclUploadHistory"
@@ -32,7 +32,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnDeleteChecked">
+        app:layout_constraintTop_toTopOf="parent">
 
     </android.support.v7.widget.RecyclerView>
 </android.support.constraint.ConstraintLayout>

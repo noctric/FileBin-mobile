@@ -8,6 +8,18 @@
     tools:context=".MainActivity"
     tools:layout_editor_absoluteY="25dp">
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fbaAddServer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:layout_marginEnd="24dp"
+        android:clickable="true"
+        android:focusable="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@mipmap/ic_add_white_24dp" />
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rclServerList"
         android:layout_width="0dp"
