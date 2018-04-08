@@ -1,5 +1,7 @@
 package de.michael.filebinmobile.fragments;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -11,7 +13,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.gson.Gson;
+
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -27,6 +34,8 @@ public class SettingsFragment extends Fragment {
     private ServerSettingsAdapter adapter;
 
     private ArrayList<Server> mockData = new ArrayList<>();
+
+    private static final String KEY_SERVER_LIST = "de.michael.filebin.SERVER_NAMES";
 
 
     @Override
@@ -78,4 +87,59 @@ public class SettingsFragment extends Fragment {
 
         return view;
     }
+
+
+
+    //TODO probably should move this functionality to a more sophisticated manager class
+    /**
+     * Using a database management system to save servers and associated profiles would be a bit
+     * of an overkill. This is because in probably 99.9% of the cases a user will not have more than
+     * one account on 1-2 different servers. So for now we use shared preferences and serialization
+     * as json strings to store our information privately on the device.
+     *
+     * @param server the server to be saved
+     * @return true on success
+     */
+    private boolean addServer(Server server) {
+        Gson gson = new Gson();
+        String serializedServerInfo = gson.toJson(server);
+
+        SharedPreferences preferences = getActivity().getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+
+        Set<String> serializedServerSet = preferences.getStringSet(KEY_SERVER_LIST, null);
+
+
+        if (serializedServerSet == null) {
+            // create a new set and add it
+            serializedServerSet = new HashSet<>();
+        }
+
+        serializedServerSet.add(serializedServerInfo);
+
+        editor.putStringSet(KEY_SERVER_LIST, serializedServerSet);
+        editor.apply();
+        
+        return true;
+    }
+
+    private List<Server> getServerList() {
+        Gson gson = new Gson();
+
+        SharedPreferences preferences = getActivity().getPreferences(Context.MODE_PRIVATE);
+        Set<String> serverListSet = preferences.getStringSet(KEY_SERVER_LIST, null);
+
+        ArrayList<Server> serverList = new ArrayList<>();
+
+        if (serverListSet != null) {
+            for (String serializedServerInfo : serverListSet) {
+                Server server = gson.fromJson(serializedServerInfo, Server.class);
+                serverList.add(server);
+            }
+        }
+
+        return serverList;
+    }
+
+
 }
