@@ -18,9 +18,14 @@ public class ServerSettingsAdapter extends RecyclerView.Adapter<ServerSettingsVi
 
     private Activity activity;
     private ArrayList<Server> savedServers = new ArrayList<>();
+    private OnAdapterDataChangedListener dataChangedListener;
 
     public ServerSettingsAdapter(Activity activity) {
         this.activity = activity;
+    }
+
+    public void setDataChangedListener(OnAdapterDataChangedListener dataChangedListener) {
+        this.dataChangedListener = dataChangedListener;
     }
 
     public void updateData(ArrayList<Server> serverList) {
@@ -57,7 +62,7 @@ public class ServerSettingsAdapter extends RecyclerView.Adapter<ServerSettingsVi
         holder.btnEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final AlertDialog.Builder builder = new AlertDialog.Builder(activity.getBaseContext());
+                final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
                 builder.setMessage("Edit server settings")
                         .setTitle("Settings for " + item.getName())
                         .setView(R.layout.edit_server_settings)
@@ -65,6 +70,7 @@ public class ServerSettingsAdapter extends RecyclerView.Adapter<ServerSettingsVi
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 //TODO save server settings
+                                //TODO we need an edit and save method in our settings manager
                             }
                         })
                         .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -81,7 +87,31 @@ public class ServerSettingsAdapter extends RecyclerView.Adapter<ServerSettingsVi
         holder.btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SettingsManager.getInstance().deleteServer(item, activity);
+
+                final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                builder.setMessage("Delete Server " + item.getName())
+                        .setTitle("Are you sure you want to delete this Server?")
+                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                                SettingsManager.getInstance().deleteServer(item, activity);
+
+                                if (dataChangedListener != null) {
+
+                                    dataChangedListener.onAdapterDataChanged();
+
+                                }
+                            }
+                        })
+                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
+                            }
+                        });
+                AlertDialog dialog = builder.create();
+                dialog.show();
             }
         });
     }

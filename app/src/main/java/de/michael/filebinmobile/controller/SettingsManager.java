@@ -18,8 +18,6 @@ public class SettingsManager {
 
     private static final String KEY_SERVER_LIST = "de.michael.filebin.SERVER_NAMES";
 
-    private ArrayList<Server> serverList;
-
     public static SettingsManager getInstance() {
         return INSTANCE;
     }
@@ -37,6 +35,10 @@ public class SettingsManager {
      * @return true on success
      */
     public boolean addServer(Server server, Activity activity) {
+
+        // DEBUGGING
+        System.out.println("working with activity " + activity.toString());
+
         Gson gson = new Gson();
         String serializedServerInfo = gson.toJson(server);
 
@@ -45,21 +47,28 @@ public class SettingsManager {
 
         Set<String> serializedServerSet = preferences.getStringSet(KEY_SERVER_LIST, null);
 
+        // so apparently we have to create a new Set object to actually update sp
+        HashSet<String> updatedServerSet;
 
         if (serializedServerSet == null) {
             // create a new set and add it
-            serializedServerSet = new HashSet<>();
+            updatedServerSet = new HashSet<>();
+        } else {
+            updatedServerSet = new HashSet<>(serializedServerSet);
+
         }
 
-        serializedServerSet.add(serializedServerInfo);
+        updatedServerSet.add(serializedServerInfo);
 
-        editor.putStringSet(KEY_SERVER_LIST, serializedServerSet);
+        editor.putStringSet(KEY_SERVER_LIST, updatedServerSet);
         editor.apply();
 
         return true;
     }
 
     public ArrayList<Server> getServerList(Activity activity) {
+        System.out.println("working with activity " + activity.toString());
+
         Gson gson = new Gson();
 
         SharedPreferences preferences = activity.getPreferences(Context.MODE_PRIVATE);
@@ -78,18 +87,26 @@ public class SettingsManager {
     }
 
     public void deleteServer(Server server, Activity activity) {
+        System.out.println("working with activity " + activity.toString());
+
         Gson gson = new Gson();
         String serializedServerInfo = gson.toJson(server);
 
         SharedPreferences preferences = activity.getPreferences(Context.MODE_PRIVATE);
         Set<String> serverListSet = preferences.getStringSet(KEY_SERVER_LIST, null);
 
+        // so apparently we have to create a new Set object to actually update sp
+        HashSet<String> updatedServerSet;
+
         if (serverListSet != null) {
-            serverListSet.remove(serializedServerInfo);
+            updatedServerSet = new HashSet<>(serverListSet);
+            updatedServerSet.remove(serializedServerInfo);
+        } else {
+            updatedServerSet = new HashSet<>();
         }
 
         SharedPreferences.Editor editor = preferences.edit();
-        editor.putStringSet(KEY_SERVER_LIST, serverListSet);
+        editor.putStringSet(KEY_SERVER_LIST, updatedServerSet);
 
         editor.apply();
     }

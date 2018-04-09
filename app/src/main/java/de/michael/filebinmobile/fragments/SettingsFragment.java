@@ -20,11 +20,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.michael.filebinmobile.R;
+import de.michael.filebinmobile.adapters.OnAdapterDataChangedListener;
 import de.michael.filebinmobile.adapters.ServerSettingsAdapter;
 import de.michael.filebinmobile.controller.SettingsManager;
 import de.michael.filebinmobile.model.Server;
 
-public class SettingsFragment extends Fragment {
+public class SettingsFragment extends Fragment implements OnAdapterDataChangedListener{
 
     @BindView(R.id.rclServerList)
     RecyclerView rclServerList;
@@ -38,6 +39,7 @@ public class SettingsFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         this.adapter = new ServerSettingsAdapter(getActivity());
+        this.adapter.setDataChangedListener(this);
 
         //region let's just add some mock samples | 16 items
         /*
@@ -62,7 +64,7 @@ public class SettingsFragment extends Fragment {
         */
         //endregion
 
-        reloadServerList();
+        //reloadServerList();
 
     }
 
@@ -84,6 +86,14 @@ public class SettingsFragment extends Fragment {
         this.rclServerList.addItemDecoration(dividerItemDecoration);
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+
+        reloadServerList();
+
+        super.onResume();
     }
 
     @OnClick(R.id.fbaAddServer)
@@ -124,6 +134,15 @@ public class SettingsFragment extends Fragment {
         ArrayList<Server> serverList = SettingsManager.getInstance().getServerList(getActivity());
         this.adapter.updateData(serverList);
 
+        System.out.println("Updating server list. Current item count: " + serverList.size());
+
+        // DEBUGGING
+        System.out.println("saved server list size" + SettingsManager.getInstance().getServerList(getActivity()).size());
+
     }
 
+    @Override
+    public void onAdapterDataChanged() {
+        reloadServerList();
+    }
 }
