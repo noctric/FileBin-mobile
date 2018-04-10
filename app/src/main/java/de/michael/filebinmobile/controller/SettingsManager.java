@@ -36,9 +36,6 @@ public class SettingsManager {
      */
     public boolean addServer(Server server, Activity activity) {
 
-        // DEBUGGING
-        System.out.println("working with activity " + activity.toString());
-
         Gson gson = new Gson();
         String serializedServerInfo = gson.toJson(server);
 
@@ -67,7 +64,6 @@ public class SettingsManager {
     }
 
     public ArrayList<Server> getServerList(Activity activity) {
-        System.out.println("working with activity " + activity.toString());
 
         Gson gson = new Gson();
 
@@ -87,8 +83,6 @@ public class SettingsManager {
     }
 
     public void deleteServer(Server server, Activity activity) {
-        System.out.println("working with activity " + activity.toString());
-
         Gson gson = new Gson();
         String serializedServerInfo = gson.toJson(server);
 

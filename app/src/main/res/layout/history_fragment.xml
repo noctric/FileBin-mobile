@@ -8,8 +8,6 @@
     tools:context=".MainActivity"
     tools:layout_editor_absoluteY="25dp">
 
-    <!--TODO let's make this a floating action button some day -->
-
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fbaDeleteCheckedItems"
         android:layout_width="wrap_content"

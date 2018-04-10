@@ -5,7 +5,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import de.michael.filebinmobile.R;
 import de.michael.filebinmobile.model.Upload;
@@ -13,6 +15,7 @@ import de.michael.filebinmobile.model.Upload;
 public class HistoryAdapter extends RecyclerView.Adapter<HistoryViewHolder> {
 
     private ArrayList<Upload> uploadHistory = new ArrayList<>();
+    private final DateFormat DATE_FORMAT = DateFormat.getDateInstance();
 
     public void updateData(ArrayList<Upload> uploadHistory) {
         this.uploadHistory.clear();
@@ -43,11 +46,11 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryViewHolder> {
     public void onBindViewHolder(HistoryViewHolder holder, int position) {
 
         Upload item = this.uploadHistory.get(position);
+        String formattedDateString = DATE_FORMAT.format(new Date(item.getUploadTimeStamp()));
 
         holder.txtUploadName.setText(item.getUploadTitle());
         holder.txtUploadSize.setText(item.getUploadSize());
-        // TODO add date time format :)
-        holder.txtUploadTimeStamp.setText("" + item.getUploadTimeStamp());
+        holder.txtUploadTimeStamp.setText(formattedDateString);
 
     }
 
