@@ -10,23 +10,23 @@
         android:id="@+id/lnlName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="8dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:padding="8dp">
 
         <TextView
             android:id="@+id/lblName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/Name"
             android:layout_marginEnd="8dp"
+            android:text="@string/Name"
             android:textColor="@color/colorTextDark" />
 
         <TextView
             android:id="@+id/txtName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:singleLine="true"
             android:ellipsize="end"
+            android:singleLine="true"
             android:text="TextView"
             android:textColor="@color/colorTextLight" />
 
@@ -36,9 +36,9 @@
         android:id="@+id/lnlAddr"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/lnlName"
         android:orientation="horizontal"
-        android:padding="8dp"
-        android:layout_below="@id/lnlName">
+        android:padding="8dp">
 
         <TextView
             android:id="@+id/lblAddress"
@@ -59,30 +59,15 @@
 
     </LinearLayout>
 
-    <LinearLayout
+    <ImageButton
+        android:id="@+id/btnDelete"
+        style="@style/imageButtinStandard"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
+        android:background="@color/colorAccent"
+        app:srcCompat="@mipmap/ic_delete_white_24dp"
         android:layout_below="@id/lnlAddr"
-        android:orientation="horizontal"
-        android:padding="8dp">
-
-        <ImageButton
-            android:id="@+id/btnEdit"
-            style="@style/imageButtinStandard"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:background="@color/colorButtonLight"
-            app:srcCompat="@mipmap/ic_mode_edit_white_24dp" />
-
-        <ImageButton
-            android:id="@+id/btnDelete"
-            style="@style/imageButtinStandard"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@color/colorAccent"
-            app:srcCompat="@mipmap/ic_delete_white_24dp" />
-    </LinearLayout>
+        android:layout_marginTop="8dp"
+        android:layout_alignParentEnd="true"/>
 
 </RelativeLayout>

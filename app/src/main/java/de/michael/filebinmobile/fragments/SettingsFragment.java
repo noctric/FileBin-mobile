@@ -22,8 +22,10 @@ import butterknife.OnClick;
 import de.michael.filebinmobile.R;
 import de.michael.filebinmobile.adapters.OnAdapterDataChangedListener;
 import de.michael.filebinmobile.adapters.ServerSettingsAdapter;
+import de.michael.filebinmobile.controller.NetworkManager;
 import de.michael.filebinmobile.controller.SettingsManager;
 import de.michael.filebinmobile.model.Server;
+import de.michael.filebinmobile.model.UserProfile;
 
 public class SettingsFragment extends Fragment implements OnAdapterDataChangedListener{
 
@@ -106,13 +108,23 @@ public class SettingsFragment extends Fragment implements OnAdapterDataChangedLi
                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        EditText txtName = view.findViewById(R.id.edtEditName);
-                        EditText txtAddr = view.findViewById(R.id.edtEditAddress);
+                        EditText edtServerName = view.findViewById(R.id.edtEditName);
+                        EditText edtServerAddr = view.findViewById(R.id.edtEditAddress);
+                        EditText edtUserName = view.findViewById(R.id.edtUserName);
+                        EditText edtUserPw = view.findViewById(R.id.edtUserPassword);
 
+                        // create a new server model
                         Server server = new Server(
-                                txtName.getText().toString(),
-                                txtAddr.getText().toString()
+                                edtServerName.getText().toString(),
+                                edtServerAddr.getText().toString()
                         );
+
+                        // create a new user profile model
+                        String userName = edtUserName.getText().toString();
+                        String apiKey = NetworkManager.getInstance()
+                                .generateApiKey(userName, edtUserPw.getText().toString(), server.getAddr());
+
+                        server.addUserProfile(new UserProfile(userName, apiKey));
 
                         SettingsManager.getInstance().addServer(server, getActivity());
 

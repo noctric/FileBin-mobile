@@ -59,13 +59,24 @@ public class ServerSettingsAdapter extends RecyclerView.Adapter<ServerSettingsVi
         holder.txtName.setText(item.getName());
         holder.txtAddr.setText(item.getAddr());
 
+        final View editServerView = LayoutInflater.from(activity)
+                .inflate(R.layout.edit_server_settings, null);
+
+        RecyclerView rclProfiles = editServerView.findViewById(R.id.rclAssociatedProfiles);
+
+        // for now we create and add a new adapter every time
+        //TODO find a better way to do this
+        ProfileAdapter adapter = new ProfileAdapter();
+        adapter.updateData(item.getUserProfiles());
+        rclProfiles.setAdapter(adapter);
+
         holder.btnEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
                 builder.setMessage("Edit server settings")
                         .setTitle("Settings for " + item.getName())
-                        .setView(R.layout.edit_server_settings)
+                        .setView(editServerView)
                         .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {

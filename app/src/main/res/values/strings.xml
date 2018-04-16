@@ -15,4 +15,6 @@
     <string name="cancel">Cancel</string>
     <string name="user_name">User name</string>
     <string name="yes">Yes</string>
+    <string name="password">Password</string>
+    <string name="password_save_hint">Your password will not be saved. It is only used to generate an apikey for the mobile app, which will be saved with your username.</string>
 </resources>

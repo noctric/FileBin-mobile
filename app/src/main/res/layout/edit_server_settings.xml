@@ -8,6 +8,52 @@
     tools:layout_editor_absoluteY="81dp">
 
     <TextView
+        android:id="@+id/txtHint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="24dp"
+        android:text="@string/password_save_hint"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edtUserPassword" />
+
+    <EditText
+        android:id="@+id/edtUserPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:inputType="textPassword"
+        android:text="Name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edtUserName" />
+
+    <EditText
+        android:id="@+id/edtUserName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="Name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edtEditAddress" />
+
+    <TextView
+        android:id="@+id/lblEditUserName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:text="@string/user_name"
+        app:layout_constraintBaseline_toBaselineOf="@+id/edtUserName"
+        app:layout_constraintEnd_toStartOf="@+id/edtEditAddress"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
         android:id="@+id/lblEditName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -19,10 +65,9 @@
         android:id="@+id/lblEditAddress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="24dp"
         android:text="@string/Address"
         app:layout_constraintBaseline_toBaselineOf="@+id/edtEditAddress"
-        app:layout_constraintEnd_toStartOf="@+id/edtEditAddress" />
+        app:layout_constraintEnd_toEndOf="@+id/lblEditUserName" />
 
     <EditText
         android:id="@+id/edtEditName"
@@ -48,14 +93,12 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edtEditName" />
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rclAssociatedProfiles"
-        android:layout_width="0dp"
-        android:layout_height="100dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginTop="24dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/edtEditAddress"
-        app:layout_constraintStart_toStartOf="@+id/lblEditAddress"
-        app:layout_constraintTop_toBottomOf="@+id/edtEditAddress" />
+    <TextView
+        android:id="@+id/lblUserPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/password"
+        app:layout_constraintBaseline_toBaselineOf="@+id/edtUserPassword"
+        app:layout_constraintEnd_toEndOf="@+id/lblEditUserName" />
+
 </android.support.constraint.ConstraintLayout>

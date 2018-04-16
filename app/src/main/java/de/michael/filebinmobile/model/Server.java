@@ -29,6 +29,16 @@ public class Server {
         this.name = name;
     }
 
+    public ArrayList<UserProfile> getUserProfiles() {
+        return userProfiles;
+    }
+
+    public void addUserProfile(UserProfile profile) {
+        if (!this.userProfiles.contains(profile)) {
+            this.userProfiles.add(profile);
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
