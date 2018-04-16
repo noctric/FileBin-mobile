@@ -2,7 +2,7 @@ package de.michael.filebinmobile.model;
 
 public class Upload {
 
-    private String uploadTitle, uploadSize;
+    private String uploadTitle, uploadSize, uploadUrl;
     private long uploadTimeStamp;
 
     public Upload(String uploadTitle, String uploadSize, long uploadTimeStamp) {
@@ -17,6 +17,10 @@ public class Upload {
 
     public String getUploadSize() {
         return uploadSize;
+    }
+
+    public String getUploadUrl() {
+        return uploadUrl;
     }
 
     public long getUploadTimeStamp() {
