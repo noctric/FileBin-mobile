@@ -1,36 +1,22 @@
 package de.michael.filebinmobile.adapters;
 
-import android.support.v7.widget.RecyclerView;
+import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import java.text.DateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 
 import de.michael.filebinmobile.R;
 import de.michael.filebinmobile.model.Upload;
 
-public class HistoryAdapter extends RecyclerView.Adapter<HistoryViewHolder> {
+public class HistoryAdapter extends SimpleDataAdapter<HistoryViewHolder, Upload> {
 
-    private ArrayList<Upload> uploadHistory = new ArrayList<>();
     private final DateFormat DATE_FORMAT = DateFormat.getDateInstance();
 
-    public void updateData(ArrayList<Upload> uploadHistory) {
-        this.uploadHistory.clear();
-        this.uploadHistory.addAll(uploadHistory);
-        notifyDataSetChanged();
-    }
-
-    public void clear() {
-        this.uploadHistory.clear();
-        notifyDataSetChanged();
-    }
-
-    public void add(Upload upload) {
-        this.uploadHistory.add(upload);
-        notifyDataSetChanged();
+    public HistoryAdapter(Activity activity) {
+        super(activity);
     }
 
     @Override
@@ -45,7 +31,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryViewHolder> {
     @Override
     public void onBindViewHolder(HistoryViewHolder holder, int position) {
 
-        Upload item = this.uploadHistory.get(position);
+        Upload item = this.getData().get(position);
         String formattedDateString = DATE_FORMAT.format(new Date(item.getUploadTimeStamp()));
 
         holder.txtUploadName.setText(item.getUploadTitle());
@@ -56,6 +42,6 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryViewHolder> {
 
     @Override
     public int getItemCount() {
-        return uploadHistory.size();
+        return this.getData().size();
     }
 }

@@ -30,7 +30,7 @@ public class HistoryFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        this.adapter = new HistoryAdapter();
+        this.adapter = new HistoryAdapter(getActivity());
 
         //region mock some history items
         ArrayList<Upload> fakeUploads = new ArrayList<>();
