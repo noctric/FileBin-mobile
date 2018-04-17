@@ -31,6 +31,12 @@ public class NetworkManager {
     private static final String ENDPOINT_USER_DELETE_API_KEY = "user/delete_apikey";
     private static final String ENDPOINT_USER_LIST_API_KEYS = "user/apikeys";
 
+    private static final String ENDPOINT_FILE_GET_CONFIG = "file/get_config";
+    private static final String ENDPOINT_FILE_UPLOAD = "file/upload";
+    private static final String ENDPOINT_FILE_HISTORY = "file/history";
+    private static final String ENDPOINT_FILE_DELETE = "file/delete";
+    private static final String ENDPOINT_FILE_CREATE_MULTIPASTE = "file/create_multipaste";
+
     // params
     private static final String PARAM_USER_NAME = "username";
     private static final String PARAM_USER_PW = "password";
@@ -38,10 +44,27 @@ public class NetworkManager {
     private static final String PARAM_USER_COMMENT = "comment";
 
     private static final String PARAM_RESPONSE_NEW_API_KEY = "new_key";
+    private static final String PARAM_RESPONSE_URLS = "urls";
+    private static final String PARAM_RESPONSE_IDS = "ids";
 
 
-    public static final MediaType JSON
+    private static final MediaType JSON
             = MediaType.parse("application/json; charset=utf-8");
+
+    private static final MediaType IMAGE_PNG
+            = MediaType.parse("image/png; charset=utf-8");
+
+    private static final MediaType IMAGE_JPG
+            = MediaType.parse("image/jpg; charset=utf-8");
+
+    private static final MediaType IMAGE_JPEG
+            = MediaType.parse("image/jpeg; charset=utf-8");
+
+    private static final MediaType TEXT
+            = MediaType.parse("text/x-markdown; charset=utf-8");
+
+    private static final MediaType VIDEO_MP4
+            = MediaType.parse("video/mp4");
 
     private OkHttpClient client = new OkHttpClient();
 
@@ -55,12 +78,14 @@ public class NetworkManager {
 
     /**
      * Makes a request to generate a new api key from the server.
-     * @param username Required param.
-     * @param password Required param.
+     *
+     * @param username   Required param.
+     * @param password   Required param.
      * @param serverAddr Required param.
      * @return A newly created api key or null if not successful.
      */
-    public @Nullable String generateApiKey(@NonNull String username, @NonNull String password, @NonNull String serverAddr) {
+    public @Nullable
+    String generateApiKey(@NonNull String username, @NonNull String password, @NonNull String serverAddr) {
 
         // TODO tidy this up :)
         String apiVersion = "v2.1.0";
@@ -94,7 +119,56 @@ public class NetworkManager {
     }
 
     // method stub
-    public String pasteUpload(@NonNull UserProfile user, @NonNull Server server, File[] files) {
+    public String pasteUploadFile(@NonNull UserProfile user, @NonNull Server server, File file) {
+
+        String apiVersion = "v2.1.0";
+        String url = server.getAddr() + "/api/" + apiVersion + "/" + ENDPOINT_FILE_UPLOAD;
+
+        String fileExtension = getFileExtension(file.getAbsolutePath());
+        MediaType mediaType = null;
+
+        // necessary for later, leave it for now
+        if (fileExtension != null) {
+
+            if (fileExtension.equals("png")) {
+                mediaType = IMAGE_PNG;
+            } else if (fileExtension.equals("jpg")) {
+                mediaType = IMAGE_JPG;
+            } else if (fileExtension.equals("jpeg")) {
+                mediaType = IMAGE_JPEG;
+            } else if (fileExtension.equals("mp4")) {
+                mediaType = VIDEO_MP4;
+            }
+
+        }
+
+        RequestBody requestBody = RequestBody.create(mediaType, file);
+
+        Request request = new Request.Builder()
+                .url("https://api.github.com/markdown/raw")
+                .post(requestBody)
+                .build();
+
+        try {
+            Response response = client.newCall(request).execute();
+
+            if (response.isSuccessful()) {
+                JSONObject responseData = getResponseData(response);
+
+                if (responseData != null) {
+                    return responseData.getJSONArray(PARAM_RESPONSE_IDS).toString();
+                }
+            }
+
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
+
+
+        return null;
+    }
+
+    public String createMultiPaste(@NonNull UserProfile user, @NonNull Server server, File[] files) {
         // TODO
         return null;
     }
@@ -105,7 +179,14 @@ public class NetworkManager {
         return null;
     }
 
-    // helper
+    // region helper -------------------------------------------------------------------------------
+
+    /**
+     * Parses a json object from the response data.
+     *
+     * @param response Received response model
+     * @return JSONObject with the responses data
+     */
     private @Nullable
     JSONObject getResponseData(Response response) {
 
@@ -118,4 +199,23 @@ public class NetworkManager {
 
         return null;
     }
+
+    /**
+     * Tries to parse and return the file extension
+     *
+     * @param filePath
+     * @return
+     */
+    private @Nullable
+    String getFileExtension(String filePath) {
+        String[] pathAndExt = filePath.split("\\.");
+        int l = pathAndExt.length;
+
+        if (l > 1) {
+            return pathAndExt[l - 1];
+        }
+
+        return null;
+    }
+    //endregion
 }
