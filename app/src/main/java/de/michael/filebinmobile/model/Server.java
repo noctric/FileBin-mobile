@@ -6,6 +6,8 @@ import java.util.Objects;
 public class Server {
 
     private String addr, name;
+    private int maxFilesPerRequest;
+    private long uploadMaxSize, requestMaxSize, maxInputVars;
     private ArrayList<UserProfile> userProfiles = new ArrayList<>();
 
     public Server(String name, String address) {
@@ -27,6 +29,38 @@ public class Server {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getMaxFilesPerRequest() {
+        return maxFilesPerRequest;
+    }
+
+    public void setMaxFilesPerRequest(int maxFilesPerRequest) {
+        this.maxFilesPerRequest = maxFilesPerRequest;
+    }
+
+    public long getUploadMaxSize() {
+        return uploadMaxSize;
+    }
+
+    public void setUploadMaxSize(long uploadMaxSize) {
+        this.uploadMaxSize = uploadMaxSize;
+    }
+
+    public long getRequestMaxSize() {
+        return requestMaxSize;
+    }
+
+    public void setRequestMaxSize(long requestMaxSize) {
+        this.requestMaxSize = requestMaxSize;
+    }
+
+    public long getMaxInputVars() {
+        return maxInputVars;
+    }
+
+    public void setMaxInputVars(long maxInputVars) {
+        this.maxInputVars = maxInputVars;
     }
 
     public ArrayList<UserProfile> getUserProfiles() {
