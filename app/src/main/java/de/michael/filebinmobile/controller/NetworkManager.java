@@ -47,6 +47,11 @@ public class NetworkManager {
     private static final String PARAM_RESPONSE_URLS = "urls";
     private static final String PARAM_RESPONSE_IDS = "ids";
 
+    private static final String PARAM_RESPONSE_MAX_UPL_SIZE = "upload_max_size";
+    private static final String PARAM_RESPONSE_MAX_FILES_REQ = "max_files_per_request";
+    private static final String PARAM_RESPONSE_MAX_IN_VARS = "max_input_vars";
+    private static final String PARAM_RESPONSE_MAX_SIZE_REQ = "request_max_size";
+
 
     private static final MediaType JSON
             = MediaType.parse("application/json; charset=utf-8");
@@ -145,7 +150,7 @@ public class NetworkManager {
         RequestBody requestBody = RequestBody.create(mediaType, file);
 
         Request request = new Request.Builder()
-                .url("https://api.github.com/markdown/raw")
+                .url(url)
                 .post(requestBody)
                 .build();
 
@@ -166,6 +171,47 @@ public class NetworkManager {
 
 
         return null;
+    }
+
+    /**
+     * Reads a specific server's configuration. Contains values that might differ between
+     * installations
+     *
+     * @param server The server model who's information will be updated
+     */
+    public void updateServerInfo(@NonNull Server server) {
+
+        String apiVersion = "v2.1.0";
+        String url = server.getAddr() + "/api/" + apiVersion + "/" + ENDPOINT_FILE_GET_CONFIG;
+
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        try {
+            Response response = client.newCall(request).execute();
+
+            if (response.isSuccessful()) {
+
+                JSONObject responseData = getResponseData(response);
+
+                if (responseData != null) {
+
+                    // update our server info
+                    server.setUploadMaxSize(responseData.getInt(PARAM_RESPONSE_MAX_UPL_SIZE));
+                    server.setMaxFilesPerRequest(responseData.getInt(PARAM_RESPONSE_MAX_FILES_REQ));
+                    server.setMaxInputVars(responseData.getInt(PARAM_RESPONSE_MAX_IN_VARS));
+                    server.setRequestMaxSize(responseData.getInt(PARAM_RESPONSE_MAX_SIZE_REQ));
+
+                }
+
+            }
+
+
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
+
     }
 
     public String createMultiPaste(@NonNull UserProfile user, @NonNull Server server, File[] files) {
