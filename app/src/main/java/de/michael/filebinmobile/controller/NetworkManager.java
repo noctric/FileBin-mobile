@@ -15,6 +15,7 @@ import de.michael.filebinmobile.model.Upload;
 import de.michael.filebinmobile.model.UserProfile;
 import okhttp3.FormBody;
 import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -26,6 +27,7 @@ public class NetworkManager {
 
     // Documentation available at https://github.com/Bluewind/filebin/blob/master/doc/api/
 
+    // region CONSTANTS
     // Endpoints
     private static final String ENDPOINT_USER_CREATE_API_KEY = "user/create_apikey";
     private static final String ENDPOINT_USER_DELETE_API_KEY = "user/delete_apikey";
@@ -70,6 +72,7 @@ public class NetworkManager {
 
     private static final MediaType VIDEO_MP4
             = MediaType.parse("video/mp4");
+    // endregion
 
     private OkHttpClient client = new OkHttpClient();
 
@@ -124,34 +127,40 @@ public class NetworkManager {
     }
 
     // method stub
-    public String pasteUploadFile(@NonNull UserProfile user, @NonNull Server server, File file) {
+    public String pasteUploadFile(@NonNull UserProfile user, @NonNull Server server, File[] files) {
 
         String apiVersion = "v2.1.0";
         String url = server.getAddr() + "/api/" + apiVersion + "/" + ENDPOINT_FILE_UPLOAD;
 
-        String fileExtension = getFileExtension(file.getAbsolutePath());
-        MediaType mediaType = null;
 
-        // necessary for later, leave it for now
-        if (fileExtension != null) {
+        MultipartBody.Builder multipartBuilder = new MultipartBody.Builder().setType(MultipartBody.FORM);
+        for (File f : files) {
 
-            if (fileExtension.equals("png")) {
-                mediaType = IMAGE_PNG;
-            } else if (fileExtension.equals("jpg")) {
-                mediaType = IMAGE_JPG;
-            } else if (fileExtension.equals("jpeg")) {
-                mediaType = IMAGE_JPEG;
-            } else if (fileExtension.equals("mp4")) {
-                mediaType = VIDEO_MP4;
+            String fileExtension = getFileExtension(f.getAbsolutePath());
+            MediaType mediaType = null;
+
+            if (fileExtension != null) {
+
+                if (fileExtension.equals("png")) {
+                    mediaType = IMAGE_PNG;
+                } else if (fileExtension.equals("jpg")) {
+                    mediaType = IMAGE_JPG;
+                } else if (fileExtension.equals("jpeg")) {
+                    mediaType = IMAGE_JPEG;
+                } else if (fileExtension.equals("mp4")) {
+                    mediaType = VIDEO_MP4;
+                }
+
             }
 
+            RequestBody requestBody = RequestBody.create(mediaType, f);
+            multipartBuilder.addFormDataPart("file[]", f.getName(), requestBody);
         }
 
-        RequestBody requestBody = RequestBody.create(mediaType, file);
 
         Request request = new Request.Builder()
                 .url(url)
-                .post(requestBody)
+                .post(multipartBuilder.build())
                 .build();
 
         try {
@@ -254,14 +263,13 @@ public class NetworkManager {
      */
     private @Nullable
     String getFileExtension(String filePath) {
-        String[] pathAndExt = filePath.split("\\.");
-        int l = pathAndExt.length;
 
-        if (l > 1) {
-            return pathAndExt[l - 1];
-        }
+        //TODO we should take more edge cases into account (e.g. file has no extension)
+        int i = filePath.lastIndexOf('.');
 
-        return null;
+        // we assume our file has an extension
+        return filePath.substring(i + 1);
+
     }
     //endregion
 }
