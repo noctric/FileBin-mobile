@@ -3,6 +3,7 @@ package de.michael.filebinmobile.controller;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -42,12 +43,16 @@ public class NetworkManager {
     // params
     private static final String PARAM_USER_NAME = "username";
     private static final String PARAM_USER_PW = "password";
+    private static final String PARAM_APIKEY = "apikey";
     private static final String PARAM_USER_ACCESS_LEVEL = "access_level";
     private static final String PARAM_USER_COMMENT = "comment";
 
     private static final String PARAM_RESPONSE_NEW_API_KEY = "new_key";
     private static final String PARAM_RESPONSE_URLS = "urls";
     private static final String PARAM_RESPONSE_IDS = "ids";
+
+    private static final String PARAM_RESPONSE_HISTORY_ITEMS = "items";
+    private static final String PARAM_RESPONSE_HISTORY_MULT_ITEMS = "multipaste_items";
 
     private static final String PARAM_RESPONSE_MAX_UPL_SIZE = "upload_max_size";
     private static final String PARAM_RESPONSE_MAX_FILES_REQ = "max_files_per_request";
@@ -170,7 +175,7 @@ public class NetworkManager {
                 JSONObject responseData = getResponseData(response);
 
                 if (responseData != null) {
-                    return responseData.getJSONArray(PARAM_RESPONSE_IDS).toString();
+                    return responseData.getJSONArray(PARAM_RESPONSE_URLS).toString();
                 }
             }
 
@@ -230,7 +235,39 @@ public class NetworkManager {
 
     // method stub
     public ArrayList<Upload> loadUploadHistory(@NonNull UserProfile user, @NonNull Server server) {
-        //TODO
+        //TODO differentiate between multi paste and normal upload
+
+        // TODO tidy this up :)
+        String apiVersion = "v2.1.0";
+        String url = server.getAddr() + "/api/" + apiVersion + "/" + ENDPOINT_FILE_HISTORY;
+
+        RequestBody body = new FormBody.Builder()
+                .add(PARAM_APIKEY, user.getApiKey())
+                .build();
+
+        Request request = new Request.Builder()
+                .url(url)
+                .post(body)
+                .build();
+
+        try {
+            Response response = client.newCall(request).execute();
+            if (response.isSuccessful()) {
+                JSONObject responseData = getResponseData(response);
+
+                if (responseData != null) {
+
+                    //TODO we can use gson and a custom deserializer for doing this cleaner
+                    JSONArray items = responseData.getJSONArray(PARAM_RESPONSE_HISTORY_ITEMS);
+                    JSONArray multipasteItems = responseData.getJSONArray(PARAM_RESPONSE_HISTORY_MULT_ITEMS);
+
+                }
+            }
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
+
+
         return null;
     }
 
