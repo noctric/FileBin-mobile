@@ -3,6 +3,9 @@ package de.michael.filebinmobile.controller;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -10,10 +13,14 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
+import de.michael.filebinmobile.model.MultiPasteUpload;
 import de.michael.filebinmobile.model.Server;
 import de.michael.filebinmobile.model.Upload;
 import de.michael.filebinmobile.model.UserProfile;
+import de.michael.filebinmobile.serialize.MultiPasteUploadDeserializer;
+import de.michael.filebinmobile.serialize.UploadItemJsonDeserializer;
 import okhttp3.FormBody;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -80,6 +87,10 @@ public class NetworkManager {
     // endregion
 
     private OkHttpClient client = new OkHttpClient();
+
+    private Gson gson = new GsonBuilder()
+            .registerTypeAdapter(Upload.class, new UploadItemJsonDeserializer())
+            .registerTypeAdapter(MultiPasteUpload.class, new MultiPasteUploadDeserializer()).create();
 
 
     private NetworkManager() {
@@ -257,10 +268,15 @@ public class NetworkManager {
 
                 if (responseData != null) {
 
-                    //TODO we can use gson and a custom deserializer for doing this cleaner
                     JSONArray items = responseData.getJSONArray(PARAM_RESPONSE_HISTORY_ITEMS);
                     JSONArray multipasteItems = responseData.getJSONArray(PARAM_RESPONSE_HISTORY_MULT_ITEMS);
 
+                    Upload[] uploads = gson.fromJson(items.toString(), Upload[].class);
+
+                    //TODO add multipastes to history
+                    MultiPasteUpload[] multiPasteUploads = gson.fromJson(multipasteItems.toString(), MultiPasteUpload[].class);
+
+                    return new ArrayList<>(Arrays.asList(uploads));
                 }
             }
         } catch (IOException | JSONException e) {
