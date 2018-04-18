@@ -142,8 +142,15 @@ public class NetworkManager {
         return null;
     }
 
-    // method stub
-    public String pasteUploadFile(@NonNull UserProfile user, @NonNull Server server, File[] files) {
+    /**
+     * Posts a file (or set of files) to a given filebin server
+     *
+     * @param user user profile posting the file(s)
+     * @param server server which holds the user profile
+     * @param files files to be posted by user
+     * @return upload url(s) in json format
+     */
+    public String pasteUploadFiles(@NonNull UserProfile user, @NonNull Server server, File[] files) {
 
         String apiVersion = "v2.1.0";
         String url = server.getAddr() + "/api/" + apiVersion + "/" + ENDPOINT_FILE_UPLOAD;
@@ -239,12 +246,19 @@ public class NetworkManager {
 
     }
 
+    // method stub
     public String createMultiPaste(@NonNull UserProfile user, @NonNull Server server, File[] files) {
         // TODO
         return null;
     }
 
-    // method stub
+    /**
+     * Requests a user's upload history from a given server
+     *
+     * @param user   User profile who's history we want to load
+     * @param server Server which holds the user profile
+     * @return a list of uploads from the past
+     */
     public ArrayList<Upload> loadUploadHistory(@NonNull UserProfile user, @NonNull Server server) {
         //TODO differentiate between multi paste and normal upload
 
