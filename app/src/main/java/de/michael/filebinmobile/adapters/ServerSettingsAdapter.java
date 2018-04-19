@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -88,6 +89,9 @@ public class ServerSettingsAdapter extends SimpleDataAdapter<ServerSettingsViewh
                 PostInfo postInfo = new PostInfo(userProfile, item);
 
                 SettingsManager.getInstance().setPostInfo(postInfo, getActivity());
+
+                Toast.makeText(getActivity(), "Server set and selected", Toast.LENGTH_SHORT).show();
+
             }
 
         });

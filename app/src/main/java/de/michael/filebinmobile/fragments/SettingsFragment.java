@@ -2,6 +2,7 @@ package de.michael.filebinmobile.fragments;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -13,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -27,12 +29,14 @@ import de.michael.filebinmobile.controller.SettingsManager;
 import de.michael.filebinmobile.model.Server;
 import de.michael.filebinmobile.model.UserProfile;
 
-public class SettingsFragment extends Fragment implements OnAdapterDataChangedListener{
+public class SettingsFragment extends Fragment implements OnAdapterDataChangedListener {
 
     @BindView(R.id.rclServerList)
     RecyclerView rclServerList;
 
     private ServerSettingsAdapter adapter;
+
+    private CreateApikeyTask createApikeyTask;
 
     private ArrayList<Server> mockData = new ArrayList<>();
 
@@ -98,6 +102,17 @@ public class SettingsFragment extends Fragment implements OnAdapterDataChangedLi
         super.onResume();
     }
 
+    @Override
+    public void onDestroy() {
+
+        // cancel our async task in case it's running
+        if (this.createApikeyTask != null) {
+            this.createApikeyTask.cancel(true);
+        }
+
+        super.onDestroy();
+    }
+
     @OnClick(R.id.fbaAddServer)
     void addServer() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -121,14 +136,15 @@ public class SettingsFragment extends Fragment implements OnAdapterDataChangedLi
 
                         // create a new user profile model
                         String userName = edtUserName.getText().toString();
-                        String apiKey = NetworkManager.getInstance()
-                                .generateApiKey(userName, edtUserPw.getText().toString(), server.getAddr());
+                        String password = edtUserPw.getText().toString();
 
-                        server.addUserProfile(new UserProfile(userName, apiKey));
+                        ApiKeyPostInfo apiKeyPostInfo = new ApiKeyPostInfo(userName, server, password);
 
-                        SettingsManager.getInstance().addServer(server, getActivity());
+                        createApikeyTask = new CreateApikeyTask();
+                        createApikeyTask.execute(apiKeyPostInfo);
 
-                        reloadServerList();
+                        Toast.makeText(getActivity(), "Creating Apikey", Toast.LENGTH_SHORT).show();
+
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -156,5 +172,72 @@ public class SettingsFragment extends Fragment implements OnAdapterDataChangedLi
     @Override
     public void onAdapterDataChanged() {
         reloadServerList();
+    }
+
+    private class CreateApikeyTask extends AsyncTask<ApiKeyPostInfo, Integer, String> {
+
+
+        private ApiKeyPostInfo postInfo;
+
+        @Override
+        protected String doInBackground(ApiKeyPostInfo... postInfos) {
+
+            if (postInfos.length > 0) {
+
+                this.postInfo = postInfos[0];
+
+                String userName = this.postInfo.getUsername();
+                String password = this.postInfo.getPassword();
+                Server server = this.postInfo.getServer();
+
+
+
+                return NetworkManager.getInstance()
+                        .generateApiKey(userName, password, server.getAddr());
+
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String apikey) {
+
+            Server server = this.postInfo.getServer();
+            server.addUserProfile(new UserProfile(this.postInfo.username, apikey));
+
+            SettingsManager.getInstance().addServer(server, getActivity());
+
+            reloadServerList();
+
+            super.onPostExecute(apikey);
+        }
+    }
+
+    /**
+     * Wrapper class for information needed to create an apikey. Due to not saving the password in
+     * the user model we can't use our normal PostInfo wrapper.
+     */
+    private class ApiKeyPostInfo {
+        private Server server;
+        private String username, password;
+
+        public ApiKeyPostInfo(String username, Server server, String password) {
+            this.username = username;
+            this.server = server;
+            this.password = password;
+        }
+
+        public String getUsername() {
+            return username;
+        }
+
+        public Server getServer() {
+            return server;
+        }
+
+        public String getPassword() {
+            return password;
+        }
     }
 }

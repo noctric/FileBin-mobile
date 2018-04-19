@@ -47,7 +47,7 @@ public class HistoryFragment extends Fragment {
             // reference our task globally so we can cancel it in case the fragment get's destroyed
             this.loadHistoryTask = new LoadHistoryTask();
             this.loadHistoryTask.execute(postInfo);
-            
+
         }
 
         //region mock some history items
