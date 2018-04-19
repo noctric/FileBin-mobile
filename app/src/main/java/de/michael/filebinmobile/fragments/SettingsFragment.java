@@ -47,29 +47,6 @@ public class SettingsFragment extends Fragment implements OnAdapterDataChangedLi
         this.adapter = new ServerSettingsAdapter(getActivity());
         this.adapter.setDataChangedListener(this);
 
-        //region let's just add some mock samples | 16 items
-        /*
-        mockData.add(new Server("Soapsurfer", "https://p.soapsurfer.de"));
-        mockData.add(new Server("Xinu", "https://paste.xinu.at"));
-        mockData.add(new Server("Xinu", "https://paste.xinu.at"));
-        mockData.add(new Server("Xinu", "https://paste.xinu.at"));
-        mockData.add(new Server("Xinu", "https://paste.xinu.at"));
-        mockData.add(new Server("Xinu", "https://paste.xinu.at"));
-        mockData.add(new Server("Xinu", "https://paste.xinu.at"));
-        mockData.add(new Server("Xinu", "https://paste.xinu.at"));
-        mockData.add(new Server("Xinu", "https://paste.xinu.at"));
-        mockData.add(new Server("Xinu", "https://paste.xinu.at"));
-        mockData.add(new Server("Xinu", "https://paste.xinu.at"));
-        mockData.add(new Server("Xinu", "https://paste.xinu.at"));
-        mockData.add(new Server("Xinu", "https://paste.xinu.at"));
-        mockData.add(new Server("Xinu", "https://paste.xinu.at"));
-        mockData.add(new Server("Xinu", "https://paste.xinu.at"));
-        mockData.add(new Server("Xinu", "https://paste.xinu.at"));
-
-        adapter.updateData(mockData);
-        */
-        //endregion
-
         //reloadServerList();
 
     }

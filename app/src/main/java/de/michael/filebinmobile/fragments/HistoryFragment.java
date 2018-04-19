@@ -50,27 +50,6 @@ public class HistoryFragment extends Fragment {
 
         }
 
-        //region mock some history items
-
-        /*
-        ArrayList<Upload> fakeUploads = new ArrayList<>();
-
-        fakeUploads.add(new Upload("Upload 1", "240 kB", 123456));
-        fakeUploads.add(new Upload("Upload 2", "240 kB", 123456));
-        fakeUploads.add(new Upload("Upload 3", "240 kB", 123456));
-        fakeUploads.add(new Upload("Upload 4", "240 kB", 123456));
-        fakeUploads.add(new Upload("Upload 5", "240 kB", 123456));
-        fakeUploads.add(new Upload("Upload 6", "240 kB", 123456));
-        fakeUploads.add(new Upload("Upload 7", "240 kB", 123456));
-        fakeUploads.add(new Upload("Upload 8", "240 kB", 123456));
-        fakeUploads.add(new Upload("Upload 9", "240 kB", 123456));
-        fakeUploads.add(new Upload("Upload 10", "240 kB", 123456));
-
-        this.adapter.updateData(fakeUploads);
-        */
-
-        //endregion
-
     }
 
     @Override
