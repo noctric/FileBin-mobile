@@ -20,7 +20,7 @@ public class SettingsManager {
     private static final SettingsManager INSTANCE = new SettingsManager();
 
     private static final String KEY_SERVER_LIST = "de.michael.filebin.SERVER_NAMES";
-    private static final String KEY_SELECTED_POSTINFO = "de.michael.filebin.SERVER_NAMES";
+    private static final String KEY_SELECTED_POSTINFO = "de.michael.filebin.SELECTED_POSTINFO";
 
     public static SettingsManager getInstance() {
         return INSTANCE;

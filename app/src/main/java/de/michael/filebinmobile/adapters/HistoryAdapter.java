@@ -32,7 +32,12 @@ public class HistoryAdapter extends SimpleDataAdapter<HistoryViewHolder, Upload>
     public void onBindViewHolder(HistoryViewHolder holder, int position) {
 
         Upload item = this.getData().get(position);
-        String formattedDateString = DATE_FORMAT.format(new Date(item.getUploadTimeStamp()));
+
+        System.out.println("");
+        assert item != null;
+
+        // don't forget that we are handling a unix time stamp
+        String formattedDateString = DATE_FORMAT.format(new Date(item.getUploadTimeStamp() * 1000));
 
         holder.txtUploadName.setText(item.getUploadTitle());
         holder.txtUploadSize.setText(item.getUploadSize());

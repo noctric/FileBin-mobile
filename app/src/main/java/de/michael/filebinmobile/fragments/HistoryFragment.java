@@ -103,9 +103,10 @@ public class HistoryFragment extends Fragment {
 
         @Override
         protected void onPostExecute(ArrayList<Upload> uploads) {
-            super.onPostExecute(uploads);
 
             adapter.updateData(uploads);
+
+            super.onPostExecute(uploads);
         }
     }
 }

@@ -6,14 +6,13 @@ import android.support.annotation.Nullable;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Iterator;
 
 import de.michael.filebinmobile.model.MultiPasteUpload;
 import de.michael.filebinmobile.model.Server;
@@ -129,7 +128,7 @@ public class NetworkManager {
         try {
             Response response = client.newCall(request).execute();
             if (response.isSuccessful()) {
-                JSONObject responseData = getResponseData(response);
+                JSONObject responseData = new JSONObject(response.body().string()).getJSONObject("data");
 
                 if (responseData != null) {
                     return responseData.getString(PARAM_RESPONSE_NEW_API_KEY);
@@ -145,9 +144,9 @@ public class NetworkManager {
     /**
      * Posts a file (or set of files) to a given filebin server
      *
-     * @param user user profile posting the file(s)
+     * @param user   user profile posting the file(s)
      * @param server server which holds the user profile
-     * @param files files to be posted by user
+     * @param files  files to be posted by user
      * @return upload url(s) in json format
      */
     public String pasteUploadFiles(@NonNull UserProfile user, @NonNull Server server, File[] files) {
@@ -190,7 +189,7 @@ public class NetworkManager {
             Response response = client.newCall(request).execute();
 
             if (response.isSuccessful()) {
-                JSONObject responseData = getResponseData(response);
+                JSONObject responseData = new JSONObject(response.body().string()).getJSONObject("data");
 
                 if (responseData != null) {
                     return responseData.getJSONArray(PARAM_RESPONSE_URLS).toString();
@@ -225,7 +224,7 @@ public class NetworkManager {
 
             if (response.isSuccessful()) {
 
-                JSONObject responseData = getResponseData(response);
+                JSONObject responseData = new JSONObject(response.body().string()).getJSONObject("data");
 
                 if (responseData != null) {
 
@@ -278,19 +277,21 @@ public class NetworkManager {
         try {
             Response response = client.newCall(request).execute();
             if (response.isSuccessful()) {
-                JSONObject responseData = getResponseData(response);
+                JSONObject responseData = new JSONObject(response.body().string()).getJSONObject("data");
 
                 if (responseData != null) {
 
-                    JSONArray items = responseData.getJSONArray(PARAM_RESPONSE_HISTORY_ITEMS);
-                    JSONArray multipasteItems = responseData.getJSONArray(PARAM_RESPONSE_HISTORY_MULT_ITEMS);
+                    //JSONArray items = responseData.getJSONArray(PARAM_RESPONSE_HISTORY_ITEMS);
+                    //JSONArray multipasteItems = responseData.getJSONArray(PARAM_RESPONSE_HISTORY_MULT_ITEMS);
 
-                    Upload[] uploads = gson.fromJson(items.toString(), Upload[].class);
+                    JSONObject nestedJsonUploadItems = responseData.getJSONObject(PARAM_RESPONSE_HISTORY_ITEMS);
 
-                    //TODO add multipastes to history
-                    MultiPasteUpload[] multiPasteUploads = gson.fromJson(multipasteItems.toString(), MultiPasteUpload[].class);
+                    ArrayList<Upload> uploadHistory = new ArrayList<>();
+                    for (JSONObject item : getJSONObjectsWithoutKey(nestedJsonUploadItems)) {
+                        uploadHistory.add(gson.fromJson(item.toString(), Upload.class));
+                    }
 
-                    return new ArrayList<>(Arrays.asList(uploads));
+                    return uploadHistory;
                 }
             }
         } catch (IOException | JSONException e) {
@@ -336,6 +337,30 @@ public class NetworkManager {
 
         // we assume our file has an extension
         return filePath.substring(i + 1);
+
+    }
+
+    /**
+     * helper method to retrieve json objects nested in another json object without knowing it's key
+     * see https://stackoverflow.com/questions/16646346/get-json-object-without-param-name-in-android
+     *
+     * @param items the json object containing the nested items with unknown keys
+     * @return a list of nested json objects, only on first level
+     * @throws JSONException
+     */
+    private ArrayList<JSONObject> getJSONObjectsWithoutKey(JSONObject items) throws JSONException {
+
+        ArrayList<JSONObject> jsonObjects = new ArrayList<>();
+
+        //get list of keys
+        Iterator<String> keys = items.keys();
+
+        while (keys.hasNext()) {
+            String key = keys.next();
+            jsonObjects.add(items.getJSONObject(key));
+        }
+
+        return jsonObjects;
 
     }
     //endregion

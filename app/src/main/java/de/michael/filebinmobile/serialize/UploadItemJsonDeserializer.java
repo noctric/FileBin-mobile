@@ -22,15 +22,18 @@ public class UploadItemJsonDeserializer implements com.google.gson.JsonDeseriali
         String mimetype = jsonUploadItem.get("mimetype").getAsString();
         String hash = jsonUploadItem.get("hash").getAsString();
         String id = jsonUploadItem.get("id").getAsString();
-        String thumbnailUrl = jsonUploadItem.get("thumbnail").getAsString();
-
+        String thumbnail = "";
+        JsonElement thumbnailAsJson = jsonUploadItem.get("thumbnail");
+        if (thumbnailAsJson != null) {
+            thumbnail = thumbnailAsJson.getAsString();
+        }
 
         Upload upload = new Upload(filename, filesize, date);
         upload.setId(id);
         upload.setHash(hash);
         upload.setMimeType(mimetype);
-        upload.setThumbnail(thumbnailUrl);
+        upload.setThumbnail(thumbnail);
 
-        return null;
+        return upload;
     }
 }

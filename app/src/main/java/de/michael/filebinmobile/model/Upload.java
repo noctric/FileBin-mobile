@@ -57,4 +57,18 @@ public class Upload {
     public long getUploadTimeStamp() {
         return uploadTimeStamp;
     }
+
+
+    @Override
+    public String toString() {
+        return "Upload{" +
+                "uploadTitle='" + uploadTitle + '\'' +
+                ", uploadSize='" + uploadSize + '\'' +
+                ", thumbnail='" + thumbnail + '\'' +
+                ", hash='" + hash + '\'' +
+                ", mimeType='" + mimeType + '\'' +
+                ", id='" + id + '\'' +
+                ", uploadTimeStamp=" + uploadTimeStamp +
+                '}';
+    }
 }

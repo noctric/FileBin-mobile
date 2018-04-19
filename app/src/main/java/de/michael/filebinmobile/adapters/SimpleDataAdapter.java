@@ -33,7 +33,11 @@ public abstract class SimpleDataAdapter<T extends RecyclerView.ViewHolder, K> ex
 
     public void updateData(ArrayList<K> data) {
         this.data.clear();
-        this.data.addAll(data);
+
+        if (data!= null) {
+            this.data.addAll(data);
+        }
+
         notifyDataSetChanged();
     }
 
