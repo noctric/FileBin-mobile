@@ -31,9 +31,9 @@ public abstract class SimpleDataAdapter<T extends RecyclerView.ViewHolder, K> ex
         this.dataChangedListener = dataChangedListener;
     }
 
-    public void updateData(ArrayList<K> serverList) {
+    public void updateData(ArrayList<K> data) {
         this.data.clear();
-        this.data.addAll(serverList);
+        this.data.addAll(data);
         notifyDataSetChanged();
     }
 

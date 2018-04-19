@@ -3,6 +3,8 @@ package de.michael.filebinmobile.controller;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.google.gson.Gson;
 
@@ -10,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
+import de.michael.filebinmobile.model.PostInfo;
 import de.michael.filebinmobile.model.Server;
 
 public class SettingsManager {
@@ -17,6 +20,7 @@ public class SettingsManager {
     private static final SettingsManager INSTANCE = new SettingsManager();
 
     private static final String KEY_SERVER_LIST = "de.michael.filebin.SERVER_NAMES";
+    private static final String KEY_SELECTED_POSTINFO = "de.michael.filebin.SERVER_NAMES";
 
     public static SettingsManager getInstance() {
         return INSTANCE;
@@ -103,5 +107,28 @@ public class SettingsManager {
         editor.putStringSet(KEY_SERVER_LIST, updatedServerSet);
 
         editor.apply();
+    }
+
+    public void setPostInfo(@Nullable PostInfo postInfo, @NonNull Activity activity) {
+        Gson gson = new Gson();
+        String serializedPostInfo = gson.toJson(postInfo);
+
+        SharedPreferences preferences = activity.getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+
+        editor.putString(KEY_SELECTED_POSTINFO, serializedPostInfo);
+        editor.apply();
+    }
+
+    public @Nullable
+    PostInfo getPostInfo(@NonNull Activity activity) {
+        Gson gson = new Gson();
+
+        SharedPreferences preferences = activity.getPreferences(Context.MODE_PRIVATE);
+
+        String serializedPostInfo = preferences.getString(KEY_SELECTED_POSTINFO, null);
+
+        return gson.fromJson(serializedPostInfo, PostInfo.class);
+
     }
 }

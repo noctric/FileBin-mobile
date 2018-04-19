@@ -20,6 +20,9 @@ public class ServerSettingsViewholder extends RecyclerView.ViewHolder {
     @BindView(R.id.btnDelete)
     ImageButton btnDelete;
 
+    @BindView(R.id.btnSetForUpload)
+    ImageButton btnSetForUpload;
+
     public ServerSettingsViewholder(View itemView) {
         super(itemView);
         ButterKnife.bind(this, itemView);
