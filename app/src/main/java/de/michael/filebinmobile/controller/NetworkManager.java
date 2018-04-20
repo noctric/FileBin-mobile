@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.concurrent.TimeUnit;
 
 import de.michael.filebinmobile.model.MultiPasteUpload;
 import de.michael.filebinmobile.model.PostInfo;
@@ -87,7 +88,10 @@ public class NetworkManager {
             = MediaType.parse("video/mp4");
     // endregion
 
-    private OkHttpClient client = new OkHttpClient();
+    private OkHttpClient client = new OkHttpClient.Builder()
+            .connectTimeout(10, TimeUnit.SECONDS)
+            .writeTimeout(10, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS).build();
 
     private Gson gson = new GsonBuilder()
             .registerTypeAdapter(Upload.class, new UploadItemJsonDeserializer())
@@ -158,6 +162,8 @@ public class NetworkManager {
 
 
         MultipartBody.Builder multipartBuilder = new MultipartBody.Builder().setType(MultipartBody.FORM);
+        multipartBuilder.addFormDataPart(PARAM_APIKEY, user.getApiKey());
+
         for (File f : files) {
 
             String fileExtension = getFileExtension(f.getAbsolutePath());
@@ -189,6 +195,8 @@ public class NetworkManager {
 
         try {
             Response response = client.newCall(request).execute();
+
+            System.out.println(response.body().string());
 
             if (response.isSuccessful()) {
                 JSONObject responseData = new JSONObject(response.body().string()).getJSONObject("data");
