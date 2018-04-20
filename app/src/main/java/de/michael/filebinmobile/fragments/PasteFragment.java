@@ -6,15 +6,16 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
@@ -29,6 +30,8 @@ import de.michael.filebinmobile.model.Server;
 import de.michael.filebinmobile.model.UserProfile;
 
 public class PasteFragment extends Fragment {
+
+    public static final String FILE_NAME_DEFAULT = "stdin";
 
     ArrayList<File> filesToUpload = new ArrayList<>();
     private UploadFilesTask fileUploadTask;
@@ -74,17 +77,19 @@ public class PasteFragment extends Fragment {
 
         if (!textToPaste.isEmpty()) {
 
-            File stdin = new File("stdin");
-
             try {
 
-                writeToFile(textToPaste, getContext());
+                writeToFile(textToPaste);
 
-            } catch (FileNotFoundException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
 
-            this.filesToUpload.add(stdin);
+            String filePath = getContext().getFilesDir() + File.separator + FILE_NAME_DEFAULT;
+
+            File file = new File(filePath);
+
+            this.filesToUpload.add(file);
 
         }
 
@@ -103,14 +108,28 @@ public class PasteFragment extends Fragment {
 
     }
 
-    private void writeToFile(String data, Context context) throws FileNotFoundException {
-        try {
-            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput("stdin", Context.MODE_PRIVATE));
-            outputStreamWriter.write(data);
-            outputStreamWriter.close();
-        } catch (IOException e) {
-            Log.e("Exception", "File write failed: " + e.toString());
+    private void writeToFile(String data) throws IOException {
+        OutputStreamWriter outputStreamWriter = new OutputStreamWriter(getContext().openFileOutput(FILE_NAME_DEFAULT, Context.MODE_PRIVATE));
+        outputStreamWriter.write(data);
+        outputStreamWriter.close();
+    }
+
+    private String readFile() throws IOException {
+
+        FileInputStream fileInputStream = getContext().openFileInput(FILE_NAME_DEFAULT);
+
+        InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream);
+        BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+        String receiveString = "";
+        StringBuilder sb = new StringBuilder();
+
+        while ((receiveString = bufferedReader.readLine()) != null) {
+            sb.append(receiveString);
         }
+
+        fileInputStream.close();
+
+        return sb.toString();
     }
 
     private class UploadFilesTask extends AsyncTask<PostInfo, Integer, String> {

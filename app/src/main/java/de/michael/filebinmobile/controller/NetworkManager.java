@@ -91,7 +91,9 @@ public class NetworkManager {
     private OkHttpClient client = new OkHttpClient.Builder()
             .connectTimeout(10, TimeUnit.SECONDS)
             .writeTimeout(10, TimeUnit.SECONDS)
-            .readTimeout(30, TimeUnit.SECONDS).build();
+            .readTimeout(30, TimeUnit.SECONDS)
+            .retryOnConnectionFailure(false)
+            .build();
 
     private Gson gson = new GsonBuilder()
             .registerTypeAdapter(Upload.class, new UploadItemJsonDeserializer())
@@ -161,8 +163,11 @@ public class NetworkManager {
         String url = server.getAddr() + "/api/" + apiVersion + "/" + ENDPOINT_FILE_UPLOAD;
 
 
-        MultipartBody.Builder multipartBuilder = new MultipartBody.Builder().setType(MultipartBody.FORM);
+        MultipartBody.Builder multipartBuilder = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM);
         multipartBuilder.addFormDataPart(PARAM_APIKEY, user.getApiKey());
+
+        int index = 0;
 
         for (File f : files) {
 
@@ -184,7 +189,8 @@ public class NetworkManager {
             }
 
             RequestBody requestBody = RequestBody.create(mediaType, f);
-            multipartBuilder.addFormDataPart("file[]", f.getName(), requestBody);
+            multipartBuilder.addFormDataPart("file[" + index + "]", f.getName(), requestBody);
+            index++;
         }
 
 
@@ -195,8 +201,6 @@ public class NetworkManager {
 
         try {
             Response response = client.newCall(request).execute();
-
-            System.out.println(response.body().string());
 
             if (response.isSuccessful()) {
                 JSONObject responseData = new JSONObject(response.body().string()).getJSONObject("data");

@@ -17,7 +17,7 @@
         android:layout_marginTop="8dp"
         android:gravity="top"
         android:hint="@string/pasteTextHint"
-        android:inputType="text"
+        android:inputType="textMultiLine"
         android:textColor="@color/colorTextLight"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
