@@ -12,6 +12,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 
 import de.michael.filebinmobile.model.MultiPasteUpload;
@@ -291,6 +292,9 @@ public class NetworkManager {
                     for (JSONObject item : getJSONObjectsWithoutKey(nestedJsonUploadItems)) {
                         uploadHistory.add(gson.fromJson(item.toString(), Upload.class));
                     }
+
+                    Collections.sort(uploadHistory, (a, b) ->
+                            Long.compare(a.getUploadTimeStamp(), b.getUploadTimeStamp()) * (-1));
 
                     return uploadHistory;
                 }

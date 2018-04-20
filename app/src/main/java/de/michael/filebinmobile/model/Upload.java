@@ -13,7 +13,6 @@ public class Upload {
     }
 
 
-
     public String getUploadTitle() {
         return uploadTitle;
     }
