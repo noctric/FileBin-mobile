@@ -131,7 +131,6 @@ public class HistoryFragment extends Fragment {
         protected void onPostExecute(ArrayList<Upload> uploads) {
 
             adapter.updateData(uploads);
-            System.out.println("received history items: " + uploads.size());
 
             super.onPostExecute(uploads);
         }

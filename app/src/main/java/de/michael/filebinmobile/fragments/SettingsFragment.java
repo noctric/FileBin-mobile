@@ -139,11 +139,6 @@ public class SettingsFragment extends Fragment implements OnAdapterDataChangedLi
         ArrayList<Server> serverList = SettingsManager.getInstance().getServerList(getActivity());
         this.adapter.updateData(serverList);
 
-        System.out.println("Updating server list. Current item count: " + serverList.size());
-
-        // DEBUGGING
-        System.out.println("saved server list size" + SettingsManager.getInstance().getServerList(getActivity()).size());
-
     }
 
     @Override

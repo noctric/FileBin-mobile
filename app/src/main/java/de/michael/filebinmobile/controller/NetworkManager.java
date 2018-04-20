@@ -323,7 +323,6 @@ public class NetworkManager {
             requestBuilder.add("ids[" + index + "]", upload.getId());
             index++;
 
-            System.out.println("adding id " + upload.getId() + " to be deleted.");
         }
 
         FormBody formBody = requestBuilder.build();
@@ -336,8 +335,6 @@ public class NetworkManager {
         try {
 
             Response response = client.newCall(request).execute();
-
-            System.out.println(response.body().string());
 
             // TODO add some deeper logic do determine successful deletion
             return response.isSuccessful();
