@@ -311,7 +311,7 @@ public class NetworkManager {
 
         // TODO tidy this up :)
         String apiVersion = "v2.1.0";
-        String url = server.getAddr() + "/api/" + apiVersion + "/" + ENDPOINT_FILE_HISTORY;
+        String url = server.getAddr() + "/api/" + apiVersion + "/" + ENDPOINT_FILE_DELETE;
 
         // build our request body
         FormBody.Builder requestBuilder = new FormBody.Builder()
@@ -320,7 +320,7 @@ public class NetworkManager {
         int index = 0;
 
         for (Upload upload : uploads) {
-            requestBuilder.add("ids[" + upload + "]", upload.getId());
+            requestBuilder.add("ids[" + index + "]", upload.getId());
             index++;
 
             System.out.println("adding id " + upload.getId() + " to be deleted.");
@@ -337,9 +337,11 @@ public class NetworkManager {
 
             Response response = client.newCall(request).execute();
 
+            System.out.println(response.body().string());
+
             // TODO add some deeper logic do determine successful deletion
             return response.isSuccessful();
-            
+
         } catch (IOException e) {
             e.printStackTrace();
         }
