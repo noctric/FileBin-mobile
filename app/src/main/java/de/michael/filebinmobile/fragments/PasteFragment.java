@@ -1,11 +1,15 @@
 package de.michael.filebinmobile.fragments;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -29,9 +34,12 @@ import de.michael.filebinmobile.model.PostInfo;
 import de.michael.filebinmobile.model.Server;
 import de.michael.filebinmobile.model.UserProfile;
 
+import static android.content.ContentValues.TAG;
+
 public class PasteFragment extends Fragment {
 
     public static final String FILE_NAME_DEFAULT = "stdin";
+    private static final int READ_REQUEST_CODE = 1;
 
     ArrayList<File> filesToUpload = new ArrayList<>();
     private UploadFilesTask fileUploadTask;
@@ -107,6 +115,54 @@ public class PasteFragment extends Fragment {
         }
 
     }
+
+    @OnClick(R.id.btnSelectFiles)
+    public void openFileSelector() {
+
+        // ACTION_OPEN_DOCUMENT is the intent to choose a file via the system's file
+        // browser.
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+
+        // Filter to only show results that can be "opened", such as a
+        // file (as opposed to a list of contacts or timezones)
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+
+        // Filter to show only images, using the image MIME data type.
+        // If one wanted to search for ogg vorbis files, the type would be "audio/ogg".
+        // To search for all documents available via installed storage providers,
+        // it would be "*/*".
+        intent.setType("image/*");
+
+        startActivityForResult(intent, READ_REQUEST_CODE);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode,
+                                 Intent resultData) {
+
+        // The ACTION_OPEN_DOCUMENT intent was sent with the request code
+        // READ_REQUEST_CODE. If the request code seen here doesn't match, it's the
+        // response to some other intent, and the code below shouldn't run at all.
+
+        if (requestCode == READ_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            // The document selected by the user won't be returned in the intent.
+            // Instead, a URI to that document will be contained in the return intent
+            // provided to this method as a parameter.
+            // Pull that URI using resultData.getData().
+            Uri uri = null;
+            if (resultData != null) {
+                uri = resultData.getData();
+
+                assert uri != null;
+
+                this.filesToUpload.add(new File(uri.getPath()));
+
+                Log.i(TAG, "Uri: " + uri.toString());
+                Log.i(TAG, "Files to be uploaded: " + Arrays.toString(filesToUpload.toArray()));
+            }
+        }
+    }
+
 
     private void writeToFile(String data) throws IOException {
         OutputStreamWriter outputStreamWriter = new OutputStreamWriter(getContext().openFileOutput(FILE_NAME_DEFAULT, Context.MODE_PRIVATE));
