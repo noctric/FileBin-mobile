@@ -11,11 +11,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import de.michael.filebinmobile.R;
 import de.michael.filebinmobile.adapters.HistoryAdapter;
 import de.michael.filebinmobile.controller.NetworkManager;
@@ -33,6 +35,7 @@ public class HistoryFragment extends Fragment {
     private HistoryAdapter adapter;
 
     private LoadHistoryTask loadHistoryTask;
+    private DeleteUploadsTask deleteUploadsTask;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -40,10 +43,15 @@ public class HistoryFragment extends Fragment {
 
         this.adapter = new HistoryAdapter(getActivity());
 
+        reloadHistory();
+
+    }
+
+    private void reloadHistory() {
+
         PostInfo postInfo = SettingsManager.getInstance().getPostInfo(getActivity());
 
         if (postInfo != null) {
-
             // reference our task globally so we can cancel it in case the fragment get's destroyed
             this.loadHistoryTask = new LoadHistoryTask();
             this.loadHistoryTask.execute(postInfo);
@@ -55,9 +63,13 @@ public class HistoryFragment extends Fragment {
     @Override
     public void onDestroy() {
 
-        // cancel our task to avoid memory leaks
+        // cancel any possibly running tasks to avoid memory leaks
         if (this.loadHistoryTask != null) {
             this.loadHistoryTask.cancel(true);
+        }
+
+        if (this.deleteUploadsTask != null) {
+            this.deleteUploadsTask.cancel(true);
         }
 
         super.onDestroy();
@@ -84,6 +96,20 @@ public class HistoryFragment extends Fragment {
         return view;
     }
 
+    @OnClick(R.id.btnDelete)
+    void deleteUploads() {
+
+        if (this.adapter != null) {
+
+            ArrayList<Upload> deleteUploads = this.adapter.getDeleteUploads();
+
+            this.deleteUploadsTask = new DeleteUploadsTask();
+            this.deleteUploadsTask.execute(deleteUploads);
+
+        }
+
+    }
+
 
     private class LoadHistoryTask extends AsyncTask<PostInfo, Integer, ArrayList<Upload>> {
 
@@ -107,6 +133,36 @@ public class HistoryFragment extends Fragment {
             adapter.updateData(uploads);
 
             super.onPostExecute(uploads);
+        }
+    }
+
+    private class DeleteUploadsTask extends AsyncTask<ArrayList<Upload>, Integer, Boolean> {
+
+        @Override
+        protected Boolean doInBackground(ArrayList<Upload>... arrayLists) {
+
+            if (arrayLists.length > 0) {
+                ArrayList<Upload> uploadList = arrayLists[0];
+                return NetworkManager.getInstance().deleteUploads(uploadList);
+            }
+
+            return false;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+
+            if (aBoolean) {
+
+                reloadHistory();
+
+            } else {
+
+                Toast.makeText(getActivity(), "Could not delete items", Toast.LENGTH_SHORT).show();
+
+            }
+
+            super.onPostExecute(aBoolean);
         }
     }
 }

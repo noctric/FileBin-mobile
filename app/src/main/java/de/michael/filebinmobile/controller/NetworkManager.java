@@ -302,6 +302,14 @@ public class NetworkManager {
         return null;
     }
 
+    // method stub
+    public Boolean deleteUploads(ArrayList<Upload> uploads) {
+
+        //TODO
+
+        return false;
+    }
+
     // region helper -------------------------------------------------------------------------------
 
     /**
