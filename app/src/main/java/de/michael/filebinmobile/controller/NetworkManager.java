@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import de.michael.filebinmobile.model.MultiPasteUpload;
+import de.michael.filebinmobile.model.PostInfo;
 import de.michael.filebinmobile.model.Server;
 import de.michael.filebinmobile.model.Upload;
 import de.michael.filebinmobile.model.UserProfile;
@@ -303,9 +304,45 @@ public class NetworkManager {
     }
 
     // method stub
-    public Boolean deleteUploads(ArrayList<Upload> uploads) {
+    public Boolean deleteUploads(PostInfo postInfo, ArrayList<Upload> uploads) {
 
-        //TODO
+        Server server = postInfo.getServer();
+        UserProfile userProfile = postInfo.getUserProfile();
+
+        // TODO tidy this up :)
+        String apiVersion = "v2.1.0";
+        String url = server.getAddr() + "/api/" + apiVersion + "/" + ENDPOINT_FILE_HISTORY;
+
+        // build our request body
+        FormBody.Builder requestBuilder = new FormBody.Builder()
+                .add(PARAM_APIKEY, userProfile.getApiKey());
+
+        int index = 0;
+
+        for (Upload upload : uploads) {
+            requestBuilder.add("ids[" + upload + "]", upload.getId());
+            index++;
+
+            System.out.println("adding id " + upload.getId() + " to be deleted.");
+        }
+
+        FormBody formBody = requestBuilder.build();
+
+        Request request = new Request.Builder()
+                .url(url)
+                .post(formBody)
+                .build();
+
+        try {
+
+            Response response = client.newCall(request).execute();
+
+            // TODO add some deeper logic do determine successful deletion
+            return response.isSuccessful();
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         return false;
     }

@@ -101,10 +101,10 @@ public class HistoryFragment extends Fragment {
 
         if (this.adapter != null) {
 
-            ArrayList<Upload> deleteUploads = this.adapter.getDeleteUploads();
+            PostInfo postInfo = SettingsManager.getInstance().getPostInfo(getActivity());
 
             this.deleteUploadsTask = new DeleteUploadsTask();
-            this.deleteUploadsTask.execute(deleteUploads);
+            this.deleteUploadsTask.execute(postInfo);
 
         }
 
@@ -136,14 +136,16 @@ public class HistoryFragment extends Fragment {
         }
     }
 
-    private class DeleteUploadsTask extends AsyncTask<ArrayList<Upload>, Integer, Boolean> {
+    private class DeleteUploadsTask extends AsyncTask<PostInfo, Integer, Boolean> {
 
         @Override
-        protected Boolean doInBackground(ArrayList<Upload>... arrayLists) {
+        protected Boolean doInBackground(PostInfo... postInfos) {
 
-            if (arrayLists.length > 0) {
-                ArrayList<Upload> uploadList = arrayLists[0];
-                return NetworkManager.getInstance().deleteUploads(uploadList);
+            if (postInfos.length > 0) {
+                PostInfo postInfo = postInfos[0];
+                ArrayList<Upload> uploadList = adapter.getDeleteUploads();
+
+                return NetworkManager.getInstance().deleteUploads(postInfo, uploadList);
             }
 
             return false;
