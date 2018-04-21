@@ -3,6 +3,7 @@ package de.michael.filebinmobile.fragments;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -94,6 +95,7 @@ public class PasteFragment extends Fragment implements OnDataRemovedListener {
         View view = inflater.inflate(R.layout.paste_fragment, container, false);
         ButterKnife.bind(this, view);
 
+        edtPastedText.setTypeface(Typeface.MONOSPACE);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
