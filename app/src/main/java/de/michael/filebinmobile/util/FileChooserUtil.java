@@ -45,16 +45,15 @@ public class FileChooserUtil {
             if (cursor.moveToFirst()) {
                 String columnName = "_display_name";
 
-                // Get column index.
+                // Get column index of display name
                 int imageColumnIndex = cursor.getColumnIndex(columnName);
 
-                // Get column value which is the uri related file local path.
+                // Get column value
                 if (imageColumnIndex >= 0) {
                     displayName = cursor.getString(imageColumnIndex);
                 }
 
             }
-
 
             cursor.close();
         }

@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -32,6 +33,9 @@ public class HistoryFragment extends Fragment {
     @BindView(R.id.rclUploadHistory)
     RecyclerView rclUploadHistory;
 
+    @BindView(R.id.pgbLoadHistory)
+    ProgressBar pgbLoadHistory;
+
     private HistoryAdapter adapter;
 
     private LoadHistoryTask loadHistoryTask;
@@ -42,8 +46,6 @@ public class HistoryFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         this.adapter = new HistoryAdapter(getActivity());
-
-        reloadHistory();
 
     }
 
@@ -57,6 +59,8 @@ public class HistoryFragment extends Fragment {
             this.loadHistoryTask.execute(postInfo);
 
         }
+
+        pgbLoadHistory.setVisibility(View.VISIBLE);
 
     }
 
@@ -92,6 +96,10 @@ public class HistoryFragment extends Fragment {
         this.rclUploadHistory.setItemAnimator(new DefaultItemAnimator());
         this.rclUploadHistory.setAdapter(this.adapter);
         this.rclUploadHistory.addItemDecoration(dividerItemDecoration);
+
+        // seeing as we update our UI both in reloadHistory() and in the asynctask itself we should
+        // only call reloadHistory AFTER the view has been bound
+        reloadHistory();
 
         return view;
     }
@@ -131,6 +139,8 @@ public class HistoryFragment extends Fragment {
         protected void onPostExecute(ArrayList<Upload> uploads) {
 
             adapter.updateData(uploads);
+
+            pgbLoadHistory.setVisibility(View.GONE);
 
             super.onPostExecute(uploads);
         }

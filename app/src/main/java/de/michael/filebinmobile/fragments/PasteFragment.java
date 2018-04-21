@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -18,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -57,6 +59,12 @@ public class PasteFragment extends Fragment implements OnDataRemovedListener {
 
     @BindView(R.id.rclAddedFiles)
     RecyclerView rclSelectedFiles;
+
+    @BindView(R.id.pgbUploadProgress)
+    ProgressBar pgbUploadProgress;
+
+    @BindView(R.id.btnPasteUpload)
+    FloatingActionButton fbaUpload;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -104,6 +112,10 @@ public class PasteFragment extends Fragment implements OnDataRemovedListener {
 
     @OnClick(R.id.btnPasteUpload)
     public void upload() {
+
+        // make some UI adjustments to show uploading status
+        this.pgbUploadProgress.setVisibility(View.VISIBLE);
+        this.fbaUpload.setEnabled(false);
 
         // TODO make file name editable before uploading
         // grab any text from our text field and create a new stdin file
@@ -259,6 +271,10 @@ public class PasteFragment extends Fragment implements OnDataRemovedListener {
 
         @Override
         protected void onPostExecute(String s) {
+
+            // upload completed, we can reset our UI
+            pgbUploadProgress.setVisibility(View.INVISIBLE);
+            fbaUpload.setEnabled(true);
 
             final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
             builder.setTitle("Upload completed")
