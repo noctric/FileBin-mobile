@@ -9,6 +9,10 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +32,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.michael.filebinmobile.R;
+import de.michael.filebinmobile.adapters.OnDataRemovedListener;
+import de.michael.filebinmobile.adapters.SelectedFilesAdapter;
 import de.michael.filebinmobile.controller.NetworkManager;
 import de.michael.filebinmobile.controller.SettingsManager;
 import de.michael.filebinmobile.model.PostInfo;
@@ -36,21 +42,27 @@ import de.michael.filebinmobile.model.UserProfile;
 
 import static android.content.ContentValues.TAG;
 
-public class PasteFragment extends Fragment {
+public class PasteFragment extends Fragment implements OnDataRemovedListener {
 
     public static final String FILE_NAME_DEFAULT = "stdin";
     private static final int READ_REQUEST_CODE = 1;
 
-    ArrayList<File> filesToUpload = new ArrayList<>();
+    private ArrayList<File> filesToUpload = new ArrayList<>();
     private UploadFilesTask fileUploadTask;
+    private SelectedFilesAdapter adapter;
 
     @BindView(R.id.edtPasteText)
     EditText edtPastedText;
 
+    @BindView(R.id.rclAddedFiles)
+    RecyclerView rclSelectedFiles;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+        this.adapter = new SelectedFilesAdapter(getActivity());
+        this.adapter.setOnDataRemovedListener(this);
 
+        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -72,6 +84,19 @@ public class PasteFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.paste_fragment, container, false);
         ButterKnife.bind(this, view);
+
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(this.rclSelectedFiles.getContext(),
+                linearLayoutManager.getOrientation());
+
+        this.rclSelectedFiles.setLayoutManager(linearLayoutManager);
+        this.rclSelectedFiles.setItemAnimator(new DefaultItemAnimator());
+        this.rclSelectedFiles.setAdapter(this.adapter);
+        this.rclSelectedFiles.addItemDecoration(dividerItemDecoration);
+
         return view;
     }
 
@@ -157,6 +182,10 @@ public class PasteFragment extends Fragment {
 
                 this.filesToUpload.add(new File(uri.getPath()));
 
+                // safer to just readd the entire list so we don't run the danger of any
+                // discrepancies between adapter data and actual data
+                this.adapter.updateData(this.filesToUpload);
+
                 Log.i(TAG, "Uri: " + uri.toString());
                 Log.i(TAG, "Files to be uploaded: " + Arrays.toString(filesToUpload.toArray()));
             }
@@ -186,6 +215,15 @@ public class PasteFragment extends Fragment {
         fileInputStream.close();
 
         return sb.toString();
+    }
+
+    @Override
+    public void onDataRemoved(int pos) {
+
+        // let's keep ALL the list manipulations in one place
+        this.filesToUpload.remove(pos);
+        this.adapter.removeItemAt(pos);
+
     }
 
     private class UploadFilesTask extends AsyncTask<PostInfo, Integer, String> {

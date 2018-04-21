@@ -46,6 +46,11 @@ public abstract class SimpleDataAdapter<T extends RecyclerView.ViewHolder, K> ex
         notifyDataSetChanged();
     }
 
+    public void removeItemAt(int pos) {
+        this.data.remove(pos);
+        notifyDataSetChanged();
+    }
+
     public void add(K item) {
         this.data.add(item);
         notifyDataSetChanged();
