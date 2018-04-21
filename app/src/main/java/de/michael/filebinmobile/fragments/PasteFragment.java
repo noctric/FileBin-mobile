@@ -39,6 +39,7 @@ import de.michael.filebinmobile.controller.SettingsManager;
 import de.michael.filebinmobile.model.PostInfo;
 import de.michael.filebinmobile.model.Server;
 import de.michael.filebinmobile.model.UserProfile;
+import de.michael.filebinmobile.util.FileChooserUtil;
 
 import static android.content.ContentValues.TAG;
 
@@ -156,7 +157,7 @@ public class PasteFragment extends Fragment implements OnDataRemovedListener {
         // If one wanted to search for ogg vorbis files, the type would be "audio/ogg".
         // To search for all documents available via installed storage providers,
         // it would be "*/*".
-        intent.setType("image/*");
+        intent.setType("*/*");
 
         startActivityForResult(intent, READ_REQUEST_CODE);
     }
@@ -180,7 +181,16 @@ public class PasteFragment extends Fragment implements OnDataRemovedListener {
 
                 assert uri != null;
 
-                this.filesToUpload.add(new File(uri.getPath()));
+                File file = null;
+                try {
+                    file = FileChooserUtil.createFileCopyFromUri(uri, getActivity());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                if (file != null) {
+                    this.filesToUpload.add(file);
+                }
 
                 // safer to just readd the entire list so we don't run the danger of any
                 // discrepancies between adapter data and actual data
