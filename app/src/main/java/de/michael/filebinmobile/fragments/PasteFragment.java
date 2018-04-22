@@ -145,10 +145,6 @@ public class PasteFragment extends Fragment implements OnDataRemovedListener {
     @OnClick(R.id.btnPasteUpload)
     public void upload() {
 
-        // make some UI adjustments to show uploading status
-        this.pgbUploadProgress.setVisibility(View.VISIBLE);
-        this.fbaUpload.setEnabled(false);
-
         // TODO make file name editable before uploading
         // grab any text from our text field and create a new stdin file
         String textToPaste = this.edtPastedText.getText().toString();
@@ -172,6 +168,10 @@ public class PasteFragment extends Fragment implements OnDataRemovedListener {
         }
 
         if (!this.filesToUpload.isEmpty()) {
+
+            // make some UI adjustments to show uploading status
+            this.pgbUploadProgress.setVisibility(View.VISIBLE);
+            this.fbaUpload.setEnabled(false);
 
             // finally upload
             PostInfo postInfo = SettingsManager.getInstance().getPostInfo(getActivity());
@@ -210,7 +210,6 @@ public class PasteFragment extends Fragment implements OnDataRemovedListener {
         } else {
 
             Toast.makeText(getActivity(), "Nothing to upload", Toast.LENGTH_SHORT).show();
-
         }
 
     }
