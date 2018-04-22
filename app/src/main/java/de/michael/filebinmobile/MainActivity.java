@@ -14,7 +14,7 @@ import de.michael.filebinmobile.fragments.HistoryFragment;
 import de.michael.filebinmobile.fragments.PasteFragment;
 import de.michael.filebinmobile.fragments.SettingsFragment;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements OnTabNavigationRequestedListener {
 
     @BindView(R.id.bnvMainNavigation)
     BottomNavigationView bnvMainNavigation;
@@ -32,6 +32,8 @@ public class MainActivity extends AppCompatActivity {
                     if (pasteFragment == null) {
 
                         pasteFragment = new PasteFragment();
+                        //TODO create a super class for our fragments and set a listener there
+                        ((PasteFragment) pasteFragment).setOnTabNavigationRequestedListener(MainActivity.this);
 
                     }
 
@@ -88,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         this.pasteFragment = new PasteFragment();
+        ((PasteFragment) pasteFragment).setOnTabNavigationRequestedListener(MainActivity.this);
 
         // don't add the first transaction the the backstack so we don't have this weird empty view
         getSupportFragmentManager().beginTransaction()
@@ -96,4 +99,8 @@ public class MainActivity extends AppCompatActivity {
         bnvMainNavigation.setOnNavigationItemSelectedListener(this.onNavigationItemSelectedListener);
     }
 
+    @Override
+    public void onNavigationRequest(int menuItemId) {
+        bnvMainNavigation.setSelectedItemId(menuItemId);
+    }
 }

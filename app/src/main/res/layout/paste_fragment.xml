@@ -8,6 +8,25 @@
     tools:context=".MainActivity"
     tools:layout_editor_absoluteY="25dp">
 
+    <TextView
+        android:id="@+id/txtSelectedServer"
+        android:layout_width="0dp"
+        android:layout_height="31dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:ellipsize="end"
+        android:lines="3"
+        android:maxLines="3"
+        android:textAlignment="center"
+        android:textSize="10sp"
+        android:typeface="serif"
+        app:layout_constraintBottom_toTopOf="@+id/rclAddedFiles"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/pgbUploadProgress"
+        app:layout_constraintTop_toBottomOf="@+id/edtPasteText" />
+
     <EditText
         android:id="@+id/edtPasteText"
         android:layout_width="0dp"

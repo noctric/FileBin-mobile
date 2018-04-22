@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -34,6 +35,7 @@ import java.util.Arrays;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import de.michael.filebinmobile.OnTabNavigationRequestedListener;
 import de.michael.filebinmobile.R;
 import de.michael.filebinmobile.adapters.OnDataRemovedListener;
 import de.michael.filebinmobile.adapters.SelectedFilesAdapter;
@@ -55,6 +57,7 @@ public class PasteFragment extends Fragment implements OnDataRemovedListener {
     private ArrayList<File> filesToUpload = new ArrayList<>();
     private UploadFilesTask fileUploadTask;
     private SelectedFilesAdapter adapter;
+    private OnTabNavigationRequestedListener onTabNavigationRequestedListener;
 
     @BindView(R.id.edtPasteText)
     EditText edtPastedText;
@@ -67,6 +70,9 @@ public class PasteFragment extends Fragment implements OnDataRemovedListener {
 
     @BindView(R.id.btnPasteUpload)
     FloatingActionButton fbaUpload;
+
+    @BindView(R.id.txtSelectedServer)
+    TextView txtSelectedServer;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -109,7 +115,29 @@ public class PasteFragment extends Fragment implements OnDataRemovedListener {
         this.rclSelectedFiles.setAdapter(this.adapter);
         this.rclSelectedFiles.addItemDecoration(dividerItemDecoration);
 
+        PostInfo postInfo = SettingsManager.getInstance().getPostInfo(getActivity());
+        String selectedServerName = "None";
+        String selectedUserName = "None";
+
+        if (postInfo != null) {
+            selectedServerName = postInfo.getServer().getName();
+            if (postInfo.getUserProfile() != null) {
+                selectedUserName = postInfo.getUserProfile().getUsrName();
+            }
+        }
+        this.txtSelectedServer.setText(String.format("Uploads to %s by %s", selectedServerName, selectedUserName));
         return view;
+    }
+
+    public void setOnTabNavigationRequestedListener(OnTabNavigationRequestedListener onTabNavigationRequestedListener) {
+        this.onTabNavigationRequestedListener = onTabNavigationRequestedListener;
+    }
+
+    @OnClick(R.id.txtSelectedServer)
+    public void openServerSettingsTab() {
+        if (this.onTabNavigationRequestedListener != null) {
+            this.onTabNavigationRequestedListener.onNavigationRequest(R.id.navigation_server_settings);
+        }
     }
 
 
@@ -153,6 +181,30 @@ public class PasteFragment extends Fragment implements OnDataRemovedListener {
 
             this.fileUploadTask = new UploadFilesTask();
             this.fileUploadTask.execute(postInfo);
+        } else {
+
+            final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setTitle("Woops")
+                    .setMessage("No Server for uploading selected. Please go to Server Settings" +
+                            "and select one.")
+                    .setPositiveButton(R.string.ok, (dialogInterface, i) -> {
+
+                        dialogInterface.dismiss();
+
+                        if (this.onTabNavigationRequestedListener != null) {
+                            this.onTabNavigationRequestedListener
+                                    .onNavigationRequest(R.id.navigation_server_settings);
+                        }
+
+                    }).setNegativeButton(R.string.cancel, (dialogInterface, i) -> {
+
+                        dialogInterface.dismiss();
+
+                    }
+            );
+            AlertDialog dialog = builder.create();
+            dialog.show();
+
         }
 
     }
