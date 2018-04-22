@@ -48,31 +48,30 @@ public class HistoryAdapter extends SimpleDataAdapter<HistoryViewHolder, Upload>
         holder.txtUploadSize.setText(item.getUploadSize());
         holder.txtUploadTimeStamp.setText(formattedDateString);
 
-        holder.ckbDeleteItem.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        holder.ckbDeleteItem.setChecked(this.deleteUploads.contains(item));
 
-                boolean checked = ((CheckBox) view).isChecked();
+        holder.ckbDeleteItem.setOnClickListener(view -> {
 
-                if (checked) {
+            boolean checked = ((CheckBox) view).isChecked();
 
-                    if (!deleteUploads.contains(item)) {
+            if (checked) {
 
-                        deleteUploads.add(item);
+                if (!deleteUploads.contains(item)) {
 
-                    }
+                    deleteUploads.add(item);
 
-                } else {
+                }
 
-                    if (deleteUploads.contains(item)) {
+            } else {
 
-                        deleteUploads.remove(item);
+                if (deleteUploads.contains(item)) {
 
-                    }
+                    deleteUploads.remove(item);
 
                 }
 
             }
+
         });
 
     }
