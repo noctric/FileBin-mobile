@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -33,6 +34,9 @@ public class SettingsFragment extends Fragment implements OnAdapterDataChangedLi
 
     @BindView(R.id.rclServerList)
     RecyclerView rclServerList;
+
+    @BindView(R.id.txtEmptyServerList)
+    TextView txtEmptyList;
 
     private ServerSettingsAdapter adapter;
 
@@ -138,6 +142,12 @@ public class SettingsFragment extends Fragment implements OnAdapterDataChangedLi
 
         ArrayList<Server> serverList = SettingsManager.getInstance().getServerList(getActivity());
         this.adapter.updateData(serverList);
+
+        if (this.adapter.getItemCount() <= 0) {
+            txtEmptyList.setVisibility(View.VISIBLE);
+        } else {
+            txtEmptyList.setVisibility(View.GONE);
+        }
 
     }
 

@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -170,40 +171,45 @@ public class PasteFragment extends Fragment implements OnDataRemovedListener {
 
         }
 
-        // TODO add all the other files
+        if (!this.filesToUpload.isEmpty()) {
 
-        // finally upload
-        PostInfo postInfo = SettingsManager.getInstance().getPostInfo(getActivity());
+            // finally upload
+            PostInfo postInfo = SettingsManager.getInstance().getPostInfo(getActivity());
 
-        if (postInfo != null) {
+            if (postInfo != null) {
 
-            cancelDownload();
+                cancelDownload();
 
-            this.fileUploadTask = new UploadFilesTask();
-            this.fileUploadTask.execute(postInfo);
+                this.fileUploadTask = new UploadFilesTask();
+                this.fileUploadTask.execute(postInfo);
+            } else {
+
+                final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle("Woops")
+                        .setMessage("No Server for uploading selected. Please go to Server Settings" +
+                                "and select one.")
+                        .setPositiveButton(R.string.ok, (dialogInterface, i) -> {
+
+                            dialogInterface.dismiss();
+
+                            if (this.onTabNavigationRequestedListener != null) {
+                                this.onTabNavigationRequestedListener
+                                        .onNavigationRequest(R.id.navigation_server_settings);
+                            }
+
+                        }).setNegativeButton(R.string.cancel, (dialogInterface, i) -> {
+
+                            dialogInterface.dismiss();
+
+                        }
+                );
+                AlertDialog dialog = builder.create();
+                dialog.show();
+
+            }
         } else {
 
-            final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-            builder.setTitle("Woops")
-                    .setMessage("No Server for uploading selected. Please go to Server Settings" +
-                            "and select one.")
-                    .setPositiveButton(R.string.ok, (dialogInterface, i) -> {
-
-                        dialogInterface.dismiss();
-
-                        if (this.onTabNavigationRequestedListener != null) {
-                            this.onTabNavigationRequestedListener
-                                    .onNavigationRequest(R.id.navigation_server_settings);
-                        }
-
-                    }).setNegativeButton(R.string.cancel, (dialogInterface, i) -> {
-
-                        dialogInterface.dismiss();
-
-                    }
-            );
-            AlertDialog dialog = builder.create();
-            dialog.show();
+            Toast.makeText(getActivity(), "Nothing to upload", Toast.LENGTH_SHORT).show();
 
         }
 
