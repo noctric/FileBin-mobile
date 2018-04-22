@@ -22,8 +22,6 @@ public class MainActivity extends AppCompatActivity {
     // TODO remove global vars and try to retrieve fragments by id
     private Fragment pasteFragment, historyFragment, settingsFragment;
 
-    // TODO only bring fragment to front instead of adding it multiple times to backstack
-    // TODO also the highlighting of the current menu point doesn't update itself when pressing back
     private BottomNavigationView.OnNavigationItemSelectedListener onNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -62,8 +60,24 @@ public class MainActivity extends AppCompatActivity {
 
     private void switchFragment(Fragment fragment) {
         FragmentManager manager = getSupportFragmentManager();
-        manager.beginTransaction().replace(R.id.frlMainContent, fragment)
-                .addToBackStack(null).commit();
+
+        // do not add any transitions of bottom bar navigation views to back stack
+        // as stated in android design guidelines. See link below. However we will implement the
+        // behaviour for pressing back as returning to our "home" view, the first menu item (Paste)
+        // https://material.io/guidelines/components/bottom-navigation.html#bottom-navigation-behavior
+        manager.beginTransaction().replace(R.id.frlMainContent, fragment).commit();
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        int selectedItemId = bnvMainNavigation.getSelectedItemId();
+
+        if (selectedItemId != R.id.navigation_paste) {
+            bnvMainNavigation.setSelectedItemId(R.id.navigation_paste);
+        } else {
+            super.onBackPressed();
+        }
     }
 
     @Override
@@ -80,8 +94,6 @@ public class MainActivity extends AppCompatActivity {
                 .add(R.id.frlMainContent, this.pasteFragment).commit();
 
         bnvMainNavigation.setOnNavigationItemSelectedListener(this.onNavigationItemSelectedListener);
-
-
     }
 
 }
