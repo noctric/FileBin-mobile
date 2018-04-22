@@ -37,6 +37,7 @@ import butterknife.OnClick;
 import de.michael.filebinmobile.R;
 import de.michael.filebinmobile.adapters.OnDataRemovedListener;
 import de.michael.filebinmobile.adapters.SelectedFilesAdapter;
+import de.michael.filebinmobile.adapters.UploadUrlAdapter;
 import de.michael.filebinmobile.controller.NetworkManager;
 import de.michael.filebinmobile.controller.SettingsManager;
 import de.michael.filebinmobile.model.PostInfo;
@@ -250,10 +251,10 @@ public class PasteFragment extends Fragment implements OnDataRemovedListener {
 
     }
 
-    private class UploadFilesTask extends AsyncTask<PostInfo, Integer, String> {
+    private class UploadFilesTask extends AsyncTask<PostInfo, Integer, ArrayList<String>> {
 
         @Override
-        protected String doInBackground(PostInfo... postInfos) {
+        protected ArrayList<String> doInBackground(PostInfo... postInfos) {
 
             if (postInfos.length > 0) {
 
@@ -272,20 +273,37 @@ public class PasteFragment extends Fragment implements OnDataRemovedListener {
         }
 
         @Override
-        protected void onPostExecute(String s) {
+        protected void onPostExecute(ArrayList<String> urlList) {
 
             // upload completed, we can reset our UI
             pgbUploadProgress.setVisibility(View.INVISIBLE);
             fbaUpload.setEnabled(true);
 
+            View view = getActivity().getLayoutInflater().inflate(R.layout.any_recycler_view, null);
+            RecyclerView rclUrlList = view.findViewById(R.id.rclAnyRecyclerView);
+
+            UploadUrlAdapter uploadUrlAdapter = new UploadUrlAdapter(getActivity());
+            uploadUrlAdapter.updateData(urlList);
+
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+            linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+
+            DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(rclUrlList.getContext(),
+                    linearLayoutManager.getOrientation());
+
+            rclUrlList.setLayoutManager(linearLayoutManager);
+            rclUrlList.setItemAnimator(new DefaultItemAnimator());
+            rclUrlList.setAdapter(uploadUrlAdapter);
+            rclUrlList.addItemDecoration(dividerItemDecoration);
+
             final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
             builder.setTitle("Upload completed")
-                    .setMessage(s)
+                    .setView(view)
                     .setPositiveButton(R.string.ok, (dialogInterface, i) -> dialogInterface.dismiss());
             AlertDialog dialog = builder.create();
             dialog.show();
 
-            super.onPostExecute(s);
+            super.onPostExecute(urlList);
         }
     }
 }

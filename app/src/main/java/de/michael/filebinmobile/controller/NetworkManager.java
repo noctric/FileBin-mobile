@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -157,7 +158,7 @@ public class NetworkManager {
      * @param files  files to be posted by user
      * @return upload url(s) in json format
      */
-    public String pasteUploadFiles(@NonNull UserProfile user, @NonNull Server server, File[] files) {
+    public ArrayList<String> pasteUploadFiles(@NonNull UserProfile user, @NonNull Server server, File[] files) {
 
         String apiVersion = "v2.1.0";
         String url = server.getAddr() + "/api/" + apiVersion + "/" + ENDPOINT_FILE_UPLOAD;
@@ -206,7 +207,15 @@ public class NetworkManager {
                 JSONObject responseData = new JSONObject(response.body().string()).getJSONObject("data");
 
                 if (responseData != null) {
-                    return responseData.getJSONArray(PARAM_RESPONSE_URLS).toString();
+
+                    JSONArray responseArray = responseData.getJSONArray(PARAM_RESPONSE_URLS);
+                    ArrayList<String> urlList = new ArrayList<>();
+
+                    for (int i = 0; i < responseArray.length(); i++) {
+                        urlList.add(responseArray.getString(i));
+                    }
+
+                    return urlList;
                 }
             }
 
