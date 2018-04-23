@@ -87,6 +87,10 @@ public class NetworkManager {
 
     private static final MediaType VIDEO_MP4
             = MediaType.parse("video/mp4");
+
+    private static final String[] API_VERSIONS = new String[]{
+            "v2.1.1", "v2.1.0", "v2.0.0", "v1.4.0", "v1.3.0", "v1.2.0", "v1.0.0"
+    };
     // endregion
 
     private OkHttpClient client = new OkHttpClient.Builder()
@@ -119,9 +123,7 @@ public class NetworkManager {
     public @Nullable
     String generateApiKey(@NonNull String username, @NonNull String password, @NonNull String serverAddr) {
 
-        // TODO tidy this up :)
-        String apiVersion = "v2.1.0";
-        String url = serverAddr + "/api/" + apiVersion + "/" + ENDPOINT_USER_CREATE_API_KEY;
+        String url = serverAddr + "/api/" + API_VERSIONS[1] + "/" + ENDPOINT_USER_CREATE_API_KEY;
 
         RequestBody body = new FormBody.Builder()
                 .add(PARAM_USER_NAME, username)
@@ -160,8 +162,7 @@ public class NetworkManager {
      */
     public ArrayList<String> pasteUploadFiles(@NonNull UserProfile user, @NonNull Server server, File[] files) {
 
-        String apiVersion = "v2.1.0";
-        String url = server.getAddr() + "/api/" + apiVersion + "/" + ENDPOINT_FILE_UPLOAD;
+        String url = server.getAddr() + "/api/" + API_VERSIONS[1] + "/" + ENDPOINT_FILE_UPLOAD;
 
 
         MultipartBody.Builder multipartBuilder = new MultipartBody.Builder()
@@ -234,8 +235,7 @@ public class NetworkManager {
      */
     public void updateServerInfo(@NonNull Server server) {
 
-        String apiVersion = "v2.1.0";
-        String url = server.getAddr() + "/api/" + apiVersion + "/" + ENDPOINT_FILE_GET_CONFIG;
+        String url = server.getAddr() + "/api/" + API_VERSIONS[1] + "/" + ENDPOINT_FILE_GET_CONFIG;
 
         Request request = new Request.Builder()
                 .url(url)
@@ -283,9 +283,7 @@ public class NetworkManager {
     public ArrayList<Upload> loadUploadHistory(@NonNull UserProfile user, @NonNull Server server) {
         //TODO differentiate between multi paste and normal upload
 
-        // TODO tidy this up :)
-        String apiVersion = "v2.1.0";
-        String url = server.getAddr() + "/api/" + apiVersion + "/" + ENDPOINT_FILE_HISTORY;
+        String url = server.getAddr() + "/api/" + API_VERSIONS[1] + "/" + ENDPOINT_FILE_HISTORY;
 
         RequestBody body = new FormBody.Builder()
                 .add(PARAM_APIKEY, user.getApiKey())
@@ -333,9 +331,7 @@ public class NetworkManager {
         Server server = postInfo.getServer();
         UserProfile userProfile = postInfo.getUserProfile();
 
-        // TODO tidy this up :)
-        String apiVersion = "v2.1.0";
-        String url = server.getAddr() + "/api/" + apiVersion + "/" + ENDPOINT_FILE_DELETE;
+        String url = server.getAddr() + "/api/" + API_VERSIONS[1] + "/" + ENDPOINT_FILE_DELETE;
 
         // build our request body
         FormBody.Builder requestBuilder = new FormBody.Builder()

@@ -9,7 +9,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
@@ -36,7 +35,6 @@ import java.util.Arrays;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import de.michael.filebinmobile.OnTabNavigationRequestedListener;
 import de.michael.filebinmobile.R;
 import de.michael.filebinmobile.adapters.OnDataRemovedListener;
 import de.michael.filebinmobile.adapters.SelectedFilesAdapter;
@@ -50,7 +48,7 @@ import de.michael.filebinmobile.util.FileChooserUtil;
 
 import static android.content.ContentValues.TAG;
 
-public class PasteFragment extends Fragment implements OnDataRemovedListener {
+public class PasteFragment extends NavigationFragment implements OnDataRemovedListener {
 
     public static final String FILE_NAME_DEFAULT = "stdin";
     private static final int READ_REQUEST_CODE = 1;
@@ -58,7 +56,6 @@ public class PasteFragment extends Fragment implements OnDataRemovedListener {
     private ArrayList<File> filesToUpload = new ArrayList<>();
     private UploadFilesTask fileUploadTask;
     private SelectedFilesAdapter adapter;
-    private OnTabNavigationRequestedListener onTabNavigationRequestedListener;
 
     @BindView(R.id.edtPasteText)
     EditText edtPastedText;
@@ -130,14 +127,10 @@ public class PasteFragment extends Fragment implements OnDataRemovedListener {
         return view;
     }
 
-    public void setOnTabNavigationRequestedListener(OnTabNavigationRequestedListener onTabNavigationRequestedListener) {
-        this.onTabNavigationRequestedListener = onTabNavigationRequestedListener;
-    }
-
     @OnClick(R.id.txtSelectedServer)
     public void openServerSettingsTab() {
-        if (this.onTabNavigationRequestedListener != null) {
-            this.onTabNavigationRequestedListener.onNavigationRequest(R.id.navigation_server_settings);
+        if (getOnTabNavigationRequestedListener() != null) {
+            getOnTabNavigationRequestedListener().onNavigationRequest(R.id.navigation_server_settings);
         }
     }
 
@@ -192,8 +185,8 @@ public class PasteFragment extends Fragment implements OnDataRemovedListener {
 
                             dialogInterface.dismiss();
 
-                            if (this.onTabNavigationRequestedListener != null) {
-                                this.onTabNavigationRequestedListener
+                            if (getOnTabNavigationRequestedListener() != null) {
+                                getOnTabNavigationRequestedListener()
                                         .onNavigationRequest(R.id.navigation_server_settings);
                             }
 
