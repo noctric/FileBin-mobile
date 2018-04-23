@@ -161,6 +161,19 @@ public class NetworkManager {
      * @return upload url(s) in json format
      */
     public ArrayList<String> pasteUploadFiles(@NonNull UserProfile user, @NonNull Server server, File[] files) {
+        return pasteUploadFiles(user, server, files, null);
+    }
+
+    /**
+     * Posts a file (or set of files) to a given filebin server
+     *
+     * @param user     user profile posting the file(s)
+     * @param server   server which holds the user profile
+     * @param files    files to be posted by user
+     * @param callback Callback interface for error handling
+     * @return upload url(s) in json format
+     */
+    public ArrayList<String> pasteUploadFiles(@NonNull UserProfile user, @NonNull Server server, File[] files, @Nullable OnErrorOccurredCallback callback) {
 
         String url = server.getAddr() + "/api/" + API_VERSIONS[1] + "/" + ENDPOINT_FILE_UPLOAD;
 
@@ -205,18 +218,40 @@ public class NetworkManager {
             Response response = client.newCall(request).execute();
 
             if (response.isSuccessful()) {
-                JSONObject responseData = new JSONObject(response.body().string()).getJSONObject("data");
 
-                if (responseData != null) {
+                String responseString = response.body().string();
+                JSONObject responseJSONObject = new JSONObject(responseString);
 
-                    JSONArray responseArray = responseData.getJSONArray(PARAM_RESPONSE_URLS);
-                    ArrayList<String> urlList = new ArrayList<>();
+                if (!isErrorResponse(responseJSONObject)) {
 
-                    for (int i = 0; i < responseArray.length(); i++) {
-                        urlList.add(responseArray.getString(i));
+                    // no error response
+                    JSONObject responseData = responseJSONObject.getJSONObject("data");
+
+                    if (responseData != null) {
+
+                        JSONArray responseArray = responseData.getJSONArray(PARAM_RESPONSE_URLS);
+                        ArrayList<String> urlList = new ArrayList<>();
+
+                        for (int i = 0; i < responseArray.length(); i++) {
+                            urlList.add(responseArray.getString(i));
+                        }
+
+                        return urlList;
                     }
+                } else {
+                    // we have an error response
+                    if (callback != null) {
 
-                    return urlList;
+                        // TODO we could include the error_id to maybe provide some more
+                        // custom error handling
+                        String message = responseJSONObject.getString("message");
+
+                        if (message == null || message.isEmpty()) {
+                            message = "Sorry, an error occurred.";
+                        }
+
+                        callback.onError(message);
+                    }
                 }
             }
 
@@ -325,7 +360,6 @@ public class NetworkManager {
         return null;
     }
 
-    // method stub
     public Boolean deleteUploads(PostInfo postInfo, ArrayList<Upload> uploads) {
 
         Server server = postInfo.getServer();
@@ -397,6 +431,7 @@ public class NetworkManager {
     String getFileExtension(String filePath) {
 
         //TODO we should take more edge cases into account (e.g. file has no extension)
+        // we could just work with mime types...
         int i = filePath.lastIndexOf('.');
 
         // we assume our file has an extension
@@ -426,6 +461,16 @@ public class NetworkManager {
 
         return jsonObjects;
 
+    }
+
+    private boolean isErrorResponse(JSONObject response) {
+        try {
+            return (!response.isNull("status") &&
+                    response.getString("status").equals("error"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
     //endregion
 }

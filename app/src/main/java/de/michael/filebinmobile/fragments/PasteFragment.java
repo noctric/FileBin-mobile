@@ -40,6 +40,7 @@ import de.michael.filebinmobile.adapters.OnDataRemovedListener;
 import de.michael.filebinmobile.adapters.SelectedFilesAdapter;
 import de.michael.filebinmobile.adapters.UploadUrlAdapter;
 import de.michael.filebinmobile.controller.NetworkManager;
+import de.michael.filebinmobile.controller.OnErrorOccurredCallback;
 import de.michael.filebinmobile.controller.SettingsManager;
 import de.michael.filebinmobile.model.PostInfo;
 import de.michael.filebinmobile.model.Server;
@@ -301,7 +302,7 @@ public class PasteFragment extends NavigationFragment implements OnDataRemovedLi
 
     }
 
-    private class UploadFilesTask extends AsyncTask<PostInfo, Integer, ArrayList<String>> {
+    private class UploadFilesTask extends AsyncTask<PostInfo, Integer, ArrayList<String>> implements OnErrorOccurredCallback{
 
         @Override
         protected ArrayList<String> doInBackground(PostInfo... postInfos) {
@@ -325,35 +326,44 @@ public class PasteFragment extends NavigationFragment implements OnDataRemovedLi
         @Override
         protected void onPostExecute(ArrayList<String> urlList) {
 
-            // upload completed, we can reset our UI
-            pgbUploadProgress.setVisibility(View.INVISIBLE);
-            fbaUpload.setEnabled(true);
+            if (!urlList.isEmpty()) {
 
-            View view = getActivity().getLayoutInflater().inflate(R.layout.any_recycler_view, null);
-            RecyclerView rclUrlList = view.findViewById(R.id.rclAnyRecyclerView);
+                // upload completed, we can reset our UI
+                pgbUploadProgress.setVisibility(View.INVISIBLE);
+                fbaUpload.setEnabled(true);
 
-            UploadUrlAdapter uploadUrlAdapter = new UploadUrlAdapter(getActivity());
-            uploadUrlAdapter.updateData(urlList);
+                View view = getActivity().getLayoutInflater().inflate(R.layout.any_recycler_view, null);
+                RecyclerView rclUrlList = view.findViewById(R.id.rclAnyRecyclerView);
 
-            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
-            linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+                UploadUrlAdapter uploadUrlAdapter = new UploadUrlAdapter(getActivity());
+                uploadUrlAdapter.updateData(urlList);
 
-            DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(rclUrlList.getContext(),
-                    linearLayoutManager.getOrientation());
+                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+                linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 
-            rclUrlList.setLayoutManager(linearLayoutManager);
-            rclUrlList.setItemAnimator(new DefaultItemAnimator());
-            rclUrlList.setAdapter(uploadUrlAdapter);
-            rclUrlList.addItemDecoration(dividerItemDecoration);
+                DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(rclUrlList.getContext(),
+                        linearLayoutManager.getOrientation());
 
-            final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-            builder.setTitle("Upload completed")
-                    .setView(view)
-                    .setPositiveButton(R.string.ok, (dialogInterface, i) -> dialogInterface.dismiss());
-            AlertDialog dialog = builder.create();
-            dialog.show();
+                rclUrlList.setLayoutManager(linearLayoutManager);
+                rclUrlList.setItemAnimator(new DefaultItemAnimator());
+                rclUrlList.setAdapter(uploadUrlAdapter);
+                rclUrlList.addItemDecoration(dividerItemDecoration);
+
+                final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle("Upload completed")
+                        .setView(view)
+                        .setPositiveButton(R.string.ok, (dialogInterface, i) -> dialogInterface.dismiss());
+                AlertDialog dialog = builder.create();
+                dialog.show();
+
+            }
 
             super.onPostExecute(urlList);
+        }
+
+        @Override
+        public void onError(String message) {
+            Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
         }
     }
 }
