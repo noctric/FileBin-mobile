@@ -1,7 +1,6 @@
 package de.michael.filebinmobile.fragments;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -96,39 +95,31 @@ public class SettingsFragment extends NavigationFragment implements OnAdapterDat
                 .inflate(R.layout.edit_server_settings, null);
         builder.setTitle("Add Server")
                 .setView(view)
-                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        EditText edtServerName = view.findViewById(R.id.edtEditName);
-                        EditText edtServerAddr = view.findViewById(R.id.edtEditAddress);
-                        EditText edtUserName = view.findViewById(R.id.edtUserName);
-                        EditText edtUserPw = view.findViewById(R.id.edtUserPassword);
+                .setPositiveButton(R.string.ok, (dialogInterface, i) -> {
+                    EditText edtServerName = view.findViewById(R.id.edtEditName);
+                    EditText edtServerAddr = view.findViewById(R.id.edtEditAddress);
+                    EditText edtUserName = view.findViewById(R.id.edtUserName);
+                    EditText edtUserPw = view.findViewById(R.id.edtUserPassword);
 
-                        // create a new server model
-                        Server server = new Server(
-                                edtServerName.getText().toString(),
-                                edtServerAddr.getText().toString()
-                        );
+                    // create a new server model
+                    Server server = new Server(
+                            edtServerName.getText().toString(),
+                            edtServerAddr.getText().toString()
+                    );
 
-                        // create a new user profile model
-                        String userName = edtUserName.getText().toString();
-                        String password = edtUserPw.getText().toString();
+                    // create a new user profile model
+                    String userName = edtUserName.getText().toString();
+                    String password = edtUserPw.getText().toString();
 
-                        ApiKeyPostInfo apiKeyPostInfo = new ApiKeyPostInfo(userName, server, password);
+                    ApiKeyPostInfo apiKeyPostInfo = new ApiKeyPostInfo(userName, server, password);
 
-                        createApikeyTask = new CreateApikeyTask();
-                        createApikeyTask.execute(apiKeyPostInfo);
+                    createApikeyTask = new CreateApikeyTask();
+                    createApikeyTask.execute(apiKeyPostInfo);
 
-                        Toast.makeText(getActivity(), "Creating Apikey", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Creating Apikey", Toast.LENGTH_SHORT).show();
 
-                    }
                 })
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss();
-                    }
-                });
+                .setNegativeButton(R.string.cancel, (dialogInterface, i) -> dialogInterface.dismiss());
         AlertDialog dialog = builder.create();
         dialog.show();
     }
@@ -166,7 +157,6 @@ public class SettingsFragment extends NavigationFragment implements OnAdapterDat
                 String userName = this.postInfo.getUsername();
                 String password = this.postInfo.getPassword();
                 Server server = this.postInfo.getServer();
-
 
 
                 return NetworkManager.getInstance()

@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import de.michael.filebinmobile.model.MultiPasteUpload;
@@ -112,6 +113,48 @@ public class NetworkManager {
         return INSTANCE;
     }
 
+    private JSONObject buildAndExecuteRequest(String url, RequestBody body, OnErrorOccurredCallback callback) {
+        Request request = new Request.Builder()
+                .url(url)
+                .post(body)
+                .build();
+
+        try {
+            Response response = client.newCall(request).execute();
+
+            if (response.isSuccessful()) {
+
+                String responseString = response.body().string();
+                JSONObject responseJSONObject = new JSONObject(responseString);
+
+                if (!isErrorResponse(responseJSONObject)) {
+
+                    // no error response
+                    return responseJSONObject.getJSONObject("data");
+
+                } else if (callback != null) {
+
+                    callback.onError(getErrorMessage(responseJSONObject));
+
+                }
+
+            } else if (callback != null) {
+
+                callback.onError(String
+                        .format(Locale.getDefault(), "Request returned %d", response.code()));
+
+            }
+
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+
+            callback.onError("Exception during request");
+        }
+
+        return null;
+
+    }
+
     /**
      * Makes a request to generate a new api key from the server.
      *
@@ -121,7 +164,8 @@ public class NetworkManager {
      * @return A newly created api key or null if not successful.
      */
     public @Nullable
-    String generateApiKey(@NonNull String username, @NonNull String password, @NonNull String serverAddr, OnErrorOccurredCallback callback) {
+    String generateApiKey(@NonNull String username, @NonNull String password,
+                          @NonNull String serverAddr, OnErrorOccurredCallback callback) {
 
         String url = serverAddr + "/api/" + API_VERSIONS[1] + "/" + ENDPOINT_USER_CREATE_API_KEY;
 
@@ -131,34 +175,17 @@ public class NetworkManager {
                 .add(PARAM_USER_ACCESS_LEVEL, "apikey")
                 .add(PARAM_USER_COMMENT, "FileBin mobile for Android: " + username + " on " + serverAddr)
                 .build();
-        Request request = new Request.Builder()
-                .url(url)
-                .post(body)
-                .build();
 
         try {
-            Response response = client.newCall(request).execute();
-            if (response.isSuccessful()) {
 
-                String responseString = response.body().string();
-                JSONObject responseJSONObject = new JSONObject(responseString);
+            JSONObject responseData = buildAndExecuteRequest(url, body, callback);
 
-                if (!isErrorResponse(responseJSONObject)) {
-                    // no error response
-                    JSONObject responseData = responseJSONObject.getJSONObject("data");
-
-                    if (responseData != null) {
-                        return responseData.getString(PARAM_RESPONSE_NEW_API_KEY);
-                    }
-
-                } else if (callback != null) {
-
-                    callback.onError(getErrorMessage(responseJSONObject));
-
-                }
-
+            if (responseData != null) {
+                return responseData.getString(PARAM_RESPONSE_NEW_API_KEY);
             }
-        } catch (IOException | JSONException e) {
+
+
+        } catch (JSONException e) {
             e.printStackTrace();
         }
 
@@ -222,49 +249,28 @@ public class NetworkManager {
         }
 
 
-        Request request = new Request.Builder()
-                .url(url)
-                .post(multipartBuilder.build())
-                .build();
+        MultipartBody multipartBody = multipartBuilder.build();
 
         try {
-            Response response = client.newCall(request).execute();
 
-            if (response.isSuccessful()) {
+            JSONObject responseData = buildAndExecuteRequest(url, multipartBody, callback);
 
-                String responseString = response.body().string();
-                JSONObject responseJSONObject = new JSONObject(responseString);
+            if (responseData != null) {
 
-                if (!isErrorResponse(responseJSONObject)) {
+                JSONArray responseArray = responseData.getJSONArray(PARAM_RESPONSE_URLS);
+                ArrayList<String> urlList = new ArrayList<>();
 
-                    // no error response
-                    JSONObject responseData = responseJSONObject.getJSONObject("data");
-
-                    if (responseData != null) {
-
-                        JSONArray responseArray = responseData.getJSONArray(PARAM_RESPONSE_URLS);
-                        ArrayList<String> urlList = new ArrayList<>();
-
-                        for (int i = 0; i < responseArray.length(); i++) {
-                            urlList.add(responseArray.getString(i));
-                        }
-
-                        return urlList;
-                    }
-                } else {
-                    // we have an error response
-                    if (callback != null) {
-
-                        // TODO we could include the error_id to maybe provide some more
-                        // custom error handling
-                        callback.onError(getErrorMessage(responseJSONObject));
-                    }
+                for (int i = 0; i < responseArray.length(); i++) {
+                    urlList.add(responseArray.getString(i));
                 }
+
+                return urlList;
             }
 
-        } catch (IOException | JSONException e) {
+        } catch (JSONException e) {
             e.printStackTrace();
         }
+
 
         return null;
     }
@@ -318,11 +324,12 @@ public class NetworkManager {
     /**
      * Requests a user's upload history from a given server
      *
-     * @param user   User profile who's history we want to load
-     * @param server Server which holds the user profile
+     * @param user     User profile who's history we want to load
+     * @param server   Server which holds the user profile
+     * @param callback
      * @return a list of uploads from the past
      */
-    public ArrayList<Upload> loadUploadHistory(@NonNull UserProfile user, @NonNull Server server) {
+    public ArrayList<Upload> loadUploadHistory(@NonNull UserProfile user, @NonNull Server server, OnErrorOccurredCallback callback) {
         //TODO differentiate between multi paste and normal upload
 
         String url = server.getAddr() + "/api/" + API_VERSIONS[1] + "/" + ENDPOINT_FILE_HISTORY;
@@ -331,43 +338,37 @@ public class NetworkManager {
                 .add(PARAM_APIKEY, user.getApiKey())
                 .build();
 
-        Request request = new Request.Builder()
-                .url(url)
-                .post(body)
-                .build();
-
         try {
-            Response response = client.newCall(request).execute();
-            if (response.isSuccessful()) {
-                JSONObject responseData = new JSONObject(response.body().string()).getJSONObject("data");
 
-                if (responseData != null) {
+            JSONObject responseData = buildAndExecuteRequest(url, body, callback);
 
-                    //JSONArray items = responseData.getJSONArray(PARAM_RESPONSE_HISTORY_ITEMS);
-                    //JSONArray multipasteItems = responseData.getJSONArray(PARAM_RESPONSE_HISTORY_MULT_ITEMS);
 
-                    JSONObject nestedJsonUploadItems = responseData.getJSONObject(PARAM_RESPONSE_HISTORY_ITEMS);
+            if (responseData != null) {
 
-                    ArrayList<Upload> uploadHistory = new ArrayList<>();
-                    for (JSONObject item : getJSONObjectsWithoutKey(nestedJsonUploadItems)) {
-                        uploadHistory.add(gson.fromJson(item.toString(), Upload.class));
-                    }
+                //JSONArray items = responseData.getJSONArray(PARAM_RESPONSE_HISTORY_ITEMS);
+                //JSONArray multipasteItems = responseData.getJSONArray(PARAM_RESPONSE_HISTORY_MULT_ITEMS);
 
-                    Collections.sort(uploadHistory, (a, b) ->
-                            Long.compare(a.getUploadTimeStamp(), b.getUploadTimeStamp()) * (-1));
+                JSONObject nestedJsonUploadItems = responseData.getJSONObject(PARAM_RESPONSE_HISTORY_ITEMS);
 
-                    return uploadHistory;
+                ArrayList<Upload> uploadHistory = new ArrayList<>();
+                for (JSONObject item : getJSONObjectsWithoutKey(nestedJsonUploadItems)) {
+                    uploadHistory.add(gson.fromJson(item.toString(), Upload.class));
                 }
+
+                Collections.sort(uploadHistory, (a, b) ->
+                        Long.compare(a.getUploadTimeStamp(), b.getUploadTimeStamp()) * (-1));
+
+                return uploadHistory;
             }
-        } catch (IOException | JSONException e) {
+
+        } catch (JSONException e) {
             e.printStackTrace();
         }
-
 
         return null;
     }
 
-    public Boolean deleteUploads(PostInfo postInfo, ArrayList<Upload> uploads) {
+    public Boolean deleteUploads(PostInfo postInfo, ArrayList<Upload> uploads, OnErrorOccurredCallback callback) {
 
         Server server = postInfo.getServer();
         UserProfile userProfile = postInfo.getUserProfile();
@@ -388,23 +389,10 @@ public class NetworkManager {
 
         FormBody formBody = requestBuilder.build();
 
-        Request request = new Request.Builder()
-                .url(url)
-                .post(formBody)
-                .build();
 
-        try {
+        JSONObject data = buildAndExecuteRequest(url, formBody, callback);
 
-            Response response = client.newCall(request).execute();
-
-            // TODO add some deeper logic do determine successful deletion
-            return response.isSuccessful();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return false;
+        return data != null;
     }
 
     // region helper -------------------------------------------------------------------------------

@@ -302,7 +302,7 @@ public class PasteFragment extends NavigationFragment implements OnDataRemovedLi
 
     }
 
-    private class UploadFilesTask extends AsyncTask<PostInfo, Integer, ArrayList<String>> implements OnErrorOccurredCallback{
+    private class UploadFilesTask extends AsyncTask<PostInfo, Integer, ArrayList<String>> implements OnErrorOccurredCallback {
 
         @Override
         protected ArrayList<String> doInBackground(PostInfo... postInfos) {

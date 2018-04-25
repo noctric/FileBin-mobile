@@ -21,6 +21,7 @@ import butterknife.OnClick;
 import de.michael.filebinmobile.R;
 import de.michael.filebinmobile.adapters.HistoryAdapter;
 import de.michael.filebinmobile.controller.NetworkManager;
+import de.michael.filebinmobile.controller.OnErrorOccurredCallback;
 import de.michael.filebinmobile.controller.SettingsManager;
 import de.michael.filebinmobile.model.PostInfo;
 import de.michael.filebinmobile.model.Server;
@@ -117,8 +118,7 @@ public class HistoryFragment extends NavigationFragment {
 
     }
 
-
-    private class LoadHistoryTask extends AsyncTask<PostInfo, Integer, ArrayList<Upload>> {
+    private class LoadHistoryTask extends AsyncTask<PostInfo, Integer, ArrayList<Upload>> implements OnErrorOccurredCallback {
 
         @Override
         protected ArrayList<Upload> doInBackground(PostInfo... postInfos) {
@@ -128,7 +128,7 @@ public class HistoryFragment extends NavigationFragment {
                 UserProfile userProfile = postInfos[0].getUserProfile();
                 Server server = postInfos[0].getServer();
 
-                return NetworkManager.getInstance().loadUploadHistory(userProfile, server);
+                return NetworkManager.getInstance().loadUploadHistory(userProfile, server, this);
             }
 
             return null;
@@ -143,9 +143,15 @@ public class HistoryFragment extends NavigationFragment {
 
             super.onPostExecute(uploads);
         }
+
+        @Override
+        public void onError(String message) {
+            Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+        }
+
     }
 
-    private class DeleteUploadsTask extends AsyncTask<PostInfo, Integer, Boolean> {
+    private class DeleteUploadsTask extends AsyncTask<PostInfo, Integer, Boolean> implements OnErrorOccurredCallback {
 
         @Override
         protected Boolean doInBackground(PostInfo... postInfos) {
@@ -154,7 +160,7 @@ public class HistoryFragment extends NavigationFragment {
                 PostInfo postInfo = postInfos[0];
                 ArrayList<Upload> uploadList = adapter.getDeleteUploads();
 
-                return NetworkManager.getInstance().deleteUploads(postInfo, uploadList);
+                return NetworkManager.getInstance().deleteUploads(postInfo, uploadList, this);
             }
 
             return false;
@@ -174,6 +180,11 @@ public class HistoryFragment extends NavigationFragment {
             }
 
             super.onPostExecute(aBoolean);
+        }
+
+        @Override
+        public void onError(String message) {
+            Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
         }
     }
 }
