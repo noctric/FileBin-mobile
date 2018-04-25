@@ -18,4 +18,6 @@
     <string name="password">Password</string>
     <string name="password_save_hint">Your password will not be saved. It is only used to generate an apikey for the mobile app, which will be saved with your username.</string>
     <string name="emtpyList">No entries yet...</string>
+    <string name="active">active</string>
+    <string name="notActive">not active</string>
 </resources>

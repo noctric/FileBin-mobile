@@ -23,6 +23,9 @@ public class ServerSettingsViewholder extends RecyclerView.ViewHolder {
     @BindView(R.id.btnSetForUpload)
     ImageButton btnSetForUpload;
 
+    @BindView(R.id.txtIsProfileActive)
+    TextView txtIsProfileActive;
+
     public ServerSettingsViewholder(View itemView) {
         super(itemView);
         ButterKnife.bind(this, itemView);

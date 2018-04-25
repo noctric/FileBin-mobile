@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -30,7 +29,7 @@ import de.michael.filebinmobile.controller.SettingsManager;
 import de.michael.filebinmobile.model.Server;
 import de.michael.filebinmobile.model.UserProfile;
 
-public class SettingsFragment extends Fragment implements OnAdapterDataChangedListener {
+public class SettingsFragment extends NavigationFragment implements OnAdapterDataChangedListener {
 
     @BindView(R.id.rclServerList)
     RecyclerView rclServerList;
@@ -42,17 +41,12 @@ public class SettingsFragment extends Fragment implements OnAdapterDataChangedLi
 
     private CreateApikeyTask createApikeyTask;
 
-    private ArrayList<Server> mockData = new ArrayList<>();
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         this.adapter = new ServerSettingsAdapter(getActivity());
         this.adapter.setDataChangedListener(this);
-
-        //reloadServerList();
-
     }
 
     @Nullable

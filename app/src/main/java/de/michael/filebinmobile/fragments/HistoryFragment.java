@@ -3,7 +3,6 @@ package de.michael.filebinmobile.fragments;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -28,7 +27,7 @@ import de.michael.filebinmobile.model.Server;
 import de.michael.filebinmobile.model.Upload;
 import de.michael.filebinmobile.model.UserProfile;
 
-public class HistoryFragment extends Fragment {
+public class HistoryFragment extends NavigationFragment {
 
     @BindView(R.id.rclUploadHistory)
     RecyclerView rclUploadHistory;

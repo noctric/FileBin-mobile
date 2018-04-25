@@ -258,7 +258,7 @@ public class PasteFragment extends NavigationFragment implements OnDataRemovedLi
                     this.filesToUpload.add(file);
                 }
 
-                // safer to just readd the entire list so we don't run the danger of any
+                // safer to just re-add the entire list so we don't run the danger of any
                 // discrepancies between adapter data and actual data
                 this.adapter.updateData(this.filesToUpload);
 

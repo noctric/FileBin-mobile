@@ -18,8 +18,11 @@ import de.michael.filebinmobile.model.UserProfile;
 
 public class ServerSettingsAdapter extends SimpleDataAdapter<ServerSettingsViewholder, Server> {
 
+    private PostInfo selectedPostInfo;
+
     public ServerSettingsAdapter(Activity activity) {
         super(activity);
+        selectedPostInfo = getPostInfo();
     }
 
     @Override
@@ -33,6 +36,16 @@ public class ServerSettingsAdapter extends SimpleDataAdapter<ServerSettingsViewh
     @Override
     public void onBindViewHolder(ServerSettingsViewholder holder, int position) {
         final Server item = this.getData().get(position);
+
+        if (this.selectedPostInfo.getServer().equals(item) &&
+                this.selectedPostInfo.getUserProfile().equals(item.getUserProfiles().get(0))) {
+            holder.txtIsProfileActive.setText(R.string.active);
+            holder.txtIsProfileActive.setTextColor(getActivity().getResources().getColor(R.color.colorAccent));
+        } else {
+            holder.txtIsProfileActive.setText(R.string.notActive);
+            holder.txtIsProfileActive.setTextColor(getActivity().getResources().getColor(R.color.colorTextLight));
+        }
+
         holder.txtName.setText(item.getName());
         holder.txtAddr.setText(item.getAddr());
 
@@ -70,29 +83,30 @@ public class ServerSettingsAdapter extends SimpleDataAdapter<ServerSettingsViewh
             }
         });
 
-        holder.btnSetForUpload.setOnClickListener(new View.OnClickListener() {
+        holder.btnSetForUpload.setOnClickListener(view -> {
 
-            @Override
-            public void onClick(View view) {
+            UserProfile userProfile = null;
 
-                UserProfile userProfile = null;
+            // for now, we only add one profile for each server (this will change)
+            // se we don't have to display a list for selection just yet.
+            ArrayList<UserProfile> userProfiles = item.getUserProfiles();
+            if (userProfiles.size() > 0) {
 
-                // for now, we only add one profile for each server (this will change)
-                // se we don't have to display a list for selection just yet.
-                ArrayList<UserProfile> userProfiles = item.getUserProfiles();
-                if (userProfiles.size() > 0) {
-
-                    userProfile = userProfiles.get(0);
-
-                }
-
-                PostInfo postInfo = new PostInfo(userProfile, item);
-
-                SettingsManager.getInstance().setPostInfo(postInfo, getActivity());
-
-                Toast.makeText(getActivity(), "Server set and selected", Toast.LENGTH_SHORT).show();
+                userProfile = userProfiles.get(0);
 
             }
+
+            PostInfo postInfo = new PostInfo(userProfile, item);
+            this.selectedPostInfo = postInfo;
+
+            SettingsManager.getInstance().setPostInfo(postInfo, getActivity());
+
+            Toast.makeText(getActivity(), "Server set and selected", Toast.LENGTH_SHORT).show();
+
+            holder.txtIsProfileActive.setText(R.string.active);
+            holder.txtIsProfileActive.setTextColor(getActivity().getResources().getColor(R.color.colorAccent));
+
+            notifyDataSetChanged();
 
         });
     }
@@ -101,4 +115,9 @@ public class ServerSettingsAdapter extends SimpleDataAdapter<ServerSettingsViewh
     public int getItemCount() {
         return this.getData().size();
     }
+
+    public PostInfo getPostInfo() {
+        return SettingsManager.getInstance().getPostInfo(getActivity());
+    }
+
 }
