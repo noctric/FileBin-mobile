@@ -121,7 +121,7 @@ public class NetworkManager {
      * @return A newly created api key or null if not successful.
      */
     public @Nullable
-    String generateApiKey(@NonNull String username, @NonNull String password, @NonNull String serverAddr) {
+    String generateApiKey(@NonNull String username, @NonNull String password, @NonNull String serverAddr, OnErrorOccurredCallback callback) {
 
         String url = serverAddr + "/api/" + API_VERSIONS[1] + "/" + ENDPOINT_USER_CREATE_API_KEY;
 
@@ -139,11 +139,24 @@ public class NetworkManager {
         try {
             Response response = client.newCall(request).execute();
             if (response.isSuccessful()) {
-                JSONObject responseData = new JSONObject(response.body().string()).getJSONObject("data");
 
-                if (responseData != null) {
-                    return responseData.getString(PARAM_RESPONSE_NEW_API_KEY);
+                String responseString = response.body().string();
+                JSONObject responseJSONObject = new JSONObject(responseString);
+
+                if (!isErrorResponse(responseJSONObject)) {
+                    // no error response
+                    JSONObject responseData = responseJSONObject.getJSONObject("data");
+
+                    if (responseData != null) {
+                        return responseData.getString(PARAM_RESPONSE_NEW_API_KEY);
+                    }
+
+                } else if (callback != null) {
+
+                    callback.onError(getErrorMessage(responseJSONObject));
+
                 }
+
             }
         } catch (IOException | JSONException e) {
             e.printStackTrace();
@@ -244,13 +257,7 @@ public class NetworkManager {
 
                         // TODO we could include the error_id to maybe provide some more
                         // custom error handling
-                        String message = responseJSONObject.getString("message");
-
-                        if (message == null || message.isEmpty()) {
-                            message = "Sorry, an error occurred.";
-                        }
-
-                        callback.onError(message);
+                        callback.onError(getErrorMessage(responseJSONObject));
                     }
                 }
             }
@@ -471,6 +478,17 @@ public class NetworkManager {
             e.printStackTrace();
         }
         return false;
+    }
+
+    private String getErrorMessage(JSONObject response) throws JSONException {
+        String message = response.getString("message");
+
+        if (message == null || message.isEmpty()) {
+            message = "Sorry, an error occurred.";
+        }
+
+        return message;
+
     }
     //endregion
 }

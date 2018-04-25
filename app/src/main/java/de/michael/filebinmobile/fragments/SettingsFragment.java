@@ -25,6 +25,7 @@ import de.michael.filebinmobile.R;
 import de.michael.filebinmobile.adapters.OnAdapterDataChangedListener;
 import de.michael.filebinmobile.adapters.ServerSettingsAdapter;
 import de.michael.filebinmobile.controller.NetworkManager;
+import de.michael.filebinmobile.controller.OnErrorOccurredCallback;
 import de.michael.filebinmobile.controller.SettingsManager;
 import de.michael.filebinmobile.model.Server;
 import de.michael.filebinmobile.model.UserProfile;
@@ -150,7 +151,7 @@ public class SettingsFragment extends NavigationFragment implements OnAdapterDat
         reloadServerList();
     }
 
-    private class CreateApikeyTask extends AsyncTask<ApiKeyPostInfo, Integer, String> {
+    private class CreateApikeyTask extends AsyncTask<ApiKeyPostInfo, Integer, String> implements OnErrorOccurredCallback {
 
 
         private ApiKeyPostInfo postInfo;
@@ -169,7 +170,7 @@ public class SettingsFragment extends NavigationFragment implements OnAdapterDat
 
 
                 return NetworkManager.getInstance()
-                        .generateApiKey(userName, password, server.getAddr());
+                        .generateApiKey(userName, password, server.getAddr(), this);
 
             }
 
@@ -187,6 +188,11 @@ public class SettingsFragment extends NavigationFragment implements OnAdapterDat
             reloadServerList();
 
             super.onPostExecute(apikey);
+        }
+
+        @Override
+        public void onError(String message) {
+            Toast.makeText(getActivity(), "Unable to create apikey", Toast.LENGTH_SHORT).show();
         }
     }
 

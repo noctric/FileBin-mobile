@@ -72,7 +72,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
-            android:background="@color/colorDialogBlue"
+            android:background="@android:color/transparent"
+            android:tint="@color/colorPrimary"
             app:srcCompat="@mipmap/ic_add_white_24dp" />
 
         <ImageButton
@@ -80,7 +81,8 @@
             style="@style/imageButtinStandard"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@color/colorAccent"
+            android:background="@android:color/transparent"
+            android:tint="@color/colorAccent"
             app:srcCompat="@mipmap/ic_delete_white_24dp" />
 
     </LinearLayout>
