@@ -7,6 +7,8 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
@@ -174,7 +176,7 @@ public class PasteFragment extends NavigationFragment implements OnDataRemovedLi
 
                 cancelDownload();
 
-                this.fileUploadTask = new UploadFilesTask();
+                this.fileUploadTask = new UploadFilesTask(getActivity());
                 this.fileUploadTask.execute(postInfo);
             } else {
 
@@ -302,7 +304,22 @@ public class PasteFragment extends NavigationFragment implements OnDataRemovedLi
 
     }
 
+    @Override
+    void cancelAllPossiblyRunningTasks() {
+        if (this.fileUploadTask != null) {
+            this.fileUploadTask.cancel(true);
+        }
+    }
+
     private class UploadFilesTask extends AsyncTask<PostInfo, Integer, ArrayList<String>> implements OnErrorOccurredCallback {
+
+        // keep a reference to our activity/context in case we want to do some changes to the UI
+        // and prevent the application from crashing
+        private Activity activity;
+
+        public UploadFilesTask(Activity activity) {
+            this.activity = activity;
+        }
 
         @Override
         protected ArrayList<String> doInBackground(PostInfo... postInfos) {
@@ -363,7 +380,10 @@ public class PasteFragment extends NavigationFragment implements OnDataRemovedLi
 
         @Override
         public void onError(String message) {
-            Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+            // make sure we run this on the UI thread
+            new Handler(Looper.getMainLooper()).post(() ->
+                    Toast.makeText(this.activity, message, Toast.LENGTH_SHORT).show()
+            );
         }
     }
 }

@@ -4,7 +4,7 @@ import android.support.v4.app.Fragment;
 
 import de.michael.filebinmobile.OnTabNavigationRequestedListener;
 
-public class NavigationFragment extends Fragment {
+public abstract class NavigationFragment extends Fragment {
 
     private OnTabNavigationRequestedListener onTabNavigationRequestedListener;
 
@@ -15,4 +15,6 @@ public class NavigationFragment extends Fragment {
     OnTabNavigationRequestedListener getOnTabNavigationRequestedListener() {
         return onTabNavigationRequestedListener;
     }
+
+    abstract void cancelAllPossiblyRunningTasks();
 }

@@ -2,7 +2,6 @@ package de.michael.filebinmobile.adapters;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,7 +36,8 @@ public class ServerSettingsAdapter extends SimpleDataAdapter<ServerSettingsViewh
     public void onBindViewHolder(ServerSettingsViewholder holder, int position) {
         final Server item = this.getData().get(position);
 
-        if (this.selectedPostInfo.getServer().equals(item) &&
+        if (this.selectedPostInfo != null &&
+                this.selectedPostInfo.getServer().equals(item) &&
                 this.selectedPostInfo.getUserProfile().equals(item.getUserProfiles().get(0))) {
             holder.txtIsProfileActive.setText(R.string.active);
             holder.txtIsProfileActive.setTextColor(getActivity().getResources().getColor(R.color.colorAccent));
@@ -49,38 +49,32 @@ public class ServerSettingsAdapter extends SimpleDataAdapter<ServerSettingsViewh
         holder.txtName.setText(item.getName());
         holder.txtAddr.setText(item.getAddr());
 
-        final View editServerView = LayoutInflater.from(this.getActivity())
-                .inflate(R.layout.edit_server_settings, null);
+        holder.btnDelete.setOnClickListener(view -> {
 
-        holder.btnDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+            final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setMessage("Delete Server " + item.getName())
+                    .setTitle("Are you sure you want to delete this Server?")
+                    .setPositiveButton(R.string.yes, (dialogInterface, i) -> {
 
-                final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setMessage("Delete Server " + item.getName())
-                        .setTitle("Are you sure you want to delete this Server?")
-                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
+                        SettingsManager.getInstance().deleteServer(item, getActivity());
 
-                                SettingsManager.getInstance().deleteServer(item, getActivity());
+                        if (getDataChangedListener() != null) {
 
-                                if (getDataChangedListener() != null) {
+                            getDataChangedListener().onAdapterDataChanged();
 
-                                    getDataChangedListener().onAdapterDataChanged();
+                        }
 
-                                }
-                            }
-                        })
-                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                dialogInterface.dismiss();
-                            }
-                        });
-                AlertDialog dialog = builder.create();
-                dialog.show();
-            }
+                        PostInfo postInfo = SettingsManager.getInstance().getPostInfo(getActivity());
+
+                        if (postInfo != null &&
+                                postInfo.equals(new PostInfo(item.getUserProfiles().get(0), item))) {
+                            SettingsManager.getInstance().setPostInfo(null, getActivity());
+                        }
+
+                    })
+                    .setNegativeButton(R.string.cancel, (dialogInterface, i) -> dialogInterface.dismiss());
+            AlertDialog dialog = builder.create();
+            dialog.show();
         });
 
         holder.btnSetForUpload.setOnClickListener(view -> {

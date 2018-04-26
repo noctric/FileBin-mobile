@@ -1,7 +1,10 @@
 package de.michael.filebinmobile.fragments;
 
+import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
@@ -55,7 +58,7 @@ public class HistoryFragment extends NavigationFragment {
 
         if (postInfo != null) {
             // reference our task globally so we can cancel it in case the fragment get's destroyed
-            this.loadHistoryTask = new LoadHistoryTask();
+            this.loadHistoryTask = new LoadHistoryTask(getActivity());
             this.loadHistoryTask.execute(postInfo);
 
         }
@@ -65,19 +68,31 @@ public class HistoryFragment extends NavigationFragment {
     }
 
     @Override
+    public void onDetach() {
+
+        // cancel any possibly running tasks to avoid memory leaks
+        cancelAllPossiblyRunningTasks();
+
+        super.onDetach();
+    }
+
+    @Override
     public void onDestroy() {
 
         // cancel any possibly running tasks to avoid memory leaks
-        if (this.loadHistoryTask != null) {
-            this.loadHistoryTask.cancel(true);
-        }
-
-        if (this.deleteUploadsTask != null) {
-            this.deleteUploadsTask.cancel(true);
-        }
+        cancelAllPossiblyRunningTasks();
 
         super.onDestroy();
 
+    }
+
+    @Override
+    public void onDestroyView() {
+
+        // cancel any possibly running tasks to avoid memory leaks
+        cancelAllPossiblyRunningTasks();
+
+        super.onDestroyView();
     }
 
     @Nullable
@@ -111,14 +126,34 @@ public class HistoryFragment extends NavigationFragment {
 
             PostInfo postInfo = SettingsManager.getInstance().getPostInfo(getActivity());
 
-            this.deleteUploadsTask = new DeleteUploadsTask();
+            this.deleteUploadsTask = new DeleteUploadsTask(getActivity());
             this.deleteUploadsTask.execute(postInfo);
 
         }
 
     }
 
+    @Override
+    void cancelAllPossiblyRunningTasks() {
+        // cancel any possibly running tasks to avoid memory leaks
+        if (this.loadHistoryTask != null) {
+            this.loadHistoryTask.cancel(true);
+        }
+
+        if (this.deleteUploadsTask != null) {
+            this.deleteUploadsTask.cancel(true);
+        }
+    }
+
     private class LoadHistoryTask extends AsyncTask<PostInfo, Integer, ArrayList<Upload>> implements OnErrorOccurredCallback {
+
+        // keep a reference to our activity/context in case we want to do some changes to the UI
+        // and prevent the application from crashing
+        Activity activity;
+
+        public LoadHistoryTask(Activity activity) {
+            this.activity = activity;
+        }
 
         @Override
         protected ArrayList<Upload> doInBackground(PostInfo... postInfos) {
@@ -146,12 +181,24 @@ public class HistoryFragment extends NavigationFragment {
 
         @Override
         public void onError(String message) {
-            Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+
+            // make sure we run this on the UI thread
+            new Handler(Looper.getMainLooper()).post(() ->
+                    Toast.makeText(this.activity, message, Toast.LENGTH_SHORT).show()
+            );
         }
 
     }
 
     private class DeleteUploadsTask extends AsyncTask<PostInfo, Integer, Boolean> implements OnErrorOccurredCallback {
+
+        // keep a reference to our activity/context in case we want to do some changes to the UI
+        // and prevent the application from crashing
+        Activity activity;
+
+        public DeleteUploadsTask(Activity activity) {
+            this.activity = activity;
+        }
 
         @Override
         protected Boolean doInBackground(PostInfo... postInfos) {
@@ -184,7 +231,12 @@ public class HistoryFragment extends NavigationFragment {
 
         @Override
         public void onError(String message) {
-            Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+
+            // make sure we run this on the UI thread
+            new Handler(Looper.getMainLooper()).post(() ->
+                    Toast.makeText(this.activity, message, Toast.LENGTH_SHORT).show()
+            );
+
         }
     }
 }

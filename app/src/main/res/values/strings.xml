@@ -20,4 +20,7 @@
     <string name="emtpyList">No entries yet...</string>
     <string name="active">active</string>
     <string name="notActive">not active</string>
+    <string name="serverAddedToList">Server added</string>
+    <string name="setServerAsActive">Do you want to add this server and account as active upload target?</string>
+    <string name="no">No</string>
 </resources>

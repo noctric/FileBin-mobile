@@ -1,8 +1,11 @@
 package de.michael.filebinmobile.fragments;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
@@ -26,6 +29,7 @@ import de.michael.filebinmobile.adapters.ServerSettingsAdapter;
 import de.michael.filebinmobile.controller.NetworkManager;
 import de.michael.filebinmobile.controller.OnErrorOccurredCallback;
 import de.michael.filebinmobile.controller.SettingsManager;
+import de.michael.filebinmobile.model.PostInfo;
 import de.michael.filebinmobile.model.Server;
 import de.michael.filebinmobile.model.UserProfile;
 
@@ -113,7 +117,7 @@ public class SettingsFragment extends NavigationFragment implements OnAdapterDat
 
                     ApiKeyPostInfo apiKeyPostInfo = new ApiKeyPostInfo(userName, server, password);
 
-                    createApikeyTask = new CreateApikeyTask();
+                    createApikeyTask = new CreateApikeyTask(getActivity());
                     createApikeyTask.execute(apiKeyPostInfo);
 
                     Toast.makeText(getActivity(), "Creating Apikey", Toast.LENGTH_SHORT).show();
@@ -142,10 +146,21 @@ public class SettingsFragment extends NavigationFragment implements OnAdapterDat
         reloadServerList();
     }
 
+    @Override
+    void cancelAllPossiblyRunningTasks() {
+        if (this.createApikeyTask != null) {
+            this.createApikeyTask.cancel(true);
+        }
+    }
+
     private class CreateApikeyTask extends AsyncTask<ApiKeyPostInfo, Integer, String> implements OnErrorOccurredCallback {
 
-
+        private Activity activity;
         private ApiKeyPostInfo postInfo;
+
+        public CreateApikeyTask(Activity activity) {
+            this.activity = activity;
+        }
 
         @Override
         protected String doInBackground(ApiKeyPostInfo... postInfos) {
@@ -170,19 +185,39 @@ public class SettingsFragment extends NavigationFragment implements OnAdapterDat
         @Override
         protected void onPostExecute(String apikey) {
 
-            Server server = this.postInfo.getServer();
-            server.addUserProfile(new UserProfile(this.postInfo.username, apikey));
+            if (apikey != null) {
 
-            SettingsManager.getInstance().addServer(server, getActivity());
+                Server server = this.postInfo.getServer();
+                server.addUserProfile(new UserProfile(this.postInfo.username, apikey));
 
-            reloadServerList();
+                SettingsManager.getInstance().addServer(server, getActivity());
+
+                reloadServerList();
+
+                new AlertDialog.Builder(getContext())
+                        .setTitle(R.string.serverAddedToList)
+                        .setMessage(R.string.setServerAsActive)
+                        .setPositiveButton(R.string.yes, ((dialogInterface, i) -> {
+                            UserProfile userProfile = server.getUserProfiles().get(0);
+                            SettingsManager.getInstance()
+                                    .setPostInfo(new PostInfo(userProfile, server), getActivity());
+                            //TODO set the "active" indicator
+                        }))
+                        .setNegativeButton(R.string.no, ((dialogInterface, i) -> {
+                            dialogInterface.dismiss();
+                        }))
+                        .create().show();
+            }
 
             super.onPostExecute(apikey);
         }
 
         @Override
         public void onError(String message) {
-            Toast.makeText(getActivity(), "Unable to create apikey", Toast.LENGTH_SHORT).show();
+            // make sure we run this on the UI thread
+            new Handler(Looper.getMainLooper()).post(() ->
+                    Toast.makeText(this.activity, "Unable to create apikey", Toast.LENGTH_SHORT)
+                            .show());
         }
     }
 
