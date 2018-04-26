@@ -26,8 +26,8 @@
         android:layout_marginEnd="8dp"
         android:layout_marginTop="8dp"
         android:ems="10"
+        android:hint="@string/password"
         android:inputType="textPassword"
-        android:text="Name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edtUserName" />
 
@@ -38,8 +38,8 @@
         android:layout_marginEnd="8dp"
         android:layout_marginTop="8dp"
         android:ems="10"
+        android:hint="@string/user_name"
         android:inputType="textPersonName"
-        android:text="Name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edtEditAddress" />
 
@@ -77,8 +77,8 @@
         android:layout_marginEnd="8dp"
         android:layout_marginTop="8dp"
         android:ems="10"
+        android:hint="@string/name"
         android:inputType="textPersonName"
-        android:text="Name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -89,8 +89,8 @@
         android:layout_marginEnd="8dp"
         android:layout_marginTop="8dp"
         android:ems="10"
+        android:hint="@string/exampleAddr"
         android:inputType="textPersonName"
-        android:text="@string/exampleAddr"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edtEditName" />
 

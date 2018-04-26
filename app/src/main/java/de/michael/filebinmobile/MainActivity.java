@@ -106,6 +106,8 @@ public class MainActivity extends AppCompatActivity implements OnTabNavigationRe
 
             onFirstLaunch();
 
+            SettingsManager.getInstance().setHasLaunchedBefore(this, true);
+
         }
 
     }

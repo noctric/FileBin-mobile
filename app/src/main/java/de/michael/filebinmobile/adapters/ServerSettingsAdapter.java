@@ -24,6 +24,10 @@ public class ServerSettingsAdapter extends SimpleDataAdapter<ServerSettingsViewh
         selectedPostInfo = getPostInfo();
     }
 
+    public void setSelectedPostInfo(PostInfo selectedPostInfo) {
+        this.selectedPostInfo = selectedPostInfo;
+    }
+
     @Override
     public ServerSettingsViewholder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
@@ -37,8 +41,7 @@ public class ServerSettingsAdapter extends SimpleDataAdapter<ServerSettingsViewh
         final Server item = this.getData().get(position);
 
         if (this.selectedPostInfo != null &&
-                this.selectedPostInfo.getServer().equals(item) &&
-                this.selectedPostInfo.getUserProfile().equals(item.getUserProfiles().get(0))) {
+                this.selectedPostInfo.equals(new PostInfo(item.getUserProfiles().get(0), item))) {
             holder.txtIsProfileActive.setText(R.string.active);
             holder.txtIsProfileActive.setTextColor(getActivity().getResources().getColor(R.color.colorAccent));
         } else {

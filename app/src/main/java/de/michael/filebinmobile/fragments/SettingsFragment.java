@@ -130,7 +130,13 @@ public class SettingsFragment extends NavigationFragment implements OnAdapterDat
 
     private void reloadServerList() {
 
+        // update active status of added server (even if user hasn't set the new server as
+        // active, we still check here.
+        PostInfo postInfo = SettingsManager.getInstance().getPostInfo(getActivity());
+        this.adapter.setSelectedPostInfo(postInfo);
+
         ArrayList<Server> serverList = SettingsManager.getInstance().getServerList(getActivity());
+
         this.adapter.updateData(serverList);
 
         if (this.adapter.getItemCount() <= 0) {
@@ -138,6 +144,7 @@ public class SettingsFragment extends NavigationFragment implements OnAdapterDat
         } else {
             txtEmptyList.setVisibility(View.GONE);
         }
+
 
     }
 
@@ -192,21 +199,22 @@ public class SettingsFragment extends NavigationFragment implements OnAdapterDat
 
                 SettingsManager.getInstance().addServer(server, getActivity());
 
-                reloadServerList();
-
                 new AlertDialog.Builder(getContext())
                         .setTitle(R.string.serverAddedToList)
                         .setMessage(R.string.setServerAsActive)
                         .setPositiveButton(R.string.yes, ((dialogInterface, i) -> {
                             UserProfile userProfile = server.getUserProfiles().get(0);
+                            PostInfo postInfo = new PostInfo(userProfile, server);
                             SettingsManager.getInstance()
-                                    .setPostInfo(new PostInfo(userProfile, server), getActivity());
-                            //TODO set the "active" indicator
+                                    .setPostInfo(postInfo, getActivity());
+                            reloadServerList();
                         }))
                         .setNegativeButton(R.string.no, ((dialogInterface, i) -> {
                             dialogInterface.dismiss();
                         }))
                         .create().show();
+
+                reloadServerList();
             }
 
             super.onPostExecute(apikey);

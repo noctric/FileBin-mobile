@@ -26,4 +26,5 @@
     <string name="welcomeMsg">Welcome to FileBin for android! To start uploading files, add a server with a profile on the _Server Settings_ page. Note that you will need an account with a host of your choice to upload any files or use this app at all.</string>
     <string name="welcome">Welcome!</string>
     <string name="navToServerSettings">Yes, take me there!</string>
+    <string name="name">Name</string>
 </resources>
