@@ -21,12 +21,25 @@ public class SettingsManager {
 
     private static final String KEY_SERVER_LIST = "de.michael.filebin.SERVER_NAMES";
     private static final String KEY_SELECTED_POSTINFO = "de.michael.filebin.SELECTED_POSTINFO";
+    private static final String KEY_APP_LAUNCHED_BEFORE = "de.michael.filebin.FIRST_APP_LAUNCH";
 
     public static SettingsManager getInstance() {
         return INSTANCE;
     }
 
     private SettingsManager() {
+    }
+
+    public boolean hasLaunchedBefore(Activity activity) {
+
+        SharedPreferences preferences = activity.getPreferences(Context.MODE_PRIVATE);
+        return preferences.getBoolean(KEY_APP_LAUNCHED_BEFORE, false);
+    }
+
+    public void setHasLaunchedBefore(Activity activity, boolean hasLaunchedBefore) {
+        SharedPreferences preferences = activity.getPreferences(Context.MODE_PRIVATE);
+        preferences.edit().putBoolean(KEY_APP_LAUNCHED_BEFORE, hasLaunchedBefore)
+                .apply();
     }
 
     /**

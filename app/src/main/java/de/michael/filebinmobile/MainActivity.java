@@ -5,11 +5,13 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import de.michael.filebinmobile.controller.SettingsManager;
 import de.michael.filebinmobile.fragments.HistoryFragment;
 import de.michael.filebinmobile.fragments.PasteFragment;
 import de.michael.filebinmobile.fragments.SettingsFragment;
@@ -97,6 +99,31 @@ public class MainActivity extends AppCompatActivity implements OnTabNavigationRe
                 .add(R.id.frlMainContent, this.pasteFragment).commit();
 
         bnvMainNavigation.setOnNavigationItemSelectedListener(this.onNavigationItemSelectedListener);
+
+        // Do some stuff on first launch
+        boolean hasLaunchedBefore = SettingsManager.getInstance().hasLaunchedBefore(this);
+        if (!hasLaunchedBefore) {
+
+            onFirstLaunch();
+
+        }
+
+    }
+
+    /**
+     * We wan't to show a welcome screen and give a short introduction on adding server profiles
+     */
+    public void onFirstLaunch() {
+
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.welcome)
+                .setMessage(R.string.welcomeMsg)
+                .setPositiveButton(R.string.navToServerSettings, (dialogInterface, i) ->
+                        onNavigationRequest(R.id.navigation_server_settings))
+                .setNegativeButton(R.string.no, (dialogInterface, i) -> dialogInterface.dismiss())
+                .create().show();
+
+
     }
 
     @Override
