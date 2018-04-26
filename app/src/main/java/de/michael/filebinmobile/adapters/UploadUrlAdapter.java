@@ -6,6 +6,7 @@ import android.content.ClipboardManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import de.michael.filebinmobile.R;
 
@@ -38,6 +39,7 @@ public class UploadUrlAdapter extends SimpleDataAdapter<UploadUrlViewHolder, Str
             ClipData clip = ClipData.newPlainText("FileBin mobile url", url);
             if (clipboard != null) {
                 clipboard.setPrimaryClip(clip);
+                Toast.makeText(getActivity(), "Url copied to clipboard", Toast.LENGTH_SHORT).show();
             }
         });
 

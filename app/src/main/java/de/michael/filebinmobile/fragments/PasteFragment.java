@@ -373,6 +373,11 @@ public class PasteFragment extends NavigationFragment implements OnDataRemovedLi
                 AlertDialog dialog = builder.create();
                 dialog.show();
 
+                // clear our selected files
+                edtPastedText.setText("");
+                filesToUpload.clear();
+                adapter.clear();
+
             }
 
             super.onPostExecute(urlList);
