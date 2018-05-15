@@ -1,5 +1,7 @@
 package de.michael.filebinmobile.controller.refactor
 
+import android.content.Context
+import android.content.SharedPreferences
 import com.google.gson.GsonBuilder
 import de.michael.filebinmobile.model.MultiPasteUpload
 import de.michael.filebinmobile.model.refactor.PostInfo
@@ -17,7 +19,7 @@ import java.util.concurrent.TimeUnit
 
 
 // region CONSTANTS
-// Endpoints
+// region Endpoints
 private const val ACCESS_API = "/api/"
 
 private const val ENDPOINT_USER_CREATE_API_KEY = "user/create_apikey"
@@ -52,6 +54,17 @@ private const val PARAM_RESPONSE_MAX_SIZE_REQ = "request_max_size"
 private val API_VERSIONS = arrayOf("/api/v2.1.1", "/api/v2.1.0", "/api/v2.0.0", "/api/v1.4.0",
         "/api/v1.3.0", "/api/v1.2.0", "/api/v1.0.0")
 // endregion
+// region preference keys
+private const val KEY_STORE_PREFS = "de.michael.filebin.prefs"
+private const val KEY_SERVER_LIST = "de.michael.filebin.SERVER_NAMES"
+private const val KEY_SELECTED_POSTINFO = "de.michael.filebin.SELECTED_POSTINFO"
+private const val KEY_APP_LAUNCHED_BEFORE = "de.michael.filebin.FIRST_APP_LAUNCH"
+// endregion
+// endregion
+
+private val gson = GsonBuilder()
+        .registerTypeAdapter(Upload::class.java, UploadItemJsonDeserializer())
+        .registerTypeAdapter(MultiPasteUpload::class.java, MultiPasteUploadDeserializer()).create()
 
 object NetworkManager {
     private val client = OkHttpClient.Builder()
@@ -60,11 +73,6 @@ object NetworkManager {
             .readTimeout(30, TimeUnit.SECONDS)
             .retryOnConnectionFailure(false)
             .build()
-
-    private val gson = GsonBuilder()
-            .registerTypeAdapter(Upload::class.java, UploadItemJsonDeserializer())
-            .registerTypeAdapter(MultiPasteUpload::class.java, MultiPasteUploadDeserializer()).create()
-
 
     private fun buildAndExecuteRequest(url: String, body: RequestBody,
                                        onError: (String) -> Unit = {}): JSONObject? {
@@ -207,6 +215,69 @@ object NetworkManager {
     }
 }
 
+object SettingsManager {
+
+    private fun getAppPreferences(context: Context): SharedPreferences =
+            context.getSharedPreferences(KEY_STORE_PREFS, Context.MODE_PRIVATE)
+
+    fun hasLaunchedBefore(context: Context): Boolean =
+            getAppPreferences(context).getBoolean(KEY_APP_LAUNCHED_BEFORE, false)
+
+    fun setHasLaunchedBefore(context: Context, hasLaunchedBefore: Boolean) =
+            getAppPreferences(context)
+                    .edit()
+                    .putBoolean(KEY_APP_LAUNCHED_BEFORE, hasLaunchedBefore)
+                    .apply()
+
+    fun addServer(context: Context, server: Server) {
+        val mutableSet = getAppPreferences(context)
+                .getStringSet(KEY_SERVER_LIST, emptySet())
+                .toMutableSet()
+
+        mutableSet.add(gson.toJson(server))
+
+        getAppPreferences(context)
+                .edit()
+                .putStringSet(KEY_SERVER_LIST, mutableSet)
+                .apply()
+    }
+
+    fun getServerList(context: Context): List<Server> {
+        val serverSet = getAppPreferences(context).getStringSet(KEY_SERVER_LIST, emptySet())
+
+        return serverSet
+                .map { gson.fromJson(it, Server::class.java) }
+                .toList()
+    }
+
+    fun deleteServer(context: Context, server: Server) {
+
+        val mutableSet = getAppPreferences(context)
+                .getStringSet(KEY_SERVER_LIST, emptySet())
+                .toMutableSet()
+
+        mutableSet.remove(gson.toJson(server))
+
+        getAppPreferences(context)
+                .edit()
+                .putStringSet(KEY_SERVER_LIST, mutableSet)
+                .apply()
+    }
+
+    fun setPostInfo(context: Context, postInfo: PostInfo?) =
+            getAppPreferences(context)
+                    .edit()
+                    .putString(KEY_SELECTED_POSTINFO, gson.toJson(postInfo))
+                    .apply()
+
+    fun getPostInfo(context: Context): PostInfo? {
+        val serializedPostInfo = getAppPreferences(context).getString(KEY_SELECTED_POSTINFO, null)
+
+        return gson.fromJson(serializedPostInfo, PostInfo::class.java)
+    }
+}
+
+//region helpers
 private fun getLatestApiVersion(): String = API_VERSIONS[1]
 
 fun JSONObject?.isErrorResponse(): Boolean =
@@ -231,3 +302,4 @@ fun JSONObject.getObjectsWithoutKey(): List<JSONObject> {
     return jsonObjects
 
 }
+//endregion
