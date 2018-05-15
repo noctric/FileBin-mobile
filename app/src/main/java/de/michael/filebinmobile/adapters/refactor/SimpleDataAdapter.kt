@@ -5,7 +5,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.View
 
 abstract class SimpleDataAdapter<T : AbstractViewHolder<K>, K>
-(private val activity: Activity,
+(val activity: Activity,
  private val removeItem: (Int) -> Unit = {},
  private val onDataChanged: () -> Unit = {}) : RecyclerView.Adapter<T>() {
 
@@ -45,5 +45,5 @@ abstract class SimpleDataAdapter<T : AbstractViewHolder<K>, K>
 }
 
 abstract class AbstractViewHolder<K>(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    abstract fun bindItem(item: K, removeItem: (Int) -> Unit, pos: Int)
+    abstract fun bindItem(item: K, removeItem: (Int) -> Unit = {}, pos: Int)
 }
