@@ -10,7 +10,7 @@ import kotlinx.android.synthetic.main.list_item_upload_history.view.*
 import java.text.DateFormat
 import java.util.*
 
-class HistoryAdapter(val activity: Activity) : SimpleDataAdapter<HistoryViewHolder, Upload>(activity) {
+class HistoryAdapter(activity: Activity) : SimpleDataAdapter<HistoryViewHolder, Upload>(activity) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HistoryViewHolder {
         val view = LayoutInflater.from(parent.context)

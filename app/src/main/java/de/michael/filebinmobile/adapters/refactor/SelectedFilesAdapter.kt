@@ -10,19 +10,20 @@ import de.michael.filebinmobile.util.FileChooserUtil
 import kotlinx.android.synthetic.main.list_item_selected_file.view.*
 import java.io.File
 
-class SelectedFilesAdapter(activity: Activity, private val itemRemove: () -> Unit) : SimpleDataAdapter<SelectedFileViewHolder, File>(activity) {
+class SelectedFilesAdapter(activity: Activity, removeItem: (Int) -> Unit)
+    : SimpleDataAdapter<SelectedFileViewHolder, File>(activity, removeItem) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SelectedFileViewHolder {
         val view = LayoutInflater.from(parent.context)
                 .inflate(R.layout.list_item_selected_file, null)
 
-        return SelectedFileViewHolder(view, itemRemove)
+        return SelectedFileViewHolder(view)
     }
 }
 
-class SelectedFileViewHolder(itemView: View, private val itemRemove: () -> Unit) : AbstractViewHolder<File>(itemView) {
+class SelectedFileViewHolder(itemView: View) : AbstractViewHolder<File>(itemView) {
 
-    override fun bindItem(item: File) {
+    override fun bindItem(item: File, removeItem: (Int) -> Unit, pos: Int) {
         itemView.txtSelectedFileName.text = item.name
 
         val mimeType = FileChooserUtil.getMimeType(item)
@@ -34,7 +35,7 @@ class SelectedFileViewHolder(itemView: View, private val itemRemove: () -> Unit)
         }
 
         itemView.btnDeselectFile.setOnClickListener {
-            itemRemove()
+            removeItem(pos)
         }
     }
 
