@@ -22,9 +22,10 @@ class HistoryAdapter(activity: Activity) : SimpleDataAdapter<HistoryViewHolder, 
 }
 
 class HistoryViewHolder(itemView: View) : AbstractViewHolder<Upload>(itemView) {
+
     private val dateFormat: DateFormat = java.text.DateFormat.getDateInstance();
 
-    override fun bindItem(item: Upload) {
+    override fun bindItem(item: Upload, removeItem: (Int) -> Unit, pos: Int) {
         itemView.txtUploadName.text = item.uploadTitle
         itemView.txtUploadSize.text = item.uploadSize
 
