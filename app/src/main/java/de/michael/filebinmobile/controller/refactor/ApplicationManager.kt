@@ -2,9 +2,10 @@ package de.michael.filebinmobile.controller.refactor
 
 import com.google.gson.GsonBuilder
 import de.michael.filebinmobile.model.MultiPasteUpload
-import de.michael.filebinmobile.model.Server
-import de.michael.filebinmobile.model.Upload
-import de.michael.filebinmobile.model.UserProfile
+import de.michael.filebinmobile.model.refactor.PostInfo
+import de.michael.filebinmobile.model.refactor.Server
+import de.michael.filebinmobile.model.refactor.Upload
+import de.michael.filebinmobile.model.refactor.UserProfile
 import de.michael.filebinmobile.serialize.MultiPasteUploadDeserializer
 import de.michael.filebinmobile.serialize.UploadItemJsonDeserializer
 import de.michael.filebinmobile.util.FileChooserUtil
@@ -118,7 +119,7 @@ object NetworkManager {
 
     fun pasteUploadFiles(user: UserProfile, server: Server, files: Array<File>,
                          onError: (String) -> Unit = {}): List<String> {
-        val url = "${server.addr}${getLatestApiVersion()}/$ENDPOINT_FILE_UPLOAD"
+        val url = "${server.address}${getLatestApiVersion()}/$ENDPOINT_FILE_UPLOAD"
 
         val multipartBuilder = MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
@@ -139,6 +140,71 @@ object NetworkManager {
         val jsonArray = buildAndExecuteRequest(url, multipartBody, onError)?.getJSONArray(PARAM_RESPONSE_URLS)
         return jsonArray?.iterator<String>()?.asSequence()?.toList() ?: emptyList()
     }
+
+    fun Server.updateServerInfo(onError: (String) -> Unit = {}) {
+        val url = "${this.address}${getLatestApiVersion()}/$ENDPOINT_FILE_GET_CONFIG"
+
+        val request = Request.Builder()
+                .url(url)
+                .build()
+
+        val response = client.newCall(request).execute()
+
+        if (response.isSuccessful) {
+
+            val dataObject = JSONObject(response.body()?.string()).getDataObject()
+
+            if (dataObject.isErrorResponse()) {
+
+                onError(dataObject.getErrorMessage())
+
+            } else {
+
+                this.uploadMaxSize = dataObject.getInt(PARAM_RESPONSE_MAX_UPL_SIZE)
+                this.maxFilesPerRequest = dataObject.getInt(PARAM_RESPONSE_MAX_FILES_REQ)
+                this.maxInputVars = dataObject.getInt(PARAM_RESPONSE_MAX_IN_VARS)
+                this.requestMaxSize = dataObject.getInt(PARAM_RESPONSE_MAX_SIZE_REQ)
+
+            }
+
+        } else {
+
+            onError("Response with code ${response.code()}")
+
+        }
+
+    }
+
+    fun loadUploadHistory(user: UserProfile, server: Server, onError: (String) -> Unit = {}): List<Upload>? {
+        val url = "${server.address}${getLatestApiVersion()}/$ENDPOINT_FILE_HISTORY"
+
+        val body = FormBody.Builder()
+                .add(PARAM_APIKEY, user.apiKey)
+                .build()
+
+        val response = buildAndExecuteRequest(url, body, onError)
+
+        val historyItems = response?.getJSONObject(PARAM_RESPONSE_HISTORY_ITEMS)?.getObjectsWithoutKey()
+
+        return historyItems?.map { gson.fromJson(it.toString(), Upload::class.java) }?.sortedBy { it.uploadTimeStamp }
+    }
+
+    fun deleteUploads(postInfo: PostInfo, uploads: List<Upload>, onError: (String) -> Unit = {}): Boolean {
+
+        val url = "${postInfo.server.address}${getLatestApiVersion()}/$ENDPOINT_FILE_DELETE"
+
+        val formBodyBuilder = FormBody.Builder()
+                .add(PARAM_APIKEY, postInfo.userProfile.apiKey)
+
+        for (i in 0 until uploads.size) {
+            formBodyBuilder.add("ids[$i]", uploads[i].id)
+        }
+
+        val response = buildAndExecuteRequest(url, formBodyBuilder.build(), onError)
+
+        return response?.isErrorResponse()?.not() ?: false
+
+    }
 }
 
 private fun getLatestApiVersion(): String = API_VERSIONS[1]
@@ -154,3 +220,14 @@ fun JSONObject.getDataObject(): JSONObject = this.getJSONObject("data")
 // create an iterator for JSONArrays
 operator fun <T> JSONArray.iterator(): Iterator<T> =
         (0 until this.length()).asSequence().map { get(it) as T }.iterator()
+
+fun JSONObject.getObjectsWithoutKey(): List<JSONObject> {
+    val jsonObjects = mutableListOf<JSONObject>()
+
+    for (key in this.keys()) {
+        jsonObjects.add(this.getJSONObject(key))
+    }
+
+    return jsonObjects
+
+}
