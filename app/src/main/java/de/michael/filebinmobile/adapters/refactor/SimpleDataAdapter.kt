@@ -9,9 +9,9 @@ abstract class SimpleDataAdapter<T : AbstractViewHolder<K>, K>
  private val removeItem: (Int) -> Unit = {},
  private val onDataChanged: () -> Unit = {}) : RecyclerView.Adapter<T>() {
 
-    val data: ArrayList<K> = ArrayList()
+    val data: MutableList<K> = mutableListOf()
 
-    fun updateData(data: ArrayList<K>) {
+    fun updateData(data: List<K>) {
         this.data.clear()
         this.data.addAll(data)
         notifyDataSetChanged()
