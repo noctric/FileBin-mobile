@@ -125,7 +125,7 @@ object NetworkManager {
         return buildAndExecuteRequest(url, formBody, onError)?.getString(PARAM_RESPONSE_NEW_API_KEY)
     }
 
-    fun pasteUploadFiles(user: UserProfile, server: Server, files: Array<File>,
+    fun pasteUploadFiles(user: UserProfile, server: Server, files: List<File>,
                          onError: (String) -> Unit = {}): List<String> {
         val url = "${server.address}${getLatestApiVersion()}/$ENDPOINT_FILE_UPLOAD"
 
