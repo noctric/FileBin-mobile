@@ -13,11 +13,15 @@ import de.michael.filebinmobile.model.refactor.Server
 import kotlinx.android.synthetic.main.list_item_server_setting.view.*
 
 class ServerSettingsAdapter(activity: Activity) : SimpleDataAdapter<ServerSettingsViewHolder, Server>(activity) {
+
+    var selectedPostInfo: PostInfo? = null
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ServerSettingsViewHolder {
         val view = LayoutInflater.from(parent.context)
                 .inflate(R.layout.list_item_server_setting, null)
         return ServerSettingsViewHolder(view, activity)
     }
+
 }
 
 class ServerSettingsViewHolder(itemView: View, val activity: Activity) : AbstractViewHolder<Server>(itemView) {
