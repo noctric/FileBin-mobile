@@ -8,8 +8,8 @@ import de.michael.filebinmobile.model.refactor.PostInfo
 import de.michael.filebinmobile.model.refactor.Server
 import de.michael.filebinmobile.model.refactor.Upload
 import de.michael.filebinmobile.model.refactor.UserProfile
-import de.michael.filebinmobile.serialize.MultiPasteUploadDeserializer
 import de.michael.filebinmobile.serialize.UploadItemJsonDeserializer
+import de.michael.filebinmobile.serialize.refactor.MultiPasteUploadDeserializer
 import de.michael.filebinmobile.util.FileChooserUtil
 import okhttp3.*
 import org.json.JSONArray
