@@ -1,6 +1,7 @@
 package de.michael.filebinmobile.fragments.refactor
 
-import android.app.Fragment
+import android.support.v4.app.Fragment
+
 
 abstract class NavigationFragment : Fragment() {
     var onTabNavigationRequested: (menuItemId: Int) -> Unit = {}
