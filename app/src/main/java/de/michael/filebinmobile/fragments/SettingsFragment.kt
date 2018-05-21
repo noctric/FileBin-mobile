@@ -35,14 +35,14 @@ class SettingsFragment : NavigationFragment() {
         createApiKeyTask = null
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        return inflater?.inflate(R.layout.server_settings_fragment, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.server_settings_fragment, container, false)
                 ?: super.onCreateView(inflater, container, savedInstanceState)
     }
 
-    private fun init(view: View) {
+    private fun init() {
 
-        this.adapter = ServerSettingsAdapter(activity)
+        this.adapter = ServerSettingsAdapter(activity!!)
 
         val linearLayoutManager = LinearLayoutManager(activity)
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
@@ -61,13 +61,13 @@ class SettingsFragment : NavigationFragment() {
                     .inflate(R.layout.edit_server_settings, null)
             AlertDialog.Builder(activity)
                     .setTitle("Add Server")
+                    .setView(dialogView)
                     .setPositiveButton(R.string.ok) { _: DialogInterface, _: Int ->
                         val serverName = dialogView.edtEditName.text.toString()
                         val serverAddr = dialogView.edtEditAddress.text.toString()
                         val userName = dialogView.edtUserName.text.toString()
 
-                        val server = Server(serverName,
-                                serverAddr)
+                        val server = Server(serverAddr, serverName)
 
                         val apiKeyPostInfo = ApiKeyPostInfo(server, userName, dialogView.edtUserPassword.text.toString())
 
@@ -85,7 +85,7 @@ class SettingsFragment : NavigationFragment() {
     }
 
     override fun onStart() {
-        init(view)
+        init()
         reloadServerList()
         super.onStart()
     }
@@ -98,10 +98,10 @@ class SettingsFragment : NavigationFragment() {
     private fun reloadServerList() {
         // update active status of added server (even if user hasn't set the new server as
         // active, we still check here.
-        val postInfo = SettingsManager.getPostInfo(activity)
+        val postInfo = SettingsManager.getPostInfo(activity!!)
         this.adapter!!.selectedPostInfo = postInfo
 
-        val serverList = SettingsManager.getServerList(activity)
+        val serverList = SettingsManager.getServerList(activity!!)
 
         this.adapter!!.updateData(serverList)
 
@@ -137,13 +137,13 @@ class SettingsFragment : NavigationFragment() {
                 val server = this.postInfo!!.server.copy(userProfile = userProfile)
 
                 SettingsManager
-                        .addServer(activity, server)
+                        .addServer(activity!!, server)
 
                 AlertDialog.Builder(activity)
                         .setTitle(R.string.serverAddedToList)
                         .setMessage(R.string.setServerAsActive)
                         .setPositiveButton(R.string.yes) { _, i ->
-                            SettingsManager.setPostInfo(activity, PostInfo(server, userProfile))
+                            SettingsManager.setPostInfo(activity!!, PostInfo(server, userProfile))
                             reloadServerList()
                         }
                         .setNegativeButton(R.string.no) { dialogInterface, i -> dialogInterface.dismiss() }

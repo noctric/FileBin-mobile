@@ -1,6 +1,5 @@
 package de.michael.filebinmobile.adapters
 
-import android.app.Activity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,7 +10,7 @@ import kotlinx.android.synthetic.main.list_item_upload_history.view.*
 import java.text.DateFormat
 import java.util.*
 
-class HistoryAdapter(activity: Activity) : SimpleDataAdapter<HistoryViewHolder, Upload>(activity) {
+class HistoryAdapter : SimpleDataAdapter<HistoryViewHolder, Upload>() {
     val deleteUploads = mutableListOf<Upload>()
     private val onItemSelected = { pos: Int, selected: Boolean ->
         when {

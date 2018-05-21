@@ -3,12 +3,10 @@ package de.michael.filebinmobile.controller
 import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.GsonBuilder
-import de.michael.filebinmobile.model.PostInfo
-import de.michael.filebinmobile.model.Server
-import de.michael.filebinmobile.model.Upload
-import de.michael.filebinmobile.model.UserProfile
+import de.michael.filebinmobile.model.*
 import de.michael.filebinmobile.serialize.MultiPasteUploadDeserializer
-import de.michael.filebinmobile.util.FileChooserUtil
+import de.michael.filebinmobile.serialize.UploadItemDeserializer
+import de.michael.filebinmobile.util.FileUtil
 import okhttp3.*
 import org.json.JSONArray
 import org.json.JSONObject
@@ -61,7 +59,7 @@ private const val KEY_APP_LAUNCHED_BEFORE = "de.michael.filebin.FIRST_APP_LAUNCH
 // endregion
 
 private val gson = GsonBuilder()
-        .registerTypeAdapter(Upload::class.java, UploadItemJsonDeserializer())
+        .registerTypeAdapter(Upload::class.java, UploadItemDeserializer())
         .registerTypeAdapter(MultiPasteUpload::class.java, MultiPasteUploadDeserializer()).create()
 
 object NetworkManager {
@@ -133,8 +131,8 @@ object NetworkManager {
 
         for (i in 0 until files.size) {
 
-            val mimeType = FileChooserUtil.getMimeType(files[i])
-            val mediaType = MediaType.parse("$mimeType; charset=utf-8")
+            val mimeType: String? = FileUtil.getMimeType(files[i])
+            val mediaType = MediaType.parse("${mimeType ?: "text/plain"}; charset=utf-8")
 
             val requestBody = RequestBody.create(mediaType, files[i])
 
@@ -192,7 +190,7 @@ object NetworkManager {
 
         val historyItems = response?.getJSONObject(PARAM_RESPONSE_HISTORY_ITEMS)?.getObjectsWithoutKey()
 
-        return historyItems?.map { gson.fromJson(it.toString(), Upload::class.java) }?.sortedBy { it.uploadTimeStamp }
+        return historyItems?.map { gson.fromJson(it.toString(), Upload::class.java) }?.sortedByDescending { it.uploadTimeStamp }
     }
 
     fun deleteUploads(postInfo: PostInfo, uploads: List<Upload>, onError: (String) -> Unit = {}): Boolean {
@@ -278,9 +276,11 @@ object SettingsManager {
 //region helpers
 private fun getLatestApiVersion(): String = API_VERSIONS[1]
 
-fun JSONObject?.isErrorResponse(): Boolean =
-// using smart cast from nullable JSONObject to not null JSONObject after null check
-        this != null && this.isNull("status") && this.getString("status") == "error"
+fun JSONObject?.isErrorResponse(): Boolean {
+    // using smart cast from nullable JSONObject to not null JSONObject after null check
+    if (this == null) return true
+    return this.has("status") && this.getString("status") == "error"
+}
 
 fun JSONObject.getErrorMessage(): String = this.getString("message")
 

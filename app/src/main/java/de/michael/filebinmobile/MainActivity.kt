@@ -1,7 +1,6 @@
 package de.michael.filebinmobile
 
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
@@ -43,13 +42,15 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         // add our "home"/main fragment
         val pasteFragment = PasteFragment()
         // add our navigation function so we can send navigation requests from inside the fragment
         pasteFragment.onTabNavigationRequested = onNavigationRequest
+        switchFragment(pasteFragment)
 
         // navigation listener for our navigation bar at the bottom
         bnvMainNavigation.setOnNavigationItemSelectedListener(onNavItemSelected)

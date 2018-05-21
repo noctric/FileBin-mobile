@@ -16,8 +16,7 @@ import de.michael.filebinmobile.controller.NetworkManager
 import de.michael.filebinmobile.controller.SettingsManager
 import de.michael.filebinmobile.model.PostInfo
 import de.michael.filebinmobile.model.Upload
-import kotlinx.android.synthetic.main.history_fragment.view.*
-import kotlinx.android.synthetic.main.list_item_server_setting.view.*
+import kotlinx.android.synthetic.main.history_fragment.*
 import kotlin.properties.Delegates
 
 class HistoryFragment : NavigationFragment() {
@@ -34,20 +33,20 @@ class HistoryFragment : NavigationFragment() {
         oldVal?.cancel(true)
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        return inflater?.inflate(R.layout.history_fragment, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.history_fragment, container, false)
                 ?: super.onCreateView(inflater, container, savedInstanceState)
     }
 
     override fun onStart() {
-        init(this.view)
+        init()
 
         super.onStart()
     }
 
-    private fun init(view: View) {
+    private fun init() {
 
-        this.adapter = HistoryAdapter(this.activity)
+        this.adapter = HistoryAdapter()
 
         val linearLayoutManager = LinearLayoutManager(this.activity)
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
@@ -55,17 +54,17 @@ class HistoryFragment : NavigationFragment() {
         val dividerItemDecoration = DividerItemDecoration(this.activity,
                 linearLayoutManager.orientation)
 
-        view.rclUploadHistory.layoutManager = linearLayoutManager
-        view.rclUploadHistory.itemAnimator = DefaultItemAnimator()
-        view.rclUploadHistory.adapter = this.adapter
-        view.rclUploadHistory.addItemDecoration(dividerItemDecoration)
+        rclUploadHistory.layoutManager = linearLayoutManager
+        rclUploadHistory.itemAnimator = DefaultItemAnimator()
+        rclUploadHistory.adapter = this.adapter
+        rclUploadHistory.addItemDecoration(dividerItemDecoration)
 
-        view.btnDelete.setOnClickListener {
-            val postInfo = SettingsManager.getPostInfo(activity)
+        fbaDeleteCheckedItems.setOnClickListener {
+            val postInfo = SettingsManager.getPostInfo(activity!!)
 
             if (postInfo != null) {
                 this.deleteUploadsTask = DeleteUploadsTask()
-                this.deleteUploadsTask?.execute()
+                this.deleteUploadsTask?.execute(postInfo)
             }
         }
 
@@ -79,16 +78,16 @@ class HistoryFragment : NavigationFragment() {
     }
 
     private fun reloadHistory() {
-        val postInfo = SettingsManager.getPostInfo(activity)
+        val postInfo = SettingsManager.getPostInfo(activity!!)
         if (postInfo != null) {
             this.loadHistoryTask = LoadHistoryTask()
             this.loadHistoryTask?.execute(postInfo)
 
-            view.pgbLoadHistory.visibility = View.VISIBLE
+            pgbLoadHistory.visibility = View.VISIBLE
         }
     }
 
-    private inner class LoadHistoryTask() : AsyncTask<PostInfo, Int, List<Upload>>() {
+    private inner class LoadHistoryTask : AsyncTask<PostInfo, Int, List<Upload>>() {
         override fun doInBackground(vararg postInfos: PostInfo): List<Upload> {
             if (postInfos.isNotEmpty()) {
 
@@ -102,7 +101,7 @@ class HistoryFragment : NavigationFragment() {
 
         override fun onPostExecute(result: List<Upload>) {
             adapter?.updateData(result)
-            this@HistoryFragment.view.pgbLoadHistory.visibility = View.GONE
+            pgbLoadHistory.visibility = View.GONE
             super.onPostExecute(result)
         }
     }

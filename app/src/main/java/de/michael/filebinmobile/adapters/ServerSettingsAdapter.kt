@@ -1,7 +1,7 @@
 package de.michael.filebinmobile.adapters
 
-import android.app.Activity
 import android.app.AlertDialog
+import android.content.Context
 import android.content.DialogInterface
 import android.view.LayoutInflater
 import android.view.View
@@ -10,42 +10,60 @@ import de.michael.filebinmobile.R
 import de.michael.filebinmobile.controller.SettingsManager
 import de.michael.filebinmobile.model.PostInfo
 import de.michael.filebinmobile.model.Server
+import de.michael.filebinmobile.model.toPostInfo
 import kotlinx.android.synthetic.main.list_item_server_setting.view.*
 
-class ServerSettingsAdapter(activity: Activity) : SimpleDataAdapter<ServerSettingsViewHolder, Server>(activity) {
+class ServerSettingsAdapter(val context: Context) : SimpleDataAdapter<ServerSettingsViewHolder, Server>() {
 
     var selectedPostInfo: PostInfo? = null
+    set(value) {
+        field = value
+        notifyDataSetChanged()
+    }
+    private val refreshList: () -> Unit = { notifyDataSetChanged() }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ServerSettingsViewHolder {
         val view = LayoutInflater.from(parent.context)
                 .inflate(R.layout.list_item_server_setting, null)
-        return ServerSettingsViewHolder(view, activity)
+        return ServerSettingsViewHolder(view, context, refreshList)
     }
 
+    override fun onBindViewHolder(holder: ServerSettingsViewHolder, position: Int) {
+
+        if (data[position].toPostInfo() == selectedPostInfo) {
+            holder.itemView.txtIsProfileActive.text = "active"
+            holder.itemView.txtIsProfileActive.setTextColor(context.resources.getColor(R.color.colorAccent))
+        } else {
+            holder.itemView.txtIsProfileActive.text = "deactivated"
+            holder.itemView.txtIsProfileActive.setTextColor(context.resources.getColor(R.color.colorTextLight))
+        }
+
+        super.onBindViewHolder(holder, position)
+    }
 }
 
-class ServerSettingsViewHolder(itemView: View, val activity: Activity) : AbstractViewHolder<Server>(itemView) {
+class ServerSettingsViewHolder(itemView: View, val context: Context, private val refreshList: () -> Unit) : AbstractViewHolder<Server>(itemView) {
     override fun bindItem(item: Server, removeItem: (Int) -> Unit, pos: Int) {
         itemView.txtName.text = item.name
         itemView.txtAddr.text = item.address
 
         itemView.btnDelete.setOnClickListener {
-            AlertDialog.Builder(activity)
+            AlertDialog.Builder(context)
                     .setTitle("Delete Server ${item.name}")
                     .setMessage("Are you sure you want do delete this Server?")
                     .setPositiveButton(R.string.yes) { _: DialogInterface, _: Int ->
-                        SettingsManager.deleteServer(activity, item)
+                        SettingsManager.deleteServer(context, item)
                         removeItem(pos)
                     }
         }
 
         itemView.btnSetForUpload.setOnClickListener {
             val userProfile = item.userProfile
-            PostInfo(item, userProfile)
-            SettingsManager.setPostInfo(activity, PostInfo(item, userProfile))
-            itemView.txtIsProfileActive.text = activity.getString(R.string.active)
-            itemView.txtIsProfileActive.setTextColor(activity.resources.getColor(R.color.colorAccent))
-            // TODO refresh list
+            PostInfo(item, userProfile!!)
+            SettingsManager.setPostInfo(context, PostInfo(item, userProfile))
+            itemView.txtIsProfileActive.text = context.getString(R.string.active)
+            itemView.txtIsProfileActive.setTextColor(context.resources.getColor(R.color.colorAccent))
+            refreshList()
         }
     }
 }

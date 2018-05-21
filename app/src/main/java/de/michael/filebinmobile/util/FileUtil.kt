@@ -44,8 +44,8 @@ object FileUtil {
         return displayName
     }
 
-    fun getMimeType(file: File): String {
-        val extension = MimeTypeMap.getFileExtensionFromUrl(file.absolutePath)
+    fun getMimeType(file: File): String? {
+        val extension: String = MimeTypeMap.getFileExtensionFromUrl(file.absolutePath)
         return MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
     }
 }

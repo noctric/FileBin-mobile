@@ -19,10 +19,9 @@ import de.michael.filebinmobile.adapters.UploadUrlAdapter
 import de.michael.filebinmobile.controller.NetworkManager
 import de.michael.filebinmobile.controller.SettingsManager
 import de.michael.filebinmobile.model.PostInfo
-import de.michael.filebinmobile.util.FileChooserUtil
+import de.michael.filebinmobile.util.FileUtil
 import kotlinx.android.synthetic.main.any_recycler_view.view.*
 import kotlinx.android.synthetic.main.paste_fragment.*
-import kotlinx.android.synthetic.main.paste_fragment.view.*
 import java.io.File
 import java.io.OutputStreamWriter
 import kotlin.properties.Delegates
@@ -45,21 +44,26 @@ class PasteFragment : NavigationFragment() {
         uploadFilesTask = null
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        return inflater?.inflate(R.layout.paste_fragment, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.paste_fragment, container, false)
                 ?: super.onCreateView(inflater, container, savedInstanceState)
     }
 
     override fun onStart() {
-        init(view)
+        init()
         super.onStart()
     }
 
-    private fun init(view: View) {
-        selectedFilesAdapter = SelectedFilesAdapter(activity) {
-            filesToUpload.removeAt(it)
-            selectedFilesAdapter?.updateData(filesToUpload)
-        }
+    override fun onResume() {
+
+        val postInfo = SettingsManager.getPostInfo(activity!!)
+        txtSelectedServer.text = "Uploads to ${postInfo!!.server!!.name} by ${postInfo!!.userProfile.usrName}"
+
+        super.onResume()
+    }
+
+    private fun init() {
+        selectedFilesAdapter = SelectedFilesAdapter()
         selectedFilesAdapter?.updateData(filesToUpload)
 
         btnSelectFiles.setOnClickListener {
@@ -78,7 +82,7 @@ class PasteFragment : NavigationFragment() {
                 writeToFile(content)
             }
 
-            val filePath = "${activity.filesDir}${File.separator}$FILE_NAME_DEFAULT"
+            val filePath = "${activity!!.filesDir}${File.separator}$FILE_NAME_DEFAULT"
             filesToUpload.add(File(filePath))
 
             if (this.filesToUpload.isNotEmpty()) {
@@ -87,14 +91,14 @@ class PasteFragment : NavigationFragment() {
                 btnPasteUpload.isEnabled = false
 
                 // start upload
-                val postInfo = SettingsManager.getPostInfo(activity)
+                val postInfo = SettingsManager.getPostInfo(activity!!)
                 if (postInfo != null) {
                     startUpload(postInfo)
                 } else {
 
-                    val builder = AlertDialog.Builder(activity)
+                    val builder = AlertDialog.Builder(activity!!)
                     builder.setTitle("Woops")
-                            .setMessage("No Server for uploading selected. Please go to Server Settings" + "and select one.")
+                            .setMessage("No Server for uploading selected. Please go to Server Settings and select one.")
                             .setPositiveButton(R.string.ok) { dialogInterface, i ->
 
                                 dialogInterface.dismiss()
@@ -122,7 +126,7 @@ class PasteFragment : NavigationFragment() {
     }
 
     private fun writeToFile(content: String) {
-        val fileOutputStream = activity.openFileOutput(FILE_NAME_DEFAULT, Context.MODE_PRIVATE)
+        val fileOutputStream = activity!!.openFileOutput(FILE_NAME_DEFAULT, Context.MODE_PRIVATE)
         val outputStreamWriter = OutputStreamWriter(fileOutputStream)
         outputStreamWriter.write(content)
         outputStreamWriter.close()
@@ -132,7 +136,7 @@ class PasteFragment : NavigationFragment() {
         if (requestCode == READ_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             val uri = data!!.data
 
-            val fileCopy = FileChooserUtil.createFileCopyFromUri(uri, activity)
+            val fileCopy = FileUtil.createFileCopyFromUri(uri, activity!!)
             filesToUpload.add(fileCopy)
             selectedFilesAdapter?.updateData(filesToUpload)
         }
@@ -153,11 +157,10 @@ class PasteFragment : NavigationFragment() {
 
         override fun onPostExecute(result: List<String>) {
 
-            view.pgbUploadProgress.visibility = View.INVISIBLE
-            view.btnPasteUpload.isEnabled = true
+            pgbUploadProgress.visibility = View.INVISIBLE
+            btnPasteUpload.isEnabled = true
 
-            val listView = activity.layoutInflater.inflate(R.layout.any_recycler_view, null)
-            val uploadUrlAdapter = UploadUrlAdapter(activity)
+            val uploadUrlAdapter = UploadUrlAdapter(activity!!)
             uploadUrlAdapter.updateData(result)
 
             val linearLayoutManager = LinearLayoutManager(activity)
@@ -166,14 +169,16 @@ class PasteFragment : NavigationFragment() {
             val dividerItemDecoration = DividerItemDecoration(activity,
                     linearLayoutManager.orientation)
 
-            listView.rclAnyRecyclerView.layoutManager = linearLayoutManager
-            listView.rclAnyRecyclerView.itemAnimator = DefaultItemAnimator()
-            listView.rclAnyRecyclerView.adapter = uploadUrlAdapter
-            listView.rclAnyRecyclerView.addItemDecoration(dividerItemDecoration)
+            val urlListView = LayoutInflater.from(context!!).inflate(R.layout.any_recycler_view, null)
 
-            val builder = AlertDialog.Builder(activity)
+            urlListView.rclAnyRecyclerView.layoutManager = linearLayoutManager
+            urlListView.rclAnyRecyclerView.itemAnimator = DefaultItemAnimator()
+            urlListView.rclAnyRecyclerView.adapter = uploadUrlAdapter
+            urlListView.rclAnyRecyclerView.addItemDecoration(dividerItemDecoration)
+
+            val builder = AlertDialog.Builder(activity!!)
             builder.setTitle("Upload completed")
-                    .setView(view)
+                    .setView(urlListView)
                     .setPositiveButton(R.string.ok) { dialogInterface, i -> dialogInterface.dismiss() }
 
             builder.create().show()
