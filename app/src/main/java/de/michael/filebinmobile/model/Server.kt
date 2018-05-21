@@ -1,4 +1,4 @@
-package de.michael.filebinmobile.model.refactor
+package de.michael.filebinmobile.model
 
 data class Server(val address: String, val name: String,
                   var maxFilesPerRequest: Int = 0, var uploadMaxSize: Int = 0,

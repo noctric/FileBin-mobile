@@ -1,4 +1,4 @@
-package de.michael.filebinmobile.refactor
+package de.michael.filebinmobile
 
 import android.os.Bundle
 import android.os.PersistableBundle
@@ -6,11 +6,10 @@ import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
-import de.michael.filebinmobile.R
-import de.michael.filebinmobile.controller.refactor.SettingsManager
-import de.michael.filebinmobile.fragments.refactor.HistoryFragment
-import de.michael.filebinmobile.fragments.refactor.PasteFragment
-import de.michael.filebinmobile.fragments.refactor.SettingsFragment
+import de.michael.filebinmobile.controller.SettingsManager
+import de.michael.filebinmobile.fragments.HistoryFragment
+import de.michael.filebinmobile.fragments.PasteFragment
+import de.michael.filebinmobile.fragments.SettingsFragment
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {

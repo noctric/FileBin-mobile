@@ -1,4 +1,4 @@
-package de.michael.filebinmobile.adapters.refactor
+package de.michael.filebinmobile.adapters
 
 import android.app.Activity
 import android.support.v7.widget.RecyclerView

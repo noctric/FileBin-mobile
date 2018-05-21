@@ -1,4 +1,4 @@
-package de.michael.filebinmobile.fragments.refactor
+package de.michael.filebinmobile.fragments
 
 import android.app.AlertDialog
 import android.content.DialogInterface
@@ -12,12 +12,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import de.michael.filebinmobile.R
-import de.michael.filebinmobile.adapters.refactor.ServerSettingsAdapter
-import de.michael.filebinmobile.controller.refactor.NetworkManager
-import de.michael.filebinmobile.controller.refactor.SettingsManager
-import de.michael.filebinmobile.model.refactor.PostInfo
-import de.michael.filebinmobile.model.refactor.Server
-import de.michael.filebinmobile.model.refactor.UserProfile
+import de.michael.filebinmobile.adapters.ServerSettingsAdapter
+import de.michael.filebinmobile.controller.NetworkManager
+import de.michael.filebinmobile.controller.SettingsManager
+import de.michael.filebinmobile.model.PostInfo
+import de.michael.filebinmobile.model.Server
+import de.michael.filebinmobile.model.UserProfile
 import kotlinx.android.synthetic.main.edit_server_settings.view.*
 import kotlinx.android.synthetic.main.server_settings_fragment.*
 import kotlin.properties.Delegates

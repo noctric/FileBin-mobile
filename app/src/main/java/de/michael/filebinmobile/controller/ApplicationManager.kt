@@ -1,15 +1,13 @@
-package de.michael.filebinmobile.controller.refactor
+package de.michael.filebinmobile.controller
 
 import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.GsonBuilder
-import de.michael.filebinmobile.model.MultiPasteUpload
-import de.michael.filebinmobile.model.refactor.PostInfo
-import de.michael.filebinmobile.model.refactor.Server
-import de.michael.filebinmobile.model.refactor.Upload
-import de.michael.filebinmobile.model.refactor.UserProfile
-import de.michael.filebinmobile.serialize.UploadItemJsonDeserializer
-import de.michael.filebinmobile.serialize.refactor.MultiPasteUploadDeserializer
+import de.michael.filebinmobile.model.PostInfo
+import de.michael.filebinmobile.model.Server
+import de.michael.filebinmobile.model.Upload
+import de.michael.filebinmobile.model.UserProfile
+import de.michael.filebinmobile.serialize.MultiPasteUploadDeserializer
 import de.michael.filebinmobile.util.FileChooserUtil
 import okhttp3.*
 import org.json.JSONArray

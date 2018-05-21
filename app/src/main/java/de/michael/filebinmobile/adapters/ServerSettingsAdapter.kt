@@ -1,4 +1,4 @@
-package de.michael.filebinmobile.adapters.refactor
+package de.michael.filebinmobile.adapters
 
 import android.app.Activity
 import android.app.AlertDialog
@@ -7,9 +7,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import de.michael.filebinmobile.R
-import de.michael.filebinmobile.controller.refactor.SettingsManager
-import de.michael.filebinmobile.model.refactor.PostInfo
-import de.michael.filebinmobile.model.refactor.Server
+import de.michael.filebinmobile.controller.SettingsManager
+import de.michael.filebinmobile.model.PostInfo
+import de.michael.filebinmobile.model.Server
 import kotlinx.android.synthetic.main.list_item_server_setting.view.*
 
 class ServerSettingsAdapter(activity: Activity) : SimpleDataAdapter<ServerSettingsViewHolder, Server>(activity) {

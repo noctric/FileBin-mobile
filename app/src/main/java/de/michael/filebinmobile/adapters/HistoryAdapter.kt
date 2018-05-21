@@ -1,4 +1,4 @@
-package de.michael.filebinmobile.adapters.refactor
+package de.michael.filebinmobile.adapters
 
 import android.app.Activity
 import android.view.LayoutInflater
@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import de.michael.filebinmobile.R
-import de.michael.filebinmobile.model.refactor.Upload
+import de.michael.filebinmobile.model.Upload
 import kotlinx.android.synthetic.main.list_item_upload_history.view.*
 import java.text.DateFormat
 import java.util.*

@@ -1,4 +1,4 @@
-package de.michael.filebinmobile.model.refactor
+package de.michael.filebinmobile.model
 
 class Upload(val uploadTitle: String, val uploadSize: String,
              var thumbnail: String = "", val hash: String,

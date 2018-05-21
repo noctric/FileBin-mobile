@@ -1,4 +1,4 @@
-package de.michael.filebinmobile.fragments.refactor
+package de.michael.filebinmobile.fragments
 
 import android.support.v4.app.Fragment
 

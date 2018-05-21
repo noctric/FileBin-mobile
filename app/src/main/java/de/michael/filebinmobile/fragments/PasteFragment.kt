@@ -1,4 +1,4 @@
-package de.michael.filebinmobile.fragments.refactor
+package de.michael.filebinmobile.fragments
 
 import android.app.Activity
 import android.content.Context
@@ -14,11 +14,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import de.michael.filebinmobile.R
-import de.michael.filebinmobile.adapters.refactor.SelectedFilesAdapter
-import de.michael.filebinmobile.adapters.refactor.UploadUrlAdapter
-import de.michael.filebinmobile.controller.refactor.NetworkManager
-import de.michael.filebinmobile.controller.refactor.SettingsManager
-import de.michael.filebinmobile.model.refactor.PostInfo
+import de.michael.filebinmobile.adapters.SelectedFilesAdapter
+import de.michael.filebinmobile.adapters.UploadUrlAdapter
+import de.michael.filebinmobile.controller.NetworkManager
+import de.michael.filebinmobile.controller.SettingsManager
+import de.michael.filebinmobile.model.PostInfo
 import de.michael.filebinmobile.util.FileChooserUtil
 import kotlinx.android.synthetic.main.any_recycler_view.view.*
 import kotlinx.android.synthetic.main.paste_fragment.*
