@@ -5,9 +5,6 @@ import android.content.DialogInterface
 import android.graphics.PorterDuff
 import android.os.AsyncTask
 import android.os.Bundle
-import android.support.v7.widget.DefaultItemAnimator
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.LinearLayoutManager
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Patterns
@@ -47,17 +44,8 @@ class SettingsFragment : NavigationFragment() {
 
         this.adapter = ServerSettingsAdapter(activity!!)
 
-        val linearLayoutManager = LinearLayoutManager(activity)
-        linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
-
-        val dividerItemDecoration = DividerItemDecoration(this.rclServerList.context,
-                linearLayoutManager.orientation)
-
-        rclServerList.layoutManager = linearLayoutManager
-        rclServerList.itemAnimator = DefaultItemAnimator()
+        rclServerList.setup()
         rclServerList.adapter = this.adapter
-        rclServerList.addItemDecoration(dividerItemDecoration)
-
 
         fbaAddServer.setOnClickListener {
             val dialogView = LayoutInflater.from(activity)

@@ -54,7 +54,7 @@ class ServerSettingsViewHolder(itemView: View, val context: Context, private val
                     .setMessage("Are you sure you want do delete this Server?")
                     .setPositiveButton(R.string.yes) { _: DialogInterface, _: Int ->
                         SettingsManager.deleteServer(context, item)
-                        
+
                         if (item == SettingsManager.getPostInfo(context)) {
                             SettingsManager.setPostInfo(context, null)
                         }

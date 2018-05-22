@@ -66,8 +66,15 @@ class PasteFragment : NavigationFragment() {
     }
 
     private fun init() {
-        selectedFilesAdapter = SelectedFilesAdapter()
+
+        val onItemRemoved = { file: File ->
+            filesToUpload.remove(file)
+        }
+        selectedFilesAdapter = SelectedFilesAdapter(onItemRemoved = onItemRemoved)
         selectedFilesAdapter?.updateData(filesToUpload)
+
+        rclAddedFiles.setup()
+        rclAddedFiles.adapter = selectedFilesAdapter
 
         btnSelectFiles.setOnClickListener {
 

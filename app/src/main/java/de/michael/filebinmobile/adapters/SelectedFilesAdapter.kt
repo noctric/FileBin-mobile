@@ -9,7 +9,7 @@ import de.michael.filebinmobile.util.FileUtil
 import kotlinx.android.synthetic.main.list_item_selected_file.view.*
 import java.io.File
 
-class SelectedFilesAdapter : SimpleDataAdapter<SelectedFileViewHolder, File>() {
+class SelectedFilesAdapter(onItemRemoved: (File) -> Boolean = { false }) : SimpleDataAdapter<SelectedFileViewHolder, File>(onItemRemoved = onItemRemoved) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SelectedFileViewHolder {
         val view = LayoutInflater.from(parent.context)

@@ -4,9 +4,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.AsyncTask
 import android.os.Bundle
-import android.support.v7.widget.DefaultItemAnimator
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -55,16 +52,8 @@ class HistoryFragment : NavigationFragment() {
 
         this.adapter = HistoryAdapter(onListItemClick)
 
-        val linearLayoutManager = LinearLayoutManager(this.activity)
-        linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
-
-        val dividerItemDecoration = DividerItemDecoration(this.activity,
-                linearLayoutManager.orientation)
-
-        rclUploadHistory.layoutManager = linearLayoutManager
-        rclUploadHistory.itemAnimator = DefaultItemAnimator()
+        rclUploadHistory.setup()
         rclUploadHistory.adapter = this.adapter
-        rclUploadHistory.addItemDecoration(dividerItemDecoration)
 
         fbaDeleteCheckedItems.setOnClickListener {
             val postInfo = SettingsManager.getPostInfo(activity!!)

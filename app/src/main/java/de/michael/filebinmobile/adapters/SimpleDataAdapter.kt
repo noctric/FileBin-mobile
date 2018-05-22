@@ -3,10 +3,13 @@ package de.michael.filebinmobile.adapters
 import android.support.v7.widget.RecyclerView
 import android.view.View
 
-abstract class SimpleDataAdapter<T : AbstractViewHolder<K>, K>(val onClick: (K) -> Boolean = { true }) : RecyclerView.Adapter<T>() {
+abstract class SimpleDataAdapter<T : AbstractViewHolder<K>, K>(
+        val onClick: (K) -> Boolean = { true },
+        val onItemRemoved: (K) -> Boolean = { false }) : RecyclerView.Adapter<T>() {
 
     val data: MutableList<K> = mutableListOf()
     private val removeItemAt = { pos: Int ->
+        onItemRemoved(this.data[pos])
         this.data.removeAt(pos)
         notifyDataSetChanged()
     }

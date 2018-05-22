@@ -18,10 +18,20 @@ object FileUtil {
         val inputStream = context.contentResolver.openInputStream(uri)
         // write to new file in app context (copy)
         val fileOutputStream = context.openFileOutput(displayName, Context.MODE_PRIVATE)
-        // create a target file
-        val targetFile = File("${context.filesDir}${File.separator}$displayName")
-        // copy the uri file to our target file
-        return File(uri.path).copyTo(target = targetFile, overwrite = true)
+
+
+        val buf = ByteArray(1024)
+        var len = inputStream.read(buf)
+
+        while(len > 0) {
+            fileOutputStream.write(buf, 0, len)
+            len = inputStream.read(buf)
+        }
+
+        inputStream.close()
+        fileOutputStream.close()
+
+        return File("${context.filesDir}${File.separator}$displayName")
     }
 
     private fun getDisplayName(uri: Uri, contentResolver: ContentResolver): String {
