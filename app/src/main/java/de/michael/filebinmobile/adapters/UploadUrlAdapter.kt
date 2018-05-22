@@ -21,7 +21,7 @@ class UploadUrlAdapter(val context: Context) : SimpleDataAdapter<UploadUrlViewHo
 }
 
 class UploadUrlViewHolder(itemView: View, val context: Context) : AbstractViewHolder<String>(itemView) {
-    override fun bindItem(item: String, removeItem: (Int) -> Unit, pos: Int) {
+    override fun bindItem(item: String, removeItem: (Int) -> Unit, pos: Int, onClick: (String) -> Boolean) {
         itemView.txtUploadUrl.text = item
         itemView.btnClipboardUrl.setOnClickListener {
 

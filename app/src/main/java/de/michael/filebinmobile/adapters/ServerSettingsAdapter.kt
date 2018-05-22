@@ -44,7 +44,7 @@ class ServerSettingsAdapter(val context: Context) : SimpleDataAdapter<ServerSett
 }
 
 class ServerSettingsViewHolder(itemView: View, val context: Context, private val onPostInfoSelected: (Server) -> Unit) : AbstractViewHolder<Server>(itemView) {
-    override fun bindItem(item: Server, removeItem: (Int) -> Unit, pos: Int) {
+    override fun bindItem(item: Server, removeItem: (Int) -> Unit, pos: Int, onClick: (Server) -> Boolean) {
         itemView.txtName.text = item.name
         itemView.txtAddr.text = item.address
 

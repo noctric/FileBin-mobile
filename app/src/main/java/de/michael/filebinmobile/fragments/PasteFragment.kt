@@ -98,7 +98,7 @@ class PasteFragment : NavigationFragment() {
                     val builder = AlertDialog.Builder(activity!!)
                     builder.setTitle("Woops")
                             .setMessage("No Server for uploading selected. Please go to Server Settings and select one.")
-                            .setPositiveButton(R.string.ok) { dialogInterface, i ->
+                            .setPositiveButton(R.string.ok) { dialogInterface, _ ->
 
                                 dialogInterface.dismiss()
 

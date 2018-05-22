@@ -21,7 +21,7 @@ class SelectedFilesAdapter : SimpleDataAdapter<SelectedFileViewHolder, File>() {
 
 class SelectedFileViewHolder(itemView: View) : AbstractViewHolder<File>(itemView) {
 
-    override fun bindItem(item: File, removeItem: (Int) -> Unit, pos: Int) {
+    override fun bindItem(item: File, removeItem: (Int) -> Unit, pos: Int, onClick: (File) -> Boolean) {
         itemView.txtSelectedFileName.text = item.name
 
         val mimeType = FileUtil.getMimeType(item)

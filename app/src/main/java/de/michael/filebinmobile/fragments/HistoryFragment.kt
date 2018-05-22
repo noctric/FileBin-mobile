@@ -1,5 +1,7 @@
 package de.michael.filebinmobile.fragments
 
+import android.content.Intent
+import android.net.Uri
 import android.os.AsyncTask
 import android.os.Bundle
 import android.support.v7.widget.DefaultItemAnimator
@@ -22,6 +24,13 @@ import kotlin.properties.Delegates
 class HistoryFragment : NavigationFragment() {
 
     var adapter: HistoryAdapter? = null
+
+    private val onListItemClick: (Upload) -> Boolean = {
+        val address = SettingsManager.getPostInfo(activity!!)!!.address
+        val uploadUrl = "$address/${it.id}/"
+        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(uploadUrl)))
+        true
+    }
 
     private var deleteUploadsTask: DeleteUploadsTask? by Delegates.observable(null) { _, oldVal: DeleteUploadsTask?, _: DeleteUploadsTask? ->
         // make sure we cancel the old task before creating a new one
@@ -46,7 +55,7 @@ class HistoryFragment : NavigationFragment() {
 
     private fun init() {
 
-        this.adapter = HistoryAdapter()
+        this.adapter = HistoryAdapter(onListItemClick)
 
         val linearLayoutManager = LinearLayoutManager(this.activity)
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL

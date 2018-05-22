@@ -3,7 +3,7 @@ package de.michael.filebinmobile.adapters
 import android.support.v7.widget.RecyclerView
 import android.view.View
 
-abstract class SimpleDataAdapter<T : AbstractViewHolder<K>, K> : RecyclerView.Adapter<T>() {
+abstract class SimpleDataAdapter<T : AbstractViewHolder<K>, K>(val onClick: (K) -> Boolean = { true }) : RecyclerView.Adapter<T>() {
 
     val data: MutableList<K> = mutableListOf()
     private val removeItemAt = { pos: Int ->
@@ -30,7 +30,7 @@ abstract class SimpleDataAdapter<T : AbstractViewHolder<K>, K> : RecyclerView.Ad
     // while binding the viewholder we set the position as a parameter so we can access it in the
     // remove function which is also passed as a function parameter
     override fun onBindViewHolder(holder: T, position: Int) =
-            holder.bindItem(this.data[position], removeItemAt, position)
+            holder.bindItem(this.data[position], removeItemAt, position, onClick)
 
     override fun getItemCount(): Int = this.data.size
 
@@ -40,5 +40,5 @@ abstract class SimpleDataAdapter<T : AbstractViewHolder<K>, K> : RecyclerView.Ad
 }
 
 abstract class AbstractViewHolder<K>(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    abstract fun bindItem(item: K, removeItem: (Int) -> Unit = {}, pos: Int)
+    abstract fun bindItem(item: K, removeItem: (Int) -> Unit = {}, pos: Int, onClick: (K) -> Boolean)
 }

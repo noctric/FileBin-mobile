@@ -10,7 +10,7 @@ import kotlinx.android.synthetic.main.list_item_upload_history.view.*
 import java.text.DateFormat
 import java.util.*
 
-class HistoryAdapter : SimpleDataAdapter<HistoryViewHolder, Upload>() {
+class HistoryAdapter(val onListItemClick: (Upload) -> Boolean) : SimpleDataAdapter<HistoryViewHolder, Upload>(onListItemClick) {
     val deleteUploads = mutableListOf<Upload>()
     private val onItemSelected = { pos: Int, selected: Boolean ->
         when {
@@ -34,7 +34,7 @@ class HistoryViewHolder(itemView: View, private val onItemSelected: (Int, Boolea
 
     private val dateFormat: DateFormat = java.text.DateFormat.getDateInstance();
 
-    override fun bindItem(item: Upload, removeItem: (Int) -> Unit, pos: Int) {
+    override fun bindItem(item: Upload, removeItem: (Int) -> Unit, pos: Int, onClick: (Upload) -> Boolean) {
         itemView.txtUploadName.text = item.uploadTitle
         itemView.txtUploadSize.text = item.uploadSize
 
@@ -48,6 +48,7 @@ class HistoryViewHolder(itemView: View, private val onItemSelected: (Int, Boolea
             onItemSelected(pos, isChecked)
 
         }
+        itemView.setOnClickListener { onClick(item) }
     }
 
 }
