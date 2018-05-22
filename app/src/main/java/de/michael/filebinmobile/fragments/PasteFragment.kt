@@ -80,10 +80,9 @@ class PasteFragment : NavigationFragment() {
             val content = edtPasteText.text.toString()
             if (content.isNotBlank()) {
                 writeToFile(content)
+                val filePath = "${activity!!.filesDir}${File.separator}$FILE_NAME_DEFAULT"
+                filesToUpload.add(File(filePath))
             }
-
-            val filePath = "${activity!!.filesDir}${File.separator}$FILE_NAME_DEFAULT"
-            filesToUpload.add(File(filePath))
 
             if (this.filesToUpload.isNotEmpty()) {
                 // ui adjustments

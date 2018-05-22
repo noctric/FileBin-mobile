@@ -9,5 +9,6 @@
     <color name="colorTextLight">#aaaaaa</color>
     <color name="colorButtonText">#dddddd</color>
     <color name="colorButtonLight">#dfdfdf</color>
+    <color name="colorError">#f45c41</color>
 
 </resources>

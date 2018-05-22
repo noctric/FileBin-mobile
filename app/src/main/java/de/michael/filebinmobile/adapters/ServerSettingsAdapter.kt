@@ -18,7 +18,10 @@ class ServerSettingsAdapter(val context: Context) : SimpleDataAdapter<ServerSett
             field = value
             notifyDataSetChanged()
         }
-    private val refreshList: () -> Unit = { notifyDataSetChanged() }
+
+    private val refreshList: (Server) -> Unit = {
+        selectedPostInfo = it
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ServerSettingsViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -40,7 +43,7 @@ class ServerSettingsAdapter(val context: Context) : SimpleDataAdapter<ServerSett
     }
 }
 
-class ServerSettingsViewHolder(itemView: View, val context: Context, private val refreshList: () -> Unit) : AbstractViewHolder<Server>(itemView) {
+class ServerSettingsViewHolder(itemView: View, val context: Context, private val onPostInfoSelected: (Server) -> Unit) : AbstractViewHolder<Server>(itemView) {
     override fun bindItem(item: Server, removeItem: (Int) -> Unit, pos: Int) {
         itemView.txtName.text = item.name
         itemView.txtAddr.text = item.address
@@ -62,9 +65,7 @@ class ServerSettingsViewHolder(itemView: View, val context: Context, private val
 
         itemView.btnSetForUpload.setOnClickListener {
             SettingsManager.setPostInfo(context, item)
-            itemView.txtIsProfileActive.text = context.getString(R.string.active)
-            itemView.txtIsProfileActive.setTextColor(context.resources.getColor(R.color.colorAccent))
-            refreshList()
+            onPostInfoSelected(item)
         }
     }
 }

@@ -2,11 +2,15 @@ package de.michael.filebinmobile.fragments
 
 import android.app.AlertDialog
 import android.content.DialogInterface
+import android.graphics.PorterDuff
 import android.os.AsyncTask
 import android.os.Bundle
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
+import android.text.Editable
+import android.text.TextWatcher
+import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -58,22 +62,50 @@ class SettingsFragment : NavigationFragment() {
         fbaAddServer.setOnClickListener {
             val dialogView = LayoutInflater.from(activity)
                     .inflate(R.layout.edit_server_settings, null)
+
+            var isValidUrl = false
+
+            dialogView.edtEditAddress.addTextChangedListener(object : TextWatcher {
+                override fun afterTextChanged(p0: Editable?) {
+                    isValidUrl = Patterns.WEB_URL.matcher(p0?.toString()).matches()
+                    if (isValidUrl) {
+                        dialogView.edtEditAddress.background
+                                .setColorFilter(resources.getColor(R.color.colorError), PorterDuff.Mode.SRC_IN)
+                    } else {
+                        dialogView.edtEditAddress.background
+                                .setColorFilter(resources.getColor(R.color.colorAccent), PorterDuff.Mode.SRC_IN);
+                    }
+                }
+
+                override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                    /* empty */
+                }
+
+                override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                    /* empty */
+                }
+
+            })
             AlertDialog.Builder(activity)
                     .setTitle("Add Server")
                     .setView(dialogView)
                     .setPositiveButton(R.string.ok) { _: DialogInterface, _: Int ->
-                        val serverName = dialogView.edtEditName.text.toString()
-                        val serverAddr = dialogView.edtEditAddress.text.toString()
-                        val userName = dialogView.edtUserName.text.toString()
+                        if (isValidUrl) {
+                            val serverName = dialogView.edtEditName.text.toString()
+                            val serverAddr = dialogView.edtEditAddress.text.toString()
+                            val userName = dialogView.edtUserName.text.toString()
 
-                        val server = Server(serverAddr, serverName)
+                            val server = Server(serverAddr, serverName)
 
-                        val apiKeyPostInfo = ApiKeyPostInfo(server, userName, dialogView.edtUserPassword.text.toString())
+                            val apiKeyPostInfo = ApiKeyPostInfo(server, userName, dialogView.edtUserPassword.text.toString())
 
-                        createApiKeyTask = CreateApiKeyTask()
-                        createApiKeyTask?.execute(apiKeyPostInfo)
+                            createApiKeyTask = CreateApiKeyTask()
+                            createApiKeyTask?.execute(apiKeyPostInfo)
 
-                        Toast.makeText(activity, "Creating Api Key", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(activity, "Creating Api Key", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(activity, "URL seems to be invalid", Toast.LENGTH_SHORT).show()
+                        }
                     }
                     .setNegativeButton(R.string.cancel) { dialogInterface: DialogInterface, _: Int ->
                         dialogInterface.dismiss()
