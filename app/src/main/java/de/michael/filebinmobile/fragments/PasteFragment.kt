@@ -18,7 +18,7 @@ import de.michael.filebinmobile.adapters.SelectedFilesAdapter
 import de.michael.filebinmobile.adapters.UploadUrlAdapter
 import de.michael.filebinmobile.controller.NetworkManager
 import de.michael.filebinmobile.controller.SettingsManager
-import de.michael.filebinmobile.model.PostInfo
+import de.michael.filebinmobile.model.Server
 import de.michael.filebinmobile.util.FileUtil
 import kotlinx.android.synthetic.main.any_recycler_view.view.*
 import kotlinx.android.synthetic.main.paste_fragment.*
@@ -57,7 +57,7 @@ class PasteFragment : NavigationFragment() {
     override fun onResume() {
 
         val postInfo = SettingsManager.getPostInfo(activity!!)
-        txtSelectedServer.text = "Uploads to ${postInfo!!.server!!.name} by ${postInfo!!.userProfile.usrName}"
+        txtSelectedServer.text = "Uploads to ${postInfo!!.name} by ${postInfo!!.userProfile!!.usrName}"
 
         super.onResume()
     }
@@ -120,7 +120,7 @@ class PasteFragment : NavigationFragment() {
         }
     }
 
-    private fun startUpload(postInfo: PostInfo) {
+    private fun startUpload(postInfo: Server) {
         this.uploadFilesTask = UploadFileTask()
         uploadFilesTask?.execute(postInfo)
     }
@@ -143,12 +143,12 @@ class PasteFragment : NavigationFragment() {
         super.onActivityResult(requestCode, resultCode, data)
     }
 
-    private inner class UploadFileTask : AsyncTask<PostInfo, Int, List<String>>() {
-        override fun doInBackground(vararg postInfos: PostInfo): List<String> {
+    private inner class UploadFileTask : AsyncTask<Server, Int, List<String>>() {
+        override fun doInBackground(vararg postInfos: Server): List<String> {
             if (postInfos.isNotEmpty()) {
 
-                return NetworkManager.pasteUploadFiles(postInfos[0].userProfile,
-                        postInfos[0].server, this@PasteFragment.filesToUpload)
+                return NetworkManager.pasteUploadFiles(postInfos[0].userProfile!!,
+                        postInfos[0], this@PasteFragment.filesToUpload)
 
             }
 

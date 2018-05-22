@@ -14,7 +14,7 @@ import de.michael.filebinmobile.R
 import de.michael.filebinmobile.adapters.HistoryAdapter
 import de.michael.filebinmobile.controller.NetworkManager
 import de.michael.filebinmobile.controller.SettingsManager
-import de.michael.filebinmobile.model.PostInfo
+import de.michael.filebinmobile.model.Server
 import de.michael.filebinmobile.model.Upload
 import kotlinx.android.synthetic.main.history_fragment.*
 import kotlin.properties.Delegates
@@ -87,11 +87,11 @@ class HistoryFragment : NavigationFragment() {
         }
     }
 
-    private inner class LoadHistoryTask : AsyncTask<PostInfo, Int, List<Upload>>() {
-        override fun doInBackground(vararg postInfos: PostInfo): List<Upload> {
+    private inner class LoadHistoryTask : AsyncTask<Server, Int, List<Upload>>() {
+        override fun doInBackground(vararg postInfos: Server): List<Upload> {
             if (postInfos.isNotEmpty()) {
 
-                return NetworkManager.loadUploadHistory(postInfos[0].userProfile, postInfos[0].server)
+                return NetworkManager.loadUploadHistory(postInfos[0].userProfile!!, postInfos[0])
                         ?: emptyList()
 
             }
@@ -106,8 +106,8 @@ class HistoryFragment : NavigationFragment() {
         }
     }
 
-    private inner class DeleteUploadsTask() : AsyncTask<PostInfo, Int, Boolean>() {
-        override fun doInBackground(vararg postInfos: PostInfo): Boolean {
+    private inner class DeleteUploadsTask() : AsyncTask<Server, Int, Boolean>() {
+        override fun doInBackground(vararg postInfos: Server): Boolean {
             if (postInfos.isNotEmpty()) {
 
                 return NetworkManager.deleteUploads(postInfos[0], adapter!!.deleteUploads)

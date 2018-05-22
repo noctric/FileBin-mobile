@@ -8,18 +8,16 @@ import android.view.View
 import android.view.ViewGroup
 import de.michael.filebinmobile.R
 import de.michael.filebinmobile.controller.SettingsManager
-import de.michael.filebinmobile.model.PostInfo
 import de.michael.filebinmobile.model.Server
-import de.michael.filebinmobile.model.toPostInfo
 import kotlinx.android.synthetic.main.list_item_server_setting.view.*
 
 class ServerSettingsAdapter(val context: Context) : SimpleDataAdapter<ServerSettingsViewHolder, Server>() {
 
-    var selectedPostInfo: PostInfo? = null
-    set(value) {
-        field = value
-        notifyDataSetChanged()
-    }
+    var selectedPostInfo: Server? = null
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+        }
     private val refreshList: () -> Unit = { notifyDataSetChanged() }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ServerSettingsViewHolder {
@@ -30,7 +28,7 @@ class ServerSettingsAdapter(val context: Context) : SimpleDataAdapter<ServerSett
 
     override fun onBindViewHolder(holder: ServerSettingsViewHolder, position: Int) {
 
-        if (data[position].toPostInfo() == selectedPostInfo) {
+        if (data[position] == selectedPostInfo) {
             holder.itemView.txtIsProfileActive.text = "active"
             holder.itemView.txtIsProfileActive.setTextColor(context.resources.getColor(R.color.colorAccent))
         } else {
@@ -55,12 +53,15 @@ class ServerSettingsViewHolder(itemView: View, val context: Context, private val
                         SettingsManager.deleteServer(context, item)
                         removeItem(pos)
                     }
+                    .setNegativeButton(R.string.no) { dialogInterface, _ ->
+                        dialogInterface.dismiss()
+                    }
+                    .create()
+                    .show()
         }
 
         itemView.btnSetForUpload.setOnClickListener {
-            val userProfile = item.userProfile
-            PostInfo(item, userProfile!!)
-            SettingsManager.setPostInfo(context, PostInfo(item, userProfile))
+            SettingsManager.setPostInfo(context, item)
             itemView.txtIsProfileActive.text = context.getString(R.string.active)
             itemView.txtIsProfileActive.setTextColor(context.resources.getColor(R.color.colorAccent))
             refreshList()

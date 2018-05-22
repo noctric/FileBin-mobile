@@ -3,7 +3,10 @@ package de.michael.filebinmobile.controller
 import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.GsonBuilder
-import de.michael.filebinmobile.model.*
+import de.michael.filebinmobile.model.MultiPasteUpload
+import de.michael.filebinmobile.model.Server
+import de.michael.filebinmobile.model.Upload
+import de.michael.filebinmobile.model.UserProfile
 import de.michael.filebinmobile.serialize.MultiPasteUploadDeserializer
 import de.michael.filebinmobile.serialize.UploadItemDeserializer
 import de.michael.filebinmobile.util.FileUtil
@@ -193,12 +196,12 @@ object NetworkManager {
         return historyItems?.map { gson.fromJson(it.toString(), Upload::class.java) }?.sortedByDescending { it.uploadTimeStamp }
     }
 
-    fun deleteUploads(postInfo: PostInfo, uploads: List<Upload>, onError: (String) -> Unit = {}): Boolean {
+    fun deleteUploads(server: Server, uploads: List<Upload>, onError: (String) -> Unit = {}): Boolean {
 
-        val url = "${postInfo.server.address}${getLatestApiVersion()}/$ENDPOINT_FILE_DELETE"
+        val url = "${server.address}${getLatestApiVersion()}/$ENDPOINT_FILE_DELETE"
 
         val formBodyBuilder = FormBody.Builder()
-                .add(PARAM_APIKEY, postInfo.userProfile.apiKey)
+                .add(PARAM_APIKEY, server.userProfile!!.apiKey)
 
         for (i in 0 until uploads.size) {
             formBodyBuilder.add("ids[$i]", uploads[i].id)
@@ -260,16 +263,16 @@ object SettingsManager {
                 .apply()
     }
 
-    fun setPostInfo(context: Context, postInfo: PostInfo?) =
+    fun setPostInfo(context: Context, server: Server?) =
             getAppPreferences(context)
                     .edit()
-                    .putString(KEY_SELECTED_POSTINFO, gson.toJson(postInfo))
+                    .putString(KEY_SELECTED_POSTINFO, gson.toJson(server))
                     .apply()
 
-    fun getPostInfo(context: Context): PostInfo? {
+    fun getPostInfo(context: Context): Server? {
         val serializedPostInfo = getAppPreferences(context).getString(KEY_SELECTED_POSTINFO, null)
 
-        return gson.fromJson(serializedPostInfo, PostInfo::class.java)
+        return gson.fromJson(serializedPostInfo, Server::class.java)
     }
 }
 

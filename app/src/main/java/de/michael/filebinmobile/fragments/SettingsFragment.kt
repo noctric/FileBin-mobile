@@ -15,7 +15,6 @@ import de.michael.filebinmobile.R
 import de.michael.filebinmobile.adapters.ServerSettingsAdapter
 import de.michael.filebinmobile.controller.NetworkManager
 import de.michael.filebinmobile.controller.SettingsManager
-import de.michael.filebinmobile.model.PostInfo
 import de.michael.filebinmobile.model.Server
 import de.michael.filebinmobile.model.UserProfile
 import kotlinx.android.synthetic.main.edit_server_settings.view.*
@@ -143,7 +142,7 @@ class SettingsFragment : NavigationFragment() {
                         .setTitle(R.string.serverAddedToList)
                         .setMessage(R.string.setServerAsActive)
                         .setPositiveButton(R.string.yes) { _, i ->
-                            SettingsManager.setPostInfo(activity!!, PostInfo(server, userProfile))
+                            SettingsManager.setPostInfo(activity!!, server)
                             reloadServerList()
                         }
                         .setNegativeButton(R.string.no) { dialogInterface, i -> dialogInterface.dismiss() }
