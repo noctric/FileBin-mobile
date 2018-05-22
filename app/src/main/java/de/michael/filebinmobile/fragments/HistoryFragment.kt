@@ -26,9 +26,7 @@ class HistoryFragment : NavigationFragment() {
     var adapter: HistoryAdapter? = null
 
     private val onListItemClick: (Upload) -> Boolean = {
-        val address = SettingsManager.getPostInfo(activity!!)!!.address
-        val uploadUrl = "$address/${it.id}/"
-        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(uploadUrl)))
+        openInBrowser(it)
         true
     }
 
@@ -94,6 +92,12 @@ class HistoryFragment : NavigationFragment() {
 
             pgbLoadHistory.visibility = View.VISIBLE
         }
+    }
+
+    private fun openInBrowser(upload: Upload) {
+        val address = SettingsManager.getPostInfo(activity!!)!!.address
+        val uploadUrl = "$address/${upload.id}/"
+        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(uploadUrl)))
     }
 
     private inner class LoadHistoryTask : AsyncTask<Server, Int, List<Upload>>() {

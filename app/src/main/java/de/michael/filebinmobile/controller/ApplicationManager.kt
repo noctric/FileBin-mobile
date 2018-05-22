@@ -11,6 +11,7 @@ import de.michael.filebinmobile.serialize.MultiPasteUploadDeserializer
 import de.michael.filebinmobile.serialize.UploadItemDeserializer
 import de.michael.filebinmobile.util.FileUtil
 import okhttp3.*
+import okio.Okio
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
@@ -146,6 +147,32 @@ object NetworkManager {
 
         val jsonArray = buildAndExecuteRequest(url, multipartBody, onError)?.getJSONArray(PARAM_RESPONSE_URLS)
         return jsonArray?.iterator<String>()?.asSequence()?.toList() ?: emptyList()
+    }
+
+    fun downloadFile(fileUrl: String, filePath: String, onError: (String) -> Unit = {}): File? {
+
+        val request = Request.Builder()
+                .url(fileUrl)
+                .get()
+                .build()
+
+        val response = client.newCall(request).execute()
+
+        if (response.isSuccessful) {
+
+            val downloadedFile = File(filePath)
+
+            response.body()!!.source().use { bufferedSource ->
+                val bufferedSink = Okio.buffer(Okio.sink(downloadedFile))
+                bufferedSink.writeAll(bufferedSource)
+                bufferedSink.close()
+            }
+
+            return downloadedFile
+        }
+
+        onError("Error while downloading file")
+        return null
     }
 
     fun Server.updateServerInfo(onError: (String) -> Unit = {}) {
