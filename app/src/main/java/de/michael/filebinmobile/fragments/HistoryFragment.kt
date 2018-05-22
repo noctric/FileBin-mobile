@@ -91,6 +91,8 @@ class HistoryFragment : NavigationFragment() {
             this.loadHistoryTask?.execute(postInfo)
 
             pgbLoadHistory.visibility = View.VISIBLE
+        } else {
+            showNoServerSelectedDialog()
         }
     }
 

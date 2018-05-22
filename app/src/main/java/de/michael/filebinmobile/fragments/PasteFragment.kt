@@ -57,7 +57,10 @@ class PasteFragment : NavigationFragment() {
     override fun onResume() {
 
         val postInfo = SettingsManager.getPostInfo(activity!!)
-        txtSelectedServer.text = "Uploads to ${postInfo!!.name} by ${postInfo!!.userProfile!!.usrName}"
+
+        if (postInfo != null) {
+            txtSelectedServer.text = "Uploads to ${postInfo.name} by ${postInfo.userProfile!!.usrName}"
+        }
 
         super.onResume()
     }
@@ -94,23 +97,7 @@ class PasteFragment : NavigationFragment() {
                 if (postInfo != null) {
                     startUpload(postInfo)
                 } else {
-
-                    val builder = AlertDialog.Builder(activity!!)
-                    builder.setTitle("Woops")
-                            .setMessage("No Server for uploading selected. Please go to Server Settings and select one.")
-                            .setPositiveButton(R.string.ok) { dialogInterface, _ ->
-
-                                dialogInterface.dismiss()
-
-                                onTabNavigationRequested(R.id.navigation_server_settings)
-
-                            }.setNegativeButton(R.string.cancel
-                            ) { dialogInterface, i ->
-
-                                dialogInterface.dismiss()
-
-                            }
-                    builder.create().show()
+                    showNoServerSelectedDialog()
                 }
 
             } else {
