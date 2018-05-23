@@ -28,6 +28,11 @@ class HistoryAdapter(val onListItemClick: (Upload) -> Boolean) : SimpleDataAdapt
         return HistoryViewHolder(view, onItemSelected)
     }
 
+    override fun onBindViewHolder(holder: HistoryViewHolder, position: Int) {
+        holder.itemView.ckbDeleteUpload.isChecked = this.deleteUploads.contains(this.data[position])
+        super.onBindViewHolder(holder, position)
+    }
+
 }
 
 class HistoryViewHolder(itemView: View, private val onItemSelected: (Int, Boolean) -> Any) : AbstractViewHolder<Upload>(itemView) {
