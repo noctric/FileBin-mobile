@@ -3,15 +3,14 @@ package de.michael.filebinmobile.fragments
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.Typeface
 import android.os.AsyncTask
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
-import android.support.v7.widget.DefaultItemAnimator
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import de.michael.filebinmobile.R
 import de.michael.filebinmobile.adapters.SelectedFilesAdapter
@@ -67,6 +66,8 @@ class PasteFragment : NavigationFragment() {
 
     private fun init() {
 
+        edtPasteText.typeface = Typeface.MONOSPACE
+
         val onItemRemoved = { file: File ->
             filesToUpload.remove(file)
         }
@@ -87,6 +88,7 @@ class PasteFragment : NavigationFragment() {
         }
 
         btnPasteUpload.setOnClickListener {
+            hideKeyBoard()
             val content = edtPasteText.text.toString()
             if (content.isNotBlank()) {
                 writeToFile(content)
@@ -156,18 +158,11 @@ class PasteFragment : NavigationFragment() {
             val uploadUrlAdapter = UploadUrlAdapter(activity!!)
             uploadUrlAdapter.updateData(result)
 
-            val linearLayoutManager = LinearLayoutManager(activity)
-            linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
+            val urlListView = LayoutInflater.from(context!!)
+                    .inflate(R.layout.any_recycler_view, null)
 
-            val dividerItemDecoration = DividerItemDecoration(activity,
-                    linearLayoutManager.orientation)
-
-            val urlListView = LayoutInflater.from(context!!).inflate(R.layout.any_recycler_view, null)
-
-            urlListView.rclAnyRecyclerView.layoutManager = linearLayoutManager
-            urlListView.rclAnyRecyclerView.itemAnimator = DefaultItemAnimator()
+            urlListView.rclAnyRecyclerView.setup()
             urlListView.rclAnyRecyclerView.adapter = uploadUrlAdapter
-            urlListView.rclAnyRecyclerView.addItemDecoration(dividerItemDecoration)
 
             val builder = AlertDialog.Builder(activity!!)
             builder.setTitle("Upload completed")
@@ -185,6 +180,15 @@ class PasteFragment : NavigationFragment() {
             super.onPostExecute(result)
         }
 
+    }
+
+    fun hideKeyBoard() {
+        // Check if no view has focus:
+        val view = activity!!.currentFocus
+        if (view != null) {
+            val imm = activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(view.windowToken, 0)
+        }
     }
 
 }

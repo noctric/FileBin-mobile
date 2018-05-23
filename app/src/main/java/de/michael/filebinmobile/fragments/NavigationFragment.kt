@@ -6,6 +6,7 @@ import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.view.ViewGroup
 import de.michael.filebinmobile.R
 
 
@@ -43,7 +44,14 @@ abstract class NavigationFragment : Fragment() {
 // for now we just leave it here as it is the only view related extension function and doesn't
 // really belong anywhere :(
 fun RecyclerView.setup() {
-    val linearLayoutManager = LinearLayoutManager(this.context)
+    val linearLayoutManager = object : LinearLayoutManager(this.context) {
+        // override this since it seems to ignore match_parent when setting it in the item layout's
+        // xml when displaying it in a dialog (at least)
+        override fun generateDefaultLayoutParams(): RecyclerView.LayoutParams {
+            return RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT)
+        }
+    }
     linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
 
     val dividerItemDecoration = DividerItemDecoration(this.context,
@@ -52,4 +60,5 @@ fun RecyclerView.setup() {
     this.layoutManager = linearLayoutManager
     this.itemAnimator = DefaultItemAnimator()
     this.addItemDecoration(dividerItemDecoration)
+    this.setHasFixedSize(true)
 }

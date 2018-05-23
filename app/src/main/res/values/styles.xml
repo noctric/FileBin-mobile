@@ -22,8 +22,12 @@
         <item name="android:padding">@dimen/buttonPadding</item>
     </style>
 
-    <style name="imageButtinStandard">
+    <style name="imageButtonStandard">
+        <item name="android:layout_width">32dp</item>
+        <item name="android:layout_height">32dp</item>
         <item name="android:padding">8dp</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:tint">@color/colorAccent</item>
     </style>
 
 </resources>
