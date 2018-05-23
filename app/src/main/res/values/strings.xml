@@ -27,4 +27,5 @@
     <string name="welcome">Welcome!</string>
     <string name="navToServerSettings">Yes, take me there!</string>
     <string name="name">Name</string>
+    <string name="multipaste">Multipaste</string>
 </resources>

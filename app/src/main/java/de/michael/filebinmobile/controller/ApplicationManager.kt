@@ -3,10 +3,7 @@ package de.michael.filebinmobile.controller
 import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.GsonBuilder
-import de.michael.filebinmobile.model.MultiPasteUpload
-import de.michael.filebinmobile.model.Server
-import de.michael.filebinmobile.model.Upload
-import de.michael.filebinmobile.model.UserProfile
+import de.michael.filebinmobile.model.*
 import de.michael.filebinmobile.serialize.MultiPasteUploadDeserializer
 import de.michael.filebinmobile.serialize.UploadItemDeserializer
 import de.michael.filebinmobile.util.FileUtil
@@ -63,7 +60,7 @@ private const val KEY_APP_LAUNCHED_BEFORE = "de.michael.filebin.FIRST_APP_LAUNCH
 // endregion
 
 private val gson = GsonBuilder()
-        .registerTypeAdapter(Upload::class.java, UploadItemDeserializer())
+        .registerTypeAdapter(SingleUpload::class.java, UploadItemDeserializer())
         .registerTypeAdapter(MultiPasteUpload::class.java, MultiPasteUploadDeserializer()).create()
 
 object NetworkManager {
@@ -218,9 +215,15 @@ object NetworkManager {
 
         val response = buildAndExecuteRequest(url, body, onError)
 
-        val historyItems = response?.getJSONObject(PARAM_RESPONSE_HISTORY_ITEMS)?.getObjectsWithoutKey()
+        val historySingleUploadsJSON = response?.getJSONObject(PARAM_RESPONSE_HISTORY_ITEMS)?.getObjectsWithoutKey()
+        val historyMultiUploadsJSON = response?.getJSONObject(PARAM_RESPONSE_HISTORY_MULT_ITEMS)?.getObjectsWithoutKey()
 
-        return historyItems?.map { gson.fromJson(it.toString(), Upload::class.java) }?.sortedByDescending { it.uploadTimeStamp }
+        val singleUploads = historySingleUploadsJSON?.map { gson.fromJson(it.toString(), SingleUpload::class.java) }
+        val multiUploads = historyMultiUploadsJSON?.map { gson.fromJson(it.toString(), MultiPasteUpload::class.java) }
+
+        return listOf(singleUploads, multiUploads)
+                .flatMap { it!!.toList() }
+                .sortedByDescending { it.date }
     }
 
     fun deleteUploads(server: Server, uploads: List<Upload>, onError: (String) -> Unit = {}): Boolean {

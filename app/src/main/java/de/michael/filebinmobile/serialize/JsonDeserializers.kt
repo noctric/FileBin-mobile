@@ -3,8 +3,9 @@ package de.michael.filebinmobile.serialize
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
+import com.google.gson.JsonObject
 import de.michael.filebinmobile.model.MultiPasteUpload
-import de.michael.filebinmobile.model.Upload
+import de.michael.filebinmobile.model.SingleUpload
 import java.lang.reflect.Type
 
 const val PARAM_URL_ID = "url_id"
@@ -26,9 +27,9 @@ class MultiPasteUploadDeserializer : JsonDeserializer<MultiPasteUpload> {
         val urlId = multiPasteJsonObject.get(PARAM_URL_ID).asString
         val date = multiPasteJsonObject.get(PARAM_DATE).asLong
 
-        val uploadItems = multiPasteJsonObject.get(urlId).asJsonObject.getAsJsonArray(PARAM_ITEMS)
-
-        val idList = uploadItems.toList().map { it.asString }
+        val idList = multiPasteJsonObject.getAsJsonObject(PARAM_ITEMS)
+                .getObjectsWithoutKey()
+                .map { it.get("id").asString }
 
         return MultiPasteUpload(urlId, date, idList)
 
@@ -36,8 +37,8 @@ class MultiPasteUploadDeserializer : JsonDeserializer<MultiPasteUpload> {
 
 }
 
-class UploadItemDeserializer : JsonDeserializer<Upload>{
-    override fun deserialize(json: JsonElement?, typeOfT: Type?, context: JsonDeserializationContext?): Upload {
+class UploadItemDeserializer : JsonDeserializer<SingleUpload> {
+    override fun deserialize(json: JsonElement?, typeOfT: Type?, context: JsonDeserializationContext?): SingleUpload {
         val uploadJsonObject = json!!.asJsonObject
 
         val fileName = uploadJsonObject.get(PARAM_FILE_NAME).asString
@@ -49,13 +50,13 @@ class UploadItemDeserializer : JsonDeserializer<Upload>{
         val thumbnail = uploadJsonObject.get(PARAM_THUMBNAIL)?.asString ?: ""
 
 
-        val uploadItem = Upload(
+        val uploadItem = SingleUpload(
                 uploadTitle = fileName,
                 uploadSize = fileSize,
                 uploadTimeStamp = date,
                 mimeType = mimeType,
                 hash = hash,
-                id = id)
+                uploadId = id)
 
         if (thumbnail.isNotEmpty()) {
             uploadItem.thumbnail = thumbnail
@@ -63,4 +64,15 @@ class UploadItemDeserializer : JsonDeserializer<Upload>{
 
         return uploadItem
     }
+}
+
+fun JsonObject.getObjectsWithoutKey(): List<JsonObject> {
+    val jsonObjects = mutableListOf<JsonObject>()
+
+    for (key in this.keySet()) {
+        jsonObjects.add(this.getAsJsonObject(key))
+    }
+
+    return jsonObjects
+
 }
