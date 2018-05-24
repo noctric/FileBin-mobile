@@ -62,6 +62,16 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onBackPressed() {
+        // return to our "home" view or exit out of the app
+        // behaviour according to android design guidelines
+        if (bnvMainNavigation.selectedItemId != R.id.navigation_paste) {
+            onNavigationRequest(R.id.navigation_paste)
+        } else {
+            super.onBackPressed()
+        }
+    }
+
     private fun onFirstLaunch() {
         AlertDialog.Builder(this)
                 .setTitle(R.string.welcome)

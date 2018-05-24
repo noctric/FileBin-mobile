@@ -1,5 +1,7 @@
 package de.michael.filebinmobile.fragments
 
+import android.os.Handler
+import android.os.Looper
 import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.DefaultItemAnimator
@@ -7,11 +9,19 @@ import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.ViewGroup
+import android.widget.Toast
 import de.michael.filebinmobile.R
 
 
 abstract class NavigationFragment : Fragment() {
     var onTabNavigationRequested: (menuItemId: Int) -> Unit = {}
+
+    val createAndShowToastOnUIThread: (String) -> Unit = { message ->
+        // make sure we run this on the UI thread
+        Handler(Looper.getMainLooper()).post({
+            Toast.makeText(this.activity, message, Toast.LENGTH_SHORT).show()
+        })
+    }
 
     abstract fun cancelAllPossiblyRunningTasks()
 

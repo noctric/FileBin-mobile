@@ -150,7 +150,8 @@ class SettingsFragment : NavigationFragment() {
                 return NetworkManager.generateApiKey(
                         apiKeyPostInfo[0].userName,
                         apiKeyPostInfo[0].password,
-                        apiKeyPostInfo[0].server.address)
+                        apiKeyPostInfo[0].server.address,
+                        createAndShowToastOnUIThread)
             }
 
             throw IllegalArgumentException("Not enough information to generate an api key")
@@ -195,7 +196,7 @@ class SettingsFragment : NavigationFragment() {
         override fun doInBackground(vararg params: Server): Pair<Server, Server>? {
             if (params.isNotEmpty()) {
                 val oldVal = params[0].copy()
-                params[0].updateServerInfo()
+                params[0].updateServerInfo(createAndShowToastOnUIThread)
                 // we return a pair consisting of old value and new value so we can effectively
                 // replace the current saved server
                 return Pair(oldVal, params[0])

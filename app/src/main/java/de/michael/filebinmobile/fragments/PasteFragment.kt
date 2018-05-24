@@ -143,7 +143,9 @@ class PasteFragment : NavigationFragment() {
             if (postInfos.isNotEmpty()) {
 
                 return NetworkManager.pasteUploadFiles(postInfos[0].userProfile!!,
-                        postInfos[0], this@PasteFragment.filesToUpload)
+                        postInfos[0],
+                        this@PasteFragment.filesToUpload,
+                        createAndShowToastOnUIThread)
 
             }
 

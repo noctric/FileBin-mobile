@@ -95,8 +95,10 @@ class HistoryFragment : NavigationFragment() {
         override fun doInBackground(vararg postInfos: Server): List<Upload> {
             if (postInfos.isNotEmpty()) {
 
-                return NetworkManager.loadUploadHistory(postInfos[0].userProfile!!, postInfos[0])
-                        ?: emptyList()
+                return NetworkManager.loadUploadHistory(
+                        postInfos[0].userProfile!!,
+                        postInfos[0],
+                        createAndShowToastOnUIThread) ?: emptyList()
 
             }
 
@@ -106,15 +108,25 @@ class HistoryFragment : NavigationFragment() {
         override fun onPostExecute(result: List<Upload>) {
             adapter?.updateData(result)
             pgbLoadHistory.visibility = View.GONE
+
+            if (result.isEmpty()) {
+                txtEmptyHistory.visibility = View.VISIBLE
+            } else {
+                txtEmptyHistory.visibility = View.GONE
+            }
+
             super.onPostExecute(result)
         }
     }
 
-    private inner class DeleteUploadsTask() : AsyncTask<Server, Int, Boolean>() {
+    private inner class DeleteUploadsTask : AsyncTask<Server, Int, Boolean>() {
         override fun doInBackground(vararg postInfos: Server): Boolean {
             if (postInfos.isNotEmpty()) {
 
-                return NetworkManager.deleteUploads(postInfos[0], adapter!!.deleteUploads)
+                return NetworkManager.deleteUploads(
+                        postInfos[0],
+                        adapter!!.deleteUploads,
+                        createAndShowToastOnUIThread)
 
             }
 

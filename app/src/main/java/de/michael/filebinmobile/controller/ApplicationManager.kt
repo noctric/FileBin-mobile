@@ -82,29 +82,27 @@ object NetworkManager {
 
         val response = client.newCall(request).execute()
 
-        if (response.isSuccessful) {
 
-            val responseString = response.body()?.string()
+        val responseString = response.body()?.string()
 
-            if (!responseString.isNullOrEmpty()) {
+        if (!responseString.isNullOrEmpty()) {
 
-                val responseBodyAsJson = JSONObject(responseString)
+            val responseBodyAsJson = JSONObject(responseString)
 
-                if (responseBodyAsJson.isErrorResponse()) {
+            if (response.isSuccessful) {
 
-                    //TODO this is currently not safe if any api changes occur, e.g. var name changes
-                    onError(responseBodyAsJson.getErrorMessage())
-                    return null
+                return responseBodyAsJson.getDataObject()
 
-                } else {
+            }
 
-                    return responseBodyAsJson.getDataObject()
+            if (responseBodyAsJson.isErrorResponse()) {
 
-                }
+                //TODO this is currently not safe if any api changes occur, e.g. var name changes
+                onError(responseBodyAsJson.getErrorMessage())
+
             }
         }
 
-        onError("Request returned ${response.code()}")
         return null
     }
 
@@ -222,8 +220,8 @@ object NetworkManager {
         val multiUploads = historyMultiUploadsJSON?.map { gson.fromJson(it.toString(), MultiPasteUpload::class.java) }
 
         return listOf(singleUploads, multiUploads)
-                .flatMap { it!!.toList() }
-                .sortedByDescending { it.date }
+                .flatMap { it?.toList() ?: emptyList() }
+                .sortedByDescending { it?.date }
     }
 
     fun deleteUploads(server: Server, uploads: List<Upload>, onError: (String) -> Unit = {}): Boolean {
@@ -307,7 +305,7 @@ object SettingsManager {
 }
 
 //region helpers
-private fun getLatestApiVersion(): String = API_VERSIONS[1]
+private fun getLatestApiVersion(): String = API_VERSIONS[0]
 
 fun JSONObject?.isErrorResponse(): Boolean {
     // using smart cast from nullable JSONObject to not null JSONObject after null check
