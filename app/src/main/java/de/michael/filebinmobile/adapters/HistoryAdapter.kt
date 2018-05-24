@@ -1,5 +1,6 @@
 package de.michael.filebinmobile.adapters
 
+import android.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -66,6 +67,15 @@ class HistoryViewHolder(itemView: View, private val onItemSelected: (Int, Boolea
 
                     listLayout.rclAnyRecyclerView.setup()
                     listLayout.rclAnyRecyclerView.adapter = uploadUrlAdapter
+
+                    AlertDialog.Builder(itemView.context)
+                            .setTitle("Multipaste items")
+                            .setView(listLayout)
+                            .setPositiveButton(R.string.ok) { dialogInterface, _ ->
+                                dialogInterface.dismiss()
+                            }
+                            .create()
+                            .show()
                 }
             }
         }

@@ -123,7 +123,7 @@ class SettingsFragment : NavigationFragment() {
 
     private fun reloadServerList() {
         // update active status of added server (even if user hasn't set the new server as
-        // active, we still check here.
+        // active, we still check here)
         val postInfo = SettingsManager.getPostInfo(activity!!)
         this.adapter!!.selectedPostInfo = postInfo
 
