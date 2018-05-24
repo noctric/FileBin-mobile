@@ -15,6 +15,7 @@ import android.widget.Toast
 import de.michael.filebinmobile.R
 import de.michael.filebinmobile.adapters.ServerSettingsAdapter
 import de.michael.filebinmobile.controller.NetworkManager
+import de.michael.filebinmobile.controller.NetworkManager.updateServerInfo
 import de.michael.filebinmobile.controller.SettingsManager
 import de.michael.filebinmobile.model.Server
 import de.michael.filebinmobile.model.UserProfile
@@ -31,8 +32,14 @@ class SettingsFragment : NavigationFragment() {
         oldVal?.cancel(true)
     }
 
+    private var loadServerInfoTask: LoadServerInfoTask? by Delegates.observable(null) { _, oldVal: LoadServerInfoTask?, _: LoadServerInfoTask? ->
+        // make sure we cancel the old task before creating a new one
+        oldVal?.cancel(true)
+    }
+
     override fun cancelAllPossiblyRunningTasks() {
         createApiKeyTask = null
+        loadServerInfoTask = null
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -165,9 +172,46 @@ class SettingsFragment : NavigationFragment() {
                             SettingsManager.setPostInfo(activity!!, server)
                             reloadServerList()
                         }
-                        .setNegativeButton(R.string.no) { dialogInterface, i -> dialogInterface.dismiss() }
+                        .setNegativeButton(R.string.no) { dialogInterface, _ -> dialogInterface.dismiss() }
                         .create().show()
 
+                // Load the server info and replace result from this task if success
+                loadServerInfoTask = LoadServerInfoTask()
+                loadServerInfoTask?.execute(server)
+
+            }
+            super.onPostExecute(result)
+        }
+    }
+
+    /**
+     * Due to the fact that this requires an extra api call we wrap it in it's own AsyncTask to
+     * maintain some structure.
+     * This results in extra work done by the settings manager, as we write to shared prefs after
+     * adding the server and creating an api key and then overwrite the saved server after this task
+     * finished successfully.
+     */
+    private inner class LoadServerInfoTask : AsyncTask<Server, Int, Pair<Server, Server>?>() {
+        override fun doInBackground(vararg params: Server): Pair<Server, Server>? {
+            if (params.isNotEmpty()) {
+                val oldVal = params[0].copy()
+                params[0].updateServerInfo()
+                // we return a pair consisting of old value and new value so we can effectively
+                // replace the current saved server
+                return Pair(oldVal, params[0])
+            }
+            return null
+        }
+
+        override fun onPostExecute(result: Pair<Server, Server>?) {
+            if (result != null) {
+                SettingsManager.deleteServer(activity!!, result.first)
+                SettingsManager.addServer(activity!!, result.second)
+                val isCurrentUploadServer = result.first == SettingsManager.getPostInfo(activity!!)
+                if (isCurrentUploadServer) {
+                    // update our postInfo too
+                    SettingsManager.setPostInfo(activity!!, result.second)
+                }
             }
             super.onPostExecute(result)
         }
