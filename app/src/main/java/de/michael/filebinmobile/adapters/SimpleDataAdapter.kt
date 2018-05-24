@@ -4,7 +4,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.View
 
 abstract class SimpleDataAdapter<T : AbstractViewHolder<K>, K>(
-        val onClick: (K) -> Boolean = { true },
+        val onClick: (K) -> Boolean = { false },
         val onItemRemoved: (K) -> Boolean = { false }) : RecyclerView.Adapter<T>() {
 
     val data: MutableList<K> = mutableListOf()

@@ -11,7 +11,9 @@ import android.widget.Toast
 import de.michael.filebinmobile.R
 import kotlinx.android.synthetic.main.list_item_upload_url.view.*
 
-class UploadUrlAdapter(val context: Context) : SimpleDataAdapter<UploadUrlViewHolder, String>() {
+class UploadUrlAdapter(val context: Context, onClick: (String) -> Boolean = { false })
+    : SimpleDataAdapter<UploadUrlViewHolder, String>(onClick) {
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UploadUrlViewHolder {
         val view = LayoutInflater.from(parent.context)
                 .inflate(R.layout.list_item_upload_url, null)

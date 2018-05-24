@@ -5,9 +5,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import de.michael.filebinmobile.R
+import de.michael.filebinmobile.fragments.setup
 import de.michael.filebinmobile.model.MultiPasteUpload
 import de.michael.filebinmobile.model.SingleUpload
 import de.michael.filebinmobile.model.Upload
+import kotlinx.android.synthetic.main.any_recycler_view.view.*
 import kotlinx.android.synthetic.main.list_item_upload_history.view.*
 import java.text.DateFormat
 import java.util.*
@@ -47,12 +49,23 @@ class HistoryViewHolder(itemView: View, private val onItemSelected: (Int, Boolea
             is SingleUpload -> {
                 itemView.txtUploadName.text = item.uploadTitle
                 itemView.txtUploadSize.text = item.uploadSize
+                itemView.setBackgroundColor(itemView.resources.getColor(android.R.color.transparent))
                 itemView.setOnClickListener { onClick(item) }
             }
             is MultiPasteUpload -> {
                 itemView.txtUploadName.text = "Multipaste ${item.id}"
+                itemView.setBackgroundColor(itemView.resources.getColor(R.color.colorDialogBlue))
                 itemView.setOnClickListener {
-                    //TODO
+                    val listLayout = LayoutInflater.from(itemView.context)
+                            .inflate(R.layout.any_recycler_view, null)
+
+                    val uploadUrlAdapter = UploadUrlAdapter(itemView.context) {
+                        onClick(item)
+                    }
+                    uploadUrlAdapter.updateData(item.ids)
+
+                    listLayout.rclAnyRecyclerView.setup()
+                    listLayout.rclAnyRecyclerView.adapter = uploadUrlAdapter
                 }
             }
         }
