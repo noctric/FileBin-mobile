@@ -13,6 +13,7 @@ import de.michael.filebinmobile.R
 import de.michael.filebinmobile.adapters.HistoryAdapter
 import de.michael.filebinmobile.controller.NetworkManager
 import de.michael.filebinmobile.controller.SettingsManager
+import de.michael.filebinmobile.model.MultiPasteUpload
 import de.michael.filebinmobile.model.Server
 import de.michael.filebinmobile.model.Upload
 import kotlinx.android.synthetic.main.history_fragment.*
@@ -106,6 +107,12 @@ class HistoryFragment : NavigationFragment() {
         }
 
         override fun onPostExecute(result: List<Upload>) {
+
+            for (upload in result) {
+                if (upload is MultiPasteUpload) {
+                    upload.loadSingleUploadsRefs(result)
+                }
+            }
             adapter?.updateData(result)
             pgbLoadHistory.visibility = View.GONE
 

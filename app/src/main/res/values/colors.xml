@@ -2,6 +2,7 @@
 <resources>
     <color name="colorPrimary">#2c7bb3</color>
     <color name="colorPrimaryDark">#272727</color>
+    <color name="colorPrimaryDarkHalfTransparent">#80272727</color>
     <color name="colorAccent">#ff4081</color>
     <color name="colorDialogBlue">#d7edf6</color>
     <color name="colorDialogGrey">#f5f5f5</color>

@@ -4,13 +4,11 @@ import android.os.Handler
 import android.os.Looper
 import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
-import android.support.v7.widget.DefaultItemAnimator
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.*
 import android.view.ViewGroup
 import android.widget.Toast
 import de.michael.filebinmobile.R
+import de.michael.filebinmobile.view.GridViewItemDecorator
 
 
 abstract class NavigationFragment : Fragment() {
@@ -70,5 +68,17 @@ fun RecyclerView.setup() {
     this.layoutManager = linearLayoutManager
     this.itemAnimator = DefaultItemAnimator()
     this.addItemDecoration(dividerItemDecoration)
+    this.setHasFixedSize(true)
+}
+
+fun RecyclerView.setUpGridList(columnNum: Int) {
+    val gridLayoutManager = GridLayoutManager(this.context!!, columnNum)
+    gridLayoutManager.orientation = GridLayoutManager.VERTICAL
+
+    val decorator = GridViewItemDecorator(resources.getDimensionPixelSize(R.dimen.grid_spacing), columnNum)
+    this.addItemDecoration(decorator)
+
+    this.layoutManager = gridLayoutManager
+    this.itemAnimator = DefaultItemAnimator()
     this.setHasFixedSize(true)
 }

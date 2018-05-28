@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import de.michael.filebinmobile.R
-import de.michael.filebinmobile.fragments.setup
+import de.michael.filebinmobile.fragments.setUpGridList
 import de.michael.filebinmobile.model.MultiPasteUpload
 import de.michael.filebinmobile.model.SingleUpload
 import de.michael.filebinmobile.model.Upload
@@ -57,20 +57,19 @@ class HistoryViewHolder(itemView: View, private val onItemSelected: (Int, Boolea
                 itemView.txtUploadName.text = "Multipaste ${item.id}"
                 itemView.setBackgroundColor(itemView.resources.getColor(R.color.colorDialogBlue))
                 itemView.setOnClickListener {
-                    val listLayout = LayoutInflater.from(itemView.context)
+                    val view = LayoutInflater.from(itemView.context)
                             .inflate(R.layout.any_recycler_view, null)
+                    // this should be calculated dynamically
+                    view.rclAnyRecyclerView.setUpGridList(3)
 
-                    val uploadUrlAdapter = UploadUrlAdapter(itemView.context) {
-                        onClick(item)
-                    }
-                    uploadUrlAdapter.updateData(item.ids)
+                    val adapter = GridviewAdapter()
+                    adapter.updateData(item.uploads)
+                    view.rclAnyRecyclerView.adapter = adapter
 
-                    listLayout.rclAnyRecyclerView.setup()
-                    listLayout.rclAnyRecyclerView.adapter = uploadUrlAdapter
 
                     AlertDialog.Builder(itemView.context)
                             .setTitle("Multipaste items")
-                            .setView(listLayout)
+                            .setView(view)
                             .setPositiveButton(R.string.ok) { dialogInterface, _ ->
                                 dialogInterface.dismiss()
                             }

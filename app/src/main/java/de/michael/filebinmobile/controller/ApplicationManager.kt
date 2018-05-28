@@ -305,7 +305,7 @@ object SettingsManager {
 }
 
 //region helpers
-private fun getLatestApiVersion(): String = API_VERSIONS[0]
+private fun getLatestApiVersion(): String = API_VERSIONS[1]
 
 fun JSONObject?.isErrorResponse(): Boolean {
     // using smart cast from nullable JSONObject to not null JSONObject after null check
