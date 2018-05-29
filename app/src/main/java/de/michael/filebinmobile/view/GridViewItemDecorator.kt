@@ -54,3 +54,20 @@ class GridViewItemDecorator(val gridSpacingPx: Int, val gridSize: Int) : Recycle
         }
     }
 }
+
+/**
+ * https://stackoverflow.com/a/29720777
+ */
+class BottomOffsetDecorator(private val offset: Int, private val condition: () -> Boolean) : RecyclerView.ItemDecoration() {
+    override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State?) {
+        super.getItemOffsets(outRect, view, parent, state)
+        val dataSize = state!!.itemCount
+        val position = parent.getChildAdapterPosition(view)
+        if (condition() && position == dataSize - 1) {
+            outRect.set(0, 0, 0, offset)
+        } else {
+            outRect.set(0, 0, 0, 0)
+        }
+
+    }
+}

@@ -61,7 +61,7 @@ abstract class NavigationFragment : Fragment() {
 
 // for now we just leave it here as it is the only view related extension function and doesn't
 // really belong anywhere :(
-fun RecyclerView.setup() {
+fun RecyclerView.setup(divider: Boolean = true) {
     val linearLayoutManager = object : LinearLayoutManager(this.context) {
         // override this since it seems to ignore match_parent when setting it in the item layout's
         // xml when displaying it in a dialog (at least)
@@ -72,12 +72,14 @@ fun RecyclerView.setup() {
     }
     linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
 
-    val dividerItemDecoration = DividerItemDecoration(this.context,
-            linearLayoutManager.orientation)
+    if (divider) {
+        val dividerItemDecoration = DividerItemDecoration(this.context,
+                linearLayoutManager.orientation)
+        this.addItemDecoration(dividerItemDecoration)
+    }
 
     this.layoutManager = linearLayoutManager
     this.itemAnimator = DefaultItemAnimator()
-    this.addItemDecoration(dividerItemDecoration)
     this.setHasFixedSize(true)
 }
 

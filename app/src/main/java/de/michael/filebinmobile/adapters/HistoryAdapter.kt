@@ -42,7 +42,7 @@ class HistoryAdapter(onListItemClick: (Upload) -> Boolean) : SimpleDataAdapter<H
 
 class HistoryViewHolder(itemView: View, private val onItemSelected: (Int, Boolean) -> Any) : AbstractViewHolder<Upload>(itemView) {
 
-    private val dateFormat: DateFormat = java.text.DateFormat.getDateInstance();
+    private val dateFormat: DateFormat = java.text.DateFormat.getDateInstance()
 
     override fun bindItem(item: Upload, removeItem: (Int) -> Unit, pos: Int, onClick: (Upload) -> Boolean) {
 

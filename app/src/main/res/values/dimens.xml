@@ -3,4 +3,5 @@
     <dimen name="buttonPadding">3dp</dimen>
     <dimen name="gridImageSize">80dp</dimen>
     <dimen name="grid_spacing">8dp</dimen>
+    <dimen name="file_list_bottom_offset">64dp</dimen>
 </resources>

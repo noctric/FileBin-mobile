@@ -19,8 +19,10 @@ import de.michael.filebinmobile.controller.NetworkManager
 import de.michael.filebinmobile.controller.SettingsManager
 import de.michael.filebinmobile.model.Server
 import de.michael.filebinmobile.util.FileUtil
+import de.michael.filebinmobile.view.BottomOffsetDecorator
 import kotlinx.android.synthetic.main.any_recycler_view.view.*
 import kotlinx.android.synthetic.main.paste_fragment.*
+import kotlinx.android.synthetic.main.paste_fragment.view.*
 import java.io.File
 import java.io.OutputStreamWriter
 import kotlin.properties.Delegates
@@ -44,13 +46,9 @@ class PasteFragment : NavigationFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.paste_fragment, container, false)
-                ?: super.onCreateView(inflater, container, savedInstanceState)
-    }
-
-    override fun onStart() {
-        init()
-        super.onStart()
+        val view = inflater.inflate(R.layout.paste_fragment, container, false)
+        init(view)
+        return view
     }
 
     override fun onResume() {
@@ -64,9 +62,9 @@ class PasteFragment : NavigationFragment() {
         super.onResume()
     }
 
-    private fun init() {
+    private fun init(view: View) {
 
-        edtPasteText.typeface = Typeface.MONOSPACE
+        view.edtPasteText.typeface = Typeface.MONOSPACE
 
         val onItemRemoved = { file: File ->
             filesToUpload.remove(file)
@@ -74,10 +72,13 @@ class PasteFragment : NavigationFragment() {
         selectedFilesAdapter = SelectedFilesAdapter(onItemRemoved = onItemRemoved)
         selectedFilesAdapter?.updateData(filesToUpload)
 
-        rclAddedFiles.setup()
-        rclAddedFiles.adapter = selectedFilesAdapter
+        val bottomOffset = resources.getDimension(R.dimen.file_list_bottom_offset).toInt()
+        view.rclAddedFiles.setup(false)
+        // TODO calculate this dynamically
+        view.rclAddedFiles.addItemDecoration(BottomOffsetDecorator(bottomOffset) { filesToUpload.size >= 3 })
+        view.rclAddedFiles.adapter = selectedFilesAdapter
 
-        btnSelectFiles.setOnClickListener {
+        view.btnSelectFiles.setOnClickListener {
 
             val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
             intent.addCategory(Intent.CATEGORY_OPENABLE)
@@ -87,7 +88,7 @@ class PasteFragment : NavigationFragment() {
 
         }
 
-        btnPasteUpload.setOnClickListener {
+        view.btnPasteUpload.setOnClickListener {
             hideKeyBoard()
             val content = edtPasteText.text.toString()
             if (content.isNotBlank()) {
@@ -98,8 +99,8 @@ class PasteFragment : NavigationFragment() {
 
             if (this.filesToUpload.isNotEmpty()) {
                 // ui adjustments
-                pgbUploadProgress.visibility = View.VISIBLE
-                btnPasteUpload.isEnabled = false
+                view.pgbUploadProgress.visibility = View.VISIBLE
+                view.btnPasteUpload.isEnabled = false
 
                 // start upload
                 val postInfo = SettingsManager.getPostInfo(activity!!)
