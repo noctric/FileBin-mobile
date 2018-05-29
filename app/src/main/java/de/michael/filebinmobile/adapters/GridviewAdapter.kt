@@ -25,10 +25,15 @@ class GridItemViewHolder(itemView: View, private val onItemSelected: (SingleUplo
             item.mimeType.contains("image") -> {
                 // for some reason we are not allowed to pass an EMPTY string (although null is ok)
                 if (item.thumbnail.isNotEmpty()) {
-                    Picasso.get().load(item.thumbnail)
-                            .resize(100, 100)
+                    Picasso.get()
+                            .load(item.thumbnail)
+                            .placeholder(R.drawable.image_placeholder)
                             .into(itemView.imgMultiPasteSingleItemThumb)
                 }
+            }
+            item.mimeType.contains("text") -> {
+                itemView.imgMultiPasteSingleItemThumb
+                        .setImageResource(R.drawable.ic_code_black_24dp)
             }
         }
         itemView.setOnClickListener {

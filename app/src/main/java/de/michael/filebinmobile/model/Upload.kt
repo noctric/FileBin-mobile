@@ -11,6 +11,10 @@ data class MultiPasteUpload(val urlId: String, val uploadTimeStamp: Long,
                             val ids: List<String>) : Upload(urlId, uploadTimeStamp) {
     val uploads: MutableList<SingleUpload> = mutableListOf()
 
+    /**
+     * Api design forces us to manually go through all multi pastes and set the references for
+     * the detailed single upload items
+     */
     fun loadSingleUploadsRefs(uploads: List<Upload>) {
         this.uploads.clear()
         this.uploads.addAll(uploads

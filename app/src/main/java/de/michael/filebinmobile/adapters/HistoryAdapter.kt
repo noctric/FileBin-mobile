@@ -62,7 +62,7 @@ class HistoryViewHolder(itemView: View, private val onItemSelected: (Int, Boolea
                     // this should be calculated dynamically
                     view.rclAnyRecyclerView.setUpGridList(3)
 
-                    val adapter = GridviewAdapter()
+                    val adapter = GridviewAdapter(onClick)
                     adapter.updateData(item.uploads)
                     view.rclAnyRecyclerView.adapter = adapter
 

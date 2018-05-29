@@ -1,7 +1,5 @@
 package de.michael.filebinmobile.fragments
 
-import android.content.Intent
-import android.net.Uri
 import android.os.AsyncTask
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -84,12 +82,6 @@ class HistoryFragment : NavigationFragment() {
         } else {
             showNoServerSelectedDialog()
         }
-    }
-
-    private fun openInBrowser(upload: Upload) {
-        val address = SettingsManager.getPostInfo(activity!!)!!.address
-        val uploadUrl = "$address/${upload.id}/"
-        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(uploadUrl)))
     }
 
     private inner class LoadHistoryTask : AsyncTask<Server, Int, List<Upload>>() {

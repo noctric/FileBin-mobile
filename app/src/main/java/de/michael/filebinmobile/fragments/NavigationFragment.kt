@@ -1,5 +1,7 @@
 package de.michael.filebinmobile.fragments
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Handler
 import android.os.Looper
 import android.support.v4.app.Fragment
@@ -8,6 +10,8 @@ import android.support.v7.widget.*
 import android.view.ViewGroup
 import android.widget.Toast
 import de.michael.filebinmobile.R
+import de.michael.filebinmobile.controller.SettingsManager
+import de.michael.filebinmobile.model.Upload
 import de.michael.filebinmobile.view.GridViewItemDecorator
 
 
@@ -17,7 +21,7 @@ abstract class NavigationFragment : Fragment() {
     val createAndShowToastOnUIThread: (String) -> Unit = { message ->
         // make sure we run this on the UI thread
         Handler(Looper.getMainLooper()).post({
-            Toast.makeText(this.activity, message, Toast.LENGTH_SHORT).show()
+            Toast.makeText(this.activity!!, message, Toast.LENGTH_SHORT).show()
         })
     }
 
@@ -46,6 +50,12 @@ abstract class NavigationFragment : Fragment() {
 
                 }
         builder.create().show()
+    }
+
+    fun openInBrowser(upload: Upload) {
+        val address = SettingsManager.getPostInfo(activity!!)!!.address
+        val uploadUrl = "$address/${upload.id}/"
+        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(uploadUrl)))
     }
 }
 
