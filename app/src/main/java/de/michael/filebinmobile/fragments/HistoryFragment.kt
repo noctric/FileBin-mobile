@@ -15,6 +15,7 @@ import de.michael.filebinmobile.model.MultiPasteUpload
 import de.michael.filebinmobile.model.Server
 import de.michael.filebinmobile.model.Upload
 import kotlinx.android.synthetic.main.history_fragment.*
+import kotlinx.android.synthetic.main.history_fragment.view.*
 import kotlin.properties.Delegates
 
 class HistoryFragment : NavigationFragment() {
@@ -37,24 +38,19 @@ class HistoryFragment : NavigationFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.history_fragment, container, false)
-                ?: super.onCreateView(inflater, container, savedInstanceState)
+        val view = inflater.inflate(R.layout.history_fragment, container, false)
+        init(view)
+        return view
     }
 
-    override fun onStart() {
-        init()
-
-        super.onStart()
-    }
-
-    private fun init() {
+    private fun init(view: View) {
 
         this.adapter = HistoryAdapter(onListItemClick)
 
-        rclUploadHistory.setup()
-        rclUploadHistory.adapter = this.adapter
+        view.rclUploadHistory.setup()
+        view.rclUploadHistory.adapter = this.adapter
 
-        fbaDeleteCheckedItems.setOnClickListener {
+        view.fbaDeleteCheckedItems.setOnClickListener {
             val postInfo = SettingsManager.getPostInfo(activity!!)
 
             if (postInfo != null) {
@@ -63,7 +59,11 @@ class HistoryFragment : NavigationFragment() {
             }
         }
 
-        reloadHistory()
+        view.srlRefreshHistory.setOnRefreshListener {
+            reloadHistory()
+        }
+
+        reloadHistory(view)
     }
 
     override fun cancelAllPossiblyRunningTasks() {
@@ -72,13 +72,13 @@ class HistoryFragment : NavigationFragment() {
         loadHistoryTask = null
     }
 
-    private fun reloadHistory() {
+    private fun reloadHistory(view: View = this.view!!) {
         val postInfo = SettingsManager.getPostInfo(activity!!)
         if (postInfo != null) {
             this.loadHistoryTask = LoadHistoryTask()
             this.loadHistoryTask?.execute(postInfo)
 
-            pgbLoadHistory.visibility = View.VISIBLE
+            view.pgbLoadHistory.visibility = View.VISIBLE
         } else {
             showNoServerSelectedDialog()
         }
@@ -113,6 +113,7 @@ class HistoryFragment : NavigationFragment() {
             } else {
                 txtEmptyHistory.visibility = View.GONE
             }
+            srlRefreshHistory.isRefreshing = false
 
             super.onPostExecute(result)
         }
