@@ -21,6 +21,7 @@ import de.michael.filebinmobile.model.Server
 import de.michael.filebinmobile.model.UserProfile
 import kotlinx.android.synthetic.main.edit_server_settings.view.*
 import kotlinx.android.synthetic.main.server_settings_fragment.*
+import kotlinx.android.synthetic.main.server_settings_fragment.view.*
 import kotlin.properties.Delegates
 
 class SettingsFragment : NavigationFragment() {
@@ -43,18 +44,19 @@ class SettingsFragment : NavigationFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.server_settings_fragment, container, false)
-                ?: super.onCreateView(inflater, container, savedInstanceState)
+        val view = inflater.inflate(R.layout.server_settings_fragment, container, false)
+        init(view)
+        return view
     }
 
-    private fun init() {
+    private fun init(view: View) {
 
         this.adapter = ServerSettingsAdapter(activity!!)
 
-        rclServerList.setup()
-        rclServerList.adapter = this.adapter
+        view.rclServerList.setup()
+        view.rclServerList.adapter = this.adapter
 
-        fbaAddServer.setOnClickListener {
+        view.fbaAddServer.setOnClickListener {
             val dialogView = LayoutInflater.from(activity)
                     .inflate(R.layout.edit_server_settings, null)
 
@@ -108,12 +110,6 @@ class SettingsFragment : NavigationFragment() {
                     .create().show()
         }
 
-    }
-
-    override fun onStart() {
-        init()
-        reloadServerList()
-        super.onStart()
     }
 
     override fun onResume() {
