@@ -121,8 +121,14 @@ object NetworkManager {
     }
 
     fun pasteUploadFiles(user: UserProfile, server: Server, files: List<File>,
-                         onError: (String) -> Unit = {}): List<String> {
-        val url = "${server.address}${getLatestApiVersion()}/$ENDPOINT_FILE_UPLOAD"
+                         onError: (String) -> Unit = {}, asMultiPaste: Boolean = false): List<String> {
+
+        var url = ""
+        if (asMultiPaste) {
+            url = "${server.address}${getLatestApiVersion()}/$ENDPOINT_FILE_CREATE_MULTIPASTE"
+        } else {
+            url = "${server.address}${getLatestApiVersion()}/$ENDPOINT_FILE_UPLOAD"
+        }
 
         val multipartBuilder = MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
@@ -240,6 +246,10 @@ object NetworkManager {
         return response?.isErrorResponse()?.not() ?: false
 
     }
+
+    fun createMultiPaste() {
+
+    }
 }
 
 object SettingsManager {
@@ -248,7 +258,7 @@ object SettingsManager {
             context.getSharedPreferences(KEY_STORE_PREFS, Context.MODE_PRIVATE)
 
     fun hasLaunchedBefore(context: Context): Boolean =
-            getAppPreferences(context).getBoolean(KEY_APP_LAUNCHED_BEFORE, false)
+            getAppPreferences(context).getBoolean(KEY_APP_LAUNCHED_BEFORE, true)
 
     fun setHasLaunchedBefore(context: Context, hasLaunchedBefore: Boolean) =
             getAppPreferences(context)
