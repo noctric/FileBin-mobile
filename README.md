@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/noctric/FileBin-mobile.svg?branch=master)](https://travis-ci.org/noctric/FileBin-mobile)
+
 # FileBin-mobile
 A simple mobile front end for FileBin users.
 >This website's primary goal is aiding developers, power users, students and alike in solving problems, debugging software, sharing their configuration, etc. It is not intended to distribute confidential or harmful information, scripts or software or copyrighted content for which you do not have a distribution license.
