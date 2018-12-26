@@ -22,4 +22,4 @@ android:
     - sys-img-x86-android-28
     - sys-img-armeabi-v7a-android-17
 script:
-  yes | sdkmanager --licenses --sdk_root=$ANDROID_SDK_PATH
+  yes | sdkmanager --upgrade
