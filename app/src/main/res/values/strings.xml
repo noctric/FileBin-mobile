@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">FileBin mobile</string>
-    <string name="action_settings">Settings</string>
     <string name="addFile">Add File</string>
     <string name="pasteUpload">Paste/Upload</string>
     <string name="pasteTextHint">Paste your text here</string>
@@ -11,21 +10,27 @@
     <string name="Name">Name</string>
     <string name="Address">Address</string>
     <string name="exampleAddr">https://example.org</string>
-    <string name="ok">Ok</string>
+    <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
     <string name="user_name">User name</string>
     <string name="yes">Yes</string>
     <string name="password">Password</string>
-    <string name="password_save_hint">Your password will not be saved. It is only used to generate an apikey for the mobile app, which will be saved with your username.</string>
-    <string name="emtpyList">No entries yet...</string>
+    <string name="password_save_hint">Your password will not be saved. It is only used to generate an apikey for the
+        mobile app, which will be saved with your username.
+    </string>
+    <string name="emtpyList">No entries yet…</string>
     <string name="active">active</string>
     <string name="notActive">not active</string>
     <string name="serverAddedToList">Server added</string>
     <string name="setServerAsActive">Do you want to add this server and account as active upload target?</string>
     <string name="no">No</string>
-    <string name="welcomeMsg">Welcome to FileBin for android! To start uploading files, add a server with a profile on the _Server Settings_ page. Note that you will need an account with a host of your choice to upload any files or use this app at all.</string>
+    <string name="welcomeMsg">Welcome to FileBin for android! To start uploading files, add a server with a profile on
+        the _Server Settings_ page. Note that you will need an account with a host of your choice to upload any files or
+        use this app at all.
+    </string>
     <string name="welcome">Welcome!</string>
     <string name="navToServerSettings">Yes, take me there!</string>
     <string name="name">Name</string>
     <string name="multipaste">Multipaste</string>
+    <string name="action_settings">Settings</string>
 </resources>

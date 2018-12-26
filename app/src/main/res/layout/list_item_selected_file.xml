@@ -33,6 +33,6 @@
         style="@style/imageButtonStandard"
         android:layout_centerVertical="true"
         android:layout_alignParentEnd="true"
-        app:srcCompat="@mipmap/ic_delete_white_24dp" />
+        app:srcCompat="@drawable/ic_delete" />
 
 </RelativeLayout>

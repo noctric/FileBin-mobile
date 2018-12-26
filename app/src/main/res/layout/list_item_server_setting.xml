@@ -71,12 +71,12 @@
             style="@style/imageButtonStandard"
             android:layout_marginEnd="16dp"
             android:tint="@color/colorPrimary"
-            app:srcCompat="@mipmap/ic_add_white_24dp" />
+            app:srcCompat="@drawable/ic_add" />
 
         <ImageButton
             android:id="@+id/btnDelete"
             style="@style/imageButtonStandard"
-            app:srcCompat="@mipmap/ic_delete_white_24dp" />
+            app:srcCompat="@drawable/ic_delete" />
 
     </LinearLayout>
 

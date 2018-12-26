@@ -19,5 +19,5 @@
         style="@style/imageButtonStandard"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
-        app:srcCompat="@mipmap/ic_content_paste_white_24dp" />
+        app:srcCompat="@drawable/ic_content_paste" />
 </RelativeLayout>

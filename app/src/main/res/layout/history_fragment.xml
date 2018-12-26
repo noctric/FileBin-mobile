@@ -44,7 +44,7 @@
         android:clickable="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@mipmap/ic_delete_white_24dp" />
+        app:srcCompat="@drawable/ic_delete" />
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/srlRefreshHistory"
