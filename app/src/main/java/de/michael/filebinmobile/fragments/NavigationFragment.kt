@@ -4,11 +4,11 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Handler
 import android.os.Looper
-import android.support.v4.app.Fragment
-import android.support.v7.app.AlertDialog
-import android.support.v7.widget.*
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.*
 import de.michael.filebinmobile.R
 import de.michael.filebinmobile.controller.SettingsManager
 import de.michael.filebinmobile.model.Upload
@@ -20,9 +20,9 @@ abstract class NavigationFragment : Fragment() {
 
     val createAndShowToastOnUIThread: (String) -> Unit = { message ->
         // make sure we run this on the UI thread
-        Handler(Looper.getMainLooper()).post({
+        Handler(Looper.getMainLooper()).post {
             Toast.makeText(this.activity!!, message, Toast.LENGTH_SHORT).show()
-        })
+        }
     }
 
     abstract fun cancelAllPossiblyRunningTasks()
@@ -70,7 +70,7 @@ fun RecyclerView.setup(divider: Boolean = true) {
                     ViewGroup.LayoutParams.WRAP_CONTENT)
         }
     }
-    linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
+    linearLayoutManager.orientation = RecyclerView.VERTICAL
 
     if (divider) {
         val dividerItemDecoration = DividerItemDecoration(this.context,
@@ -85,7 +85,7 @@ fun RecyclerView.setup(divider: Boolean = true) {
 
 fun RecyclerView.setUpGridList(columnNum: Int) {
     val gridLayoutManager = GridLayoutManager(this.context!!, columnNum)
-    gridLayoutManager.orientation = GridLayoutManager.VERTICAL
+    gridLayoutManager.orientation = RecyclerView.VERTICAL
 
     val decorator = GridViewItemDecorator(resources.getDimensionPixelSize(R.dimen.grid_spacing), columnNum)
     this.addItemDecoration(decorator)

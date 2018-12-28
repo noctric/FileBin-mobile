@@ -1,7 +1,7 @@
 package de.michael.filebinmobile.adapters
 
-import android.support.v7.widget.RecyclerView
 import android.view.View
+import androidx.recyclerview.widget.RecyclerView
 
 abstract class SimpleDataAdapter<T : AbstractViewHolder<K>, K>(
         val onClick: (K) -> Boolean = { false },

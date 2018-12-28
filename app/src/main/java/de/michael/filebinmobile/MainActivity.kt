@@ -1,10 +1,10 @@
 package de.michael.filebinmobile
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.app.AlertDialog
-import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import de.michael.filebinmobile.controller.SettingsManager
 import de.michael.filebinmobile.fragments.HistoryFragment
 import de.michael.filebinmobile.fragments.PasteFragment
@@ -94,7 +94,7 @@ class MainActivity : AppCompatActivity() {
         // https://material.io/guidelines/components/bottom-navigation.html#bottom-navigation-behavior
 
         supportFragmentManager.beginTransaction()
-                .replace(R.id.frlMainContent, fragment)
-                .commit()
+            .replace(R.id.frlMainContent, fragment)
+            .commit()
     }
 }

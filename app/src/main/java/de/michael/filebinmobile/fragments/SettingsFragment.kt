@@ -13,6 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import de.michael.filebinmobile.R
+import de.michael.filebinmobile.R.id.txtEmptyServerList
 import de.michael.filebinmobile.adapters.ServerSettingsAdapter
 import de.michael.filebinmobile.controller.NetworkManager
 import de.michael.filebinmobile.controller.NetworkManager.updateServerInfo
