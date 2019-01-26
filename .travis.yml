@@ -24,10 +24,8 @@ env:
   - COMPONENT=instrumentation ANDROID_TARGET=18
   - COMPONENT=instrumentation ANDROID_TARGET=19
 
-before_script:
-- ./scripts/travis_before_script.sh
-
 script:
+- ./scripts/travis_script.sh
 - "./gradlew clean build connectedCheck -PdisablePreDex --stacktrace"
 
 before_cache:
