@@ -1,52 +1,40 @@
 language: android
-sudo: required
-jdk: oraclejdk8
+sudo: false
+dist: trusty
 
+before_install:
+- mkdir "$ANDROID_HOME/licenses" || true
+- echo -e "\n8933bad161af4178b1185d1a37fbf41ea5269c55\nd56f5187479451eabf01fb78af6dfcb131a6481e" > "$ANDROID_HOME/licenses/android-sdk-license"
+- echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd\n504667f4c0de7af1a06de9f4b1727b84351f2910" > "$ANDROID_HOME/licenses/android-sdk-preview-license"
+
+android:
+  components:
+  # https://github.com/travis-ci/travis-ci/issues/6040#issuecomment-219367943
+  - tools
+  - tools
+
+jdk:
+- oraclejdk8
+
+env:
+  matrix:
+  - COMPONENT=unit
+  - COMPONENT=instrumentation ANDROID_TARGET=16
+  - COMPONENT=instrumentation ANDROID_TARGET=17
+  - COMPONENT=instrumentation ANDROID_TARGET=18
+  - COMPONENT=instrumentation ANDROID_TARGET=19
+
+before_script:
+- ./scripts/travis_before_script.sh
+
+script:
+- "./gradlew clean build connectedCheck -PdisablePreDex --stacktrace"
+
+before_cache:
+- rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
+- rm -fr $HOME/.gradle/caches/*/plugin-resolution/
 cache:
   directories:
   - $HOME/.gradle/caches/
   - $HOME/.gradle/wrapper/
-
-env:
-  global:
-  - ANDROID_API=24
-  - EMULATOR_API=21
-  - ANDROID_BUILD_TOOLS=24.0.2
-  - ANDROID_ABI=armeabi-v7a
-  - ANDROID_TAG=google_apis_playstore
-  - ADB_INSTALL_TIMEOUT=5 # minutes
-
-android:
-  components:
-  - tools
-  - tools
-  - platform-tools
-  - build-tools-$ANDROID_BUILD_TOOLS
-  - android-$ANDROID_API
-  - android-$EMULATOR_API
-  - extra-google-m2repository
-  - extra-android-m2repository # for design library
-  - addon-google_apis-google-19 # google play services
-  - sys-img-armeabi-v7a-google_apis-23-$ANDROID_API_LEVEL
-  - sys-img-armeabi-v7a-google_apis-23-$EMULATOR_API_LEVEL
-
-  licenses:
-  - android-sdk-preview-license-.+
-  - android-sdk-license-.+
-  - google-gdk-license-.+
-
-before_install:
-- mkdir "$ANDROID_HOME/licenses" || true
-- echo -e "\n8933bad161af4178b1185d1a37fbf41ea5269c55" > "$ANDROID_HOME/licenses/android-sdk-license"
-- echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > "$ANDROID_HOME/licenses/android-sdk-preview-license"
-- chmod +x gradlew
-#- ./gradlew dependencies || true # DON'T ADD unless you are getting "Install missing components using SDK manager"
-
-before_script:
-- echo no | android create avd --force -n test -t android-21 --abi $ANDROID_ABI --tag $ANDROID_TAG
-- emulator -avd test -no-skin -no-audio -no-window &
-- android-wait-for-emulator
-- adb shell input keyevent 82 &
-
-script:
-- "./gradlew clean build connectedCheck -PdisablePreDex --stacktrace"
+  - $HOME/.android/build-cache
